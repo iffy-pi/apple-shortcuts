@@ -2,7 +2,7 @@
 	"id": "id",
 	"version": { 
 		"str" : "3.2.4",
-		"num" : 325
+		"num" : 326
 	},
 	"name": "My Shortcut",
 	"type": "independent",
