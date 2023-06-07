@@ -1,0 +1,15 @@
+{
+	// indie shortcuts dont really need an ID as they are the only one of their kind, but its good practice incase they become part of a framework
+	"id": "id",
+	"version": { 
+		"str" : "3.2.4",
+		// number version allows for efficient comparison
+		// grouped with version to allow for efficient comparisons
+		"num" : 324
+	},
+	"name": "My Shortcut",
+	"type": "independent",
+	"link": "<icloud link>",
+	"release_logs": "release logs",
+	"release_time": "some date time format"
+}
