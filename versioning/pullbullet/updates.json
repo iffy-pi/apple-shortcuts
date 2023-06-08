@@ -4,7 +4,7 @@
 	"name": "PullBullet",
 	"type": "independent",
 	"rhub": "https://routinehub.co/shortcut/15516",
-	"link": "https://www.icloud.com/shortcuts/dd16707261fd47f2b8bee806dd0bfaec",
+	"link": "https://www.icloud.com/shortcuts/147986ece9e14f108f1ffcac9d3ddfde",
 	"releaseNotes": "- Migrated to use GitHub Pages for remote updates instead of UpdateKit, resulting in much faster performance.",
 	"releaseTime": "2023-06-07"
 }
