@@ -1,0 +1,10 @@
+{
+	"id": 3,
+	"version": 1.01,
+	"name": "PushList",
+	"type": "independent",
+	"rhub": "https://routinehub.co/shortcut/15517",
+	"link": "https://www.icloud.com/shortcuts/61c3ae510f194095bb93341ddee98245",
+	"releaseNotes": "- Migrated to use GitHub Pages for remote updates instead of UpdateKit, resulting in much faster performance.",
+	"releaseTime": "2023-06-07"
+}
