@@ -1,12 +1,12 @@
 {
-	"id": "id",
+	"id": 1,
 	"version": { 
-		"str" : "3.2.4",
-		"num" : 326
+		"str" : "1.3",
+		"num" : 13
 	},
-	"name": "My Shortcut",
+	"name": "PushBullet",
 	"type": "independent",
-	"link": "<icloud link>",
-	"release_logs": "release logs",
-	"release_time": "some date time format"
+	"link": "https://www.icloud.com/shortcuts/8f1f04b6a3474094a98257cc1328279d",
+	"release_logs": "Version before GitHub Pages Update Migration\\n-In testing",
+	"release_time": "2022-09-14T20:37:18-04:00"
 }
