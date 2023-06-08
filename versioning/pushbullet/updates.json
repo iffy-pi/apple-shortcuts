@@ -1,7 +1,6 @@
 {
 	"id": 1,
-	"versionStr" : 1.3,
-	"versionNum": 13,
+	"version": 1.4,
 	"name": "PushBullet",
 	"type": "independent",
 	"rhub": "https://routinehub.co/shortcut/8984",
