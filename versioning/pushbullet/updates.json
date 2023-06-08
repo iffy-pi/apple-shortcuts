@@ -1,9 +1,7 @@
 {
 	"id": 1,
-	"version": { 
-		"str" : "1.3",
-		"num" : 13
-	},
+	"versionStr" : 1.3,
+	"versionNum": 13,
 	"name": "PushBullet",
 	"type": "independent",
 	"link": "https://www.icloud.com/shortcuts/8f1f04b6a3474094a98257cc1328279d",
