@@ -1,0 +1,10 @@
+{
+	"id": 2,
+	"version": 1.01,
+	"name": "PullBullet",
+	"type": "independent",
+	"rhub": "https://routinehub.co/shortcut/15516",
+	"link": "https://www.icloud.com/shortcuts/f21139d45a19421386c206bfbadfe037",
+	"releaseNotes": "- Migrated to use GitHub Pages for remote updates instead of UpdateKit, resulting in much faster performance.",
+	"releaseTime": "2023-06-07"
+}
