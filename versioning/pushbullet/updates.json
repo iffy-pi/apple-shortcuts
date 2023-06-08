@@ -1,10 +1,10 @@
 {
 	"id": 1,
-	"version": 1.4,
+	"version": 1.41,
 	"name": "PushBullet",
 	"type": "independent",
-	"rhub": "https://routinehub.co/shortcut/8984",
-	"link": "https://www.icloud.com/shortcuts/8f1f04b6a3474094a98257cc1328279d",
-	"releaseNotes": "Version before GitHub Pages Update Migration\\n-In testing",
+	"rhub": "https://routinehub.co/shortcut/15515",
+	"link": "https://www.icloud.com/shortcuts/14ee7c47e5cd488988699caa41920603",
+	"releaseNotes": "- Fixed RoutineHub versioning.\\n- Migrated to remote updates using GitHub Pages rather than UpdateKit to resolve performance issues.\\n- General debugging improvements.",
 	"releaseTime": "2022-09-14T20:37:18-04:00"
 }
