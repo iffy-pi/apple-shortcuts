@@ -1,6 +1,11 @@
 # apple-shortcuts
 A repository for handling the updates and versioning of my apple shortcuts
 
+**NEXT ID:**
+```
+2
+```
+
 ## Action Pipeline
 - Shortcut versions are stored in versioning folder
 - Configured static HTML github workflow to deploy on changes to contents of versioning folder
