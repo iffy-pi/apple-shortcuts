@@ -4,7 +4,8 @@
 	"versionNum": 13,
 	"name": "PushBullet",
 	"type": "independent",
+	"rhub": "https://routinehub.co/shortcut/8984/",
 	"link": "https://www.icloud.com/shortcuts/8f1f04b6a3474094a98257cc1328279d",
-	"releaseLogs": "Version before GitHub Pages Update Migration\\n-In testing",
+	"releaseNotes": "Version before GitHub Pages Update Migration\\n-In testing",
 	"releaseTime": "2022-09-14T20:37:18-04:00"
 }
