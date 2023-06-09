@@ -1,0 +1,187 @@
+def DisplayFoodItem():
+
+def SearchAlgorithm():
+
+
+def BulkEntry(): # Bulk Entry
+
+def MakePreset(): # Make Preset
+
+def FoodsList(): # Foods List
+
+def LogAlgorithm(): # Log Algorithm
+
+def GetRecent(): # "Get Recent"
+
+
+def NutriDix():
+	return ;;
+
+
+def Nutrition():
+	zero = 0
+	quick = zero
+	backprompt = quick
+
+	one = 1
+	result = RunShortcut("NutriDix")
+	NutriDic = Dictionary(result)
+
+	DVal = NutriDic['Total Energy Today']
+
+	deviceModel = GetDeviceDetails("Model")
+	if deviceModel != 'iPhone':
+		text = f"Foods logged on {deviceModel} will be added to backlog"
+
+	else:
+		healthSamples = HealthApp.Find(
+				AllHealthSamples,
+				whereAllAreTrue=[
+					Type="Dietary Energy",
+					StartDate=Today,
+				],
+				Unit=cal
+			)
+
+		unit = Health.Sample.GetDetails(healthSamples[0], "Unit")
+
+		REPEATRESULTS = []
+		for sample in healthSamples:
+			# this is done in shortcuts by just getting the value at the end of repeat
+			# it automatically aggregates repeat results
+			REPEATRESULTS.append(Health.Sample.GetDetails(sample, "Value"))
+
+
+		Ks = Round( Sum(REPEATRESULTS), "hundredths")
+
+		if Count("Items", Ks) < 1:
+			Ks = 0
+
+		file = GetFile("Shortcuts/FLS/Other/backtag.txt")
+
+		if file is not None:
+			ToClear = str(file.read())
+
+		else
+			ToClear = 0
+
+		IFRESULT = f"You've eaten {Ks} Calories Today."
+
+	Prompt = IFRESULT
+
+	mainMenu = Menu(prompt=prompt, options=[
+			"Quick Log",
+			"Log Foods",
+			"Log Foods In Bulk",
+			"Search and View",
+			"Presets",
+			"Barcodes",
+			"Recent Meals",
+			"Weekly Summary",
+			"Food History",
+			"Clear Backlog",
+		])
+
+	if mainMenu.selected == "Quick Log"
+		# InRecents does not exist!
+		for item in RunShortcut("Get Recent", input=InRecents):
+			CurFood = item
+			text = f"How many servings of {CurFood['Name']}\n(1 serving = {CurFood['Serving Size']})"
+			
+			# translates to set dictionary value in CurFood and then set dictionary
+			CurFood['Servings'] = AskForInput(text, Input.Number, default=1, allowDecimalNumbers=True, allowNegativeNumbers=True)
+
+			LogList.Append(f"{Date.CurrentDate}\n{CurFood}")
+
+		for item in LogList:
+			RunShortcut("Log Algorithm", input=item)
+
+		if ToClear == 1:
+			Quick = ToClear
+		else
+			return
+
+	elif mainMenu.selected == "Log Foods"
+		if GetDeviceDetails("Model") == 'iPhone':
+			# action will be discontinued in later versions
+			ContinueInShortcutsApp()
+
+		LoggedFoodsDix = {
+			'SAMPLE' : 'SAMPLE'
+		}
+
+		Dating = AskForInput("What date and time? Click Done for Right Now", Input.DateAndTime)
+
+
+		for item in RunShortcut("Foods List"):
+			CurFood = item
+			text = f"{Dating}\n{CurFood}"
+			CurLoggedFood = RunShortcut("Log Algorithm", input=text)
+			
+			# Comment: Get the logged food dictionary and add it into the logged foods dix,
+			# with key: servings of food and value: food dictionary
+
+			roundedNumber = Round(Number(CurLoggedFood['Servings']), "Hundredths")
+			LoggedFoodsDix[ f"{roundedNumber}x{CurLoggedFood['name']}" ] = CurLoggedFood
+
+
+		makePresetMenu = Menu(prompt="Make Preset?", options=["Yes", "No"])
+
+		if makePresetMenu.selected == "Yes":
+			# Get the keys from the logged foods dix so users can select what foods they want to make into a preset
+			res = Filter( 
+				SplitText(Text(LoggedFoodsDix.Keys)), 
+				where=[
+					"Name" is not "SAMPLE",
+				])
+
+			chosenItems = ChooseFrom(res, prompt="Select Foods For Preset", selectMultiple=True)
+
+			for item in chosenItems:
+				# With each chosen key we use the key to retrieve the value from logged food dix
+				# and add it to the list of foods to be made into a preset (chosenFoods)
+				# each item in this case are the keys from the loggedfoodsdix
+				ChosenFoods.Append( LoggedFoodsDix[item] )
+
+			# run make preset with chosen foods
+			RunShortcut("Make Preset", input=ChosenFoods)
+
+		elif makePresetMenu.selected == "No":
+			pass
+
+	elif mainMenu.selected == "Log Foods In Bulk"
+		if GetDeviceDetails("Model") == 'iPhone':
+			# action will be discontinued in later versions
+			ContinueInShortcutsApp()
+
+		RunShortcut("Bulk Entry")
+
+	elif mainMenu.selected == "Search and View"
+		# run search algorithm and display food with 
+
+		SearchResult = RunShortcut("Display Food Item", input=RunShortcut("Search Algorithm"))
+
+		postSearchMenu = Menu(options=["Log Entry", "Make Preset", "Exit"])
+
+		if postSearchMenu.selected == "Log Entry":
+			text = Text(f"{AskForInput("Date:", Input.DateAndTime, default=Date.CurrentDate)}\n{SearchResult}")
+			res = RunShortcut(
+				"Log Algorithm",
+				input=text)
+
+			LoggedFoods2 = res
+			
+
+	elif mainMenu.selected == "Presets"
+
+	elif mainMenu.selected == "Barcodes"
+
+	elif mainMenu.selected == "Recent Meals"
+
+	elif mainMenu.selected == "Weekly Summary"
+
+	elif mainMenu.selected == "Food History"
+
+	elif mainMenu.selected == "Clear Backlog"
+
+
