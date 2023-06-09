@@ -170,7 +170,8 @@ if Number(UpdateRes['version']) > updateInfo['version']:
 		{splitText}
 
 		📬 Developer:
-		Reddit: iffythegreat
+		Reddit: iffythegreat (https://www.reddit.com/user/iffythegreat)
+		RoutineHub: iffy-pi (https://routinehub.co/user/iffy-pi)
 
 		📚 Full Update History:
 		{updateRes['rhub']}/changelog
