@@ -6,16 +6,17 @@ def main(ShortcutInput, type="Any", source="Share Sheet", default="Clipboard"):
 	Setup:
 	- UpdateInfo['user']
 	- AccessToken
-	- TOADD: Pushbullet Premium
+	- Pushbullet Premium
 
 	TODO:
-	- Add set up for pushbullet premium
-	- Update MIME to remote calls to github pages
 
 	DONE:
 	- Add user selection of a type 
+	- Add set up for pushbullet premium
+	- Update MIME to remote calls to github pages
 	'''
 
+	@SETUP
 	UpdateInfo = {
 		'updateLink': 'https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/updates.json'
 		'version': 1.41,
@@ -39,14 +40,19 @@ def main(ShortcutInput, type="Any", source="Share Sheet", default="Clipboard"):
 
 		return
 
+	@SETUP
 	AccessToken = '...'
+
+	@SETUP
 	pushbulletPremium = 0
 
-	# update this to remote calls
-	mime = Text(File("mime.txt"))
+	remoteFiles = {
+		'mime' : 'https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/data/ext_to_mime.json',
+		'errorCodesInfo' : 'https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/data/error_codes_info.txt'
+	}
 
-	# copy from shortcut
-	errorCodesInfo = '....'
+	res = GetContentsOfURL(remoteFiles['mime'])
+	mime = Dictionary(res)
 
 	PushCall = {
 		'push_url': '...',
@@ -82,7 +88,6 @@ def main(ShortcutInput, type="Any", source="Share Sheet", default="Clipboard"):
 	for repeatItem in Contents:
 		item = repeatItem
 
-		curItemHandled = 0
 		itemPushBody = pushBody
 		
 
@@ -114,37 +119,48 @@ def main(ShortcutInput, type="Any", source="Share Sheet", default="Clipboard"):
 					)
 
 			if files is not None:
-				pushType = 1
+				pushType = typeId['link']
 
 		# do note
 		if pushType == -1:
 			text = f"{itemType}/{itemFext}"
 
-			# to be reviewed
-			files = Filter(
-						text, 
-						whereAny=[
-							"Name" is "Text/",
-							"Name" is "Text/txt",
-							"Name".beginsWith("Rich Text")
-						],
-						limit=1
-					)
+			'''
+			Use regex matching to find:
+			type is "text", or "rich text"
+			extension is made up of only numbers
+			((text)|(rich text))/([0-9][0-9]*[^a-z])*
+			'''
 
-			if files is not None:
-				pushType = 0
+			res = MatchText("((text)|(rich text))/([0-9][0-9]*[^a-z])*", text, caseSensitive=False)
+
+			if res is not None:
+				pushType = typeId['note']
 
 		# do file
 		if pushType == -1:
-			# do file by getting the mime type for it 
-			if Mime[itemFext] is not None:
-				pushType = 2
+			# assume its file
+			pushType = typeId['file']
+
+			if Mime[itemFext] is None:
+				# check if entire extension is just made of numbers, ask the user
+				res = MatchText("[0-9][0-9]*[^a-z]", itemFext, caseSensitive=False)
+
+				if res is not None:
+					# extension of all numbers thats not in the MIME, ask the user
+					pushType = -1
 
 
 		if pushType == -1:
 			# let user select
+			text = f'''
+				The type of the input could not be determined:
+				Name: {itemFname}.{itemFext}
+				Content: {item}
+				What is the type of this input?
+			'''
 			typeMenu = Menu(
-					prompt="The type of the input could not be determined. What is the type of the input?",
+					prompt=text,
 					[
 						"Text",
 						"Link/URL",
@@ -154,16 +170,16 @@ def main(ShortcutInput, type="Any", source="Share Sheet", default="Clipboard"):
 
 			if typeMenu.selected == "Text":
 				# set the push type to text
-				pushType = 1
+				pushType = typeId['note']
 				item = Text(item)
 
 			elif typeMenu.selected == "Link/URL":
-				pushType = 0
+				pushType = typeId['link']
 
 			elif typeMenu.selected == "File":
 				# if the item mime type is none, then we have an errror
 				if Mime[itemFext] is not None:
-					pushType = 2
+					pushType = typeId['file']
 				else
 					itemErrorCode = 5
 					itemErrorMsg = f"Extension: {itemFext}"
@@ -175,13 +191,11 @@ def main(ShortcutInput, type="Any", source="Share Sheet", default="Clipboard"):
 		if pushType == typeId['link']:
 			itemPushBody['type'] = 'link'
 			itemPushBody['url'] = item
-			curItemHandled = 1
 
 		# note handler
 		if pushType == typeId['note']:
 			itemPushBody['type'] = 'note'
 			itemPushBody['body'] = item
-			curItemHandled = 1
 
 		# file handler
 		if pushType == typeId['file']:
@@ -196,10 +210,13 @@ def main(ShortcutInput, type="Any", source="Share Sheet", default="Clipboard"):
 					goodFileSize = 0
 
 			if goodFileSize != 1:
-				itemErrorCode = 1
+				itemErrorCode = 4
 
 			else
+				# if file extension is not in mime, then treat as binary stream
 				itemMimeType = Mime[itemFext]
+				if itemMimeType is None:
+					itemMimeType = Mime['bin']
 
 				text = f"{itemFname}.{itemFext}"
 
@@ -260,12 +277,16 @@ def main(ShortcutInput, type="Any", source="Share Sheet", default="Clipboard"):
 				itemErrorMsg = text
 
 
-		else:
+		if itemErrorCode != 0:
 			text = f'Item Name: {itemFname}, Error Code: {itemErrorCode}, Message: "{itemErrorMsg}"'
 			failedPushes.append(text)
 
 	if Count("Items", failedPushes) > 0:
-		text = f'....{failedPushes}...' # pushbullet error request
+		res = GetContentsOfURL(remoteFiles['errorCodesInfo'])
+		errorCodes = Text(res)
+
+		text = f'....{failedPushes}...{errorCodes}' # pushbullet error request
+
 		note = CreateNote(text)
 		OpenNote(note)
 
