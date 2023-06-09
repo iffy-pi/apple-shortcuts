@@ -1,13 +1,8 @@
 
 
-
 def main(ShortcutInput, type="Any", source="Share Sheet", default="Clipboard"):
 	'''
-	Setup:
-	- UpdateInfo['user']
-	- AccessToken
-	- Pushbullet Premium
-
+	v1.5 (https://www.icloud.com/shortcuts/9ef158fa0dc04deca468a523e4c9caa0)
 	TODO:
 
 	DONE:
