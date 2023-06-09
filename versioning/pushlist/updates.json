@@ -5,6 +5,7 @@
 	"type": "independent",
 	"rhub": "https://routinehub.co/shortcut/15517",
 	"link": "https://www.icloud.com/shortcuts/2eca69036c104bb0b557bb8c7e307cbf",
+	"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/pushlist/updates.json",
 	"releaseNotes": "- Updated to use count from users and not day range.",
 	"releaseTime": "2023-06-07"
 }
