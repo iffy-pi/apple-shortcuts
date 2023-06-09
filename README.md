@@ -53,6 +53,7 @@ Independent shortcuts use the format:
 	"type": "independent",
 	"link": "<icloud link>",
 	"rhub": "https://routinehub.co/shortcut/15515",
+	"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/myshortcut/updates.json",
 	"releaseNotes": "...",
 	"releaseTime": "2023-06-09"
 }
@@ -64,8 +65,14 @@ Independent shortcuts use the format:
 - `type`         : The shortcut type, which is set to independent.
 - `link`         : The icloud link for the shortcut.
 - `rhub`         : The RoutineHub link (**without the ending forward slash**).
+- `updateLink`	 : The link to updates for the shortcut.
 - `releaseNotes` : The notes for the current release, these can be multiple lines separated by an escaped newline character `\\n`.
 - `releaseTime`  : The date for the release, using ISO 8601 formatting (`YYYY-MM-DD`).
+
+Update Links are always of the format:
+```
+https://iffy-pi.github.io/apple-shortcuts/versioning/<SHORTCUT FOLDER NAME>/updates.json
+```
 
 
 Framework shortcuts have a similar format but introduces new fields:
@@ -79,6 +86,7 @@ Framework shortcuts have a similar format but introduces new fields:
 	"type": "framework",
 	"rhub": "https://routinehub.co/shortcut/15515",
 	"link": "<updater shortcut icloud link>",
+	"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/myshortcut/updates.json",
 	"releaseNotes": "...",
 	"releaseTime": "2023-06-09",
 	"children": [
@@ -118,15 +126,8 @@ This is used to maintain version history, and is simply just a JSON list of prev
 [
 	// Most recent updates first
 	{
-		// Remember to remove the comment and update the fields when copy pasting!
-		"id": "<id>",
-		"version": 3.24,
-		"name": "My Shortcut",
-		"type": "independent",
-		"link": "<icloud link>",
-		"rhub": "https://routinehub.co/shortcut/15515",
-		"releaseNotes": "...",
-		"releaseTime": "2023-06-09"
+		// updates.json object
+		// ...
 	},
 	// ...
 ]
@@ -144,7 +145,7 @@ The pseudocode for the process can be experessed in shortcut-ish python.
 # done at the beginning or end of the shortcut, which ever is preferred
 
 updateInfo = {
-	'updateLink' : 'https://iffy-pi.github.io/apple-shortcuts/versioning/shortcut/updates.json',
+	'updateLink' : '<updateLink from updates.json>',
 	'version' : 1.02
 }
 
@@ -190,7 +191,7 @@ if Number(UpdateRes['version']) > updateInfo['version']:
 '''
 
 updateInfo = {
-	'updateLink' : 'https://iffy-pi.github.io/apple-shortcuts/versioning/shortcut/updates.json',
+	'updateLink' : '<updateLink from updates.json>',
 	'version' : 1.02
 }
 
