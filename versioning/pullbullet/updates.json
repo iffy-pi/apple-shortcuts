@@ -1,11 +1,12 @@
 {
 	"id": 2,
-	"version": 1.01,
 	"name": "PullBullet",
 	"type": "independent",
 	"rhub": "https://routinehub.co/shortcut/15516",
-	"link": "https://www.icloud.com/shortcuts/147986ece9e14f108f1ffcac9d3ddfde",
 	"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/pullbullet/updates.json",
-	"releaseNotes": "- Migrated to use GitHub Pages for remote updates instead of UpdateKit, resulting in much faster performance.",
-	"releaseTime": "2023-06-07"
+
+	"version": 1.02,
+	"link": "https://www.icloud.com/shortcuts/1ed1f39586b6485c99c005a62cc7ed57",
+	"releaseNotes": "- Update checks now happen at the end of shortcut action rather than beginnning",
+	"releaseTime": "2023-06-09"
 }
