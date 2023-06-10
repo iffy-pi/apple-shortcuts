@@ -1,48 +1,125 @@
-def WeekSummary():
+'''
+TODO:
+- Update saving to backlog
+- Revamp log algorithm to work with dictionaries!
+
+DONE:
+- Made new storage format for backlog
+Backlog will be managed as a JSON formatted list:
+{
+	content: [
+			{
+				Date: '...',
+				Food: ...
+			},
+			...
+		]
+}
+saved to STORE/Other/backlog.json
+
+
+INFO:
+Current file structure (FLS):
+- Presets
+	- presetNames.txt
+	- Foods
+		- ...
+- Other
+	- backlog.txt and backtag.txt => backlog.json
+
+'''
+
 
 def NutriDixUpdater():
+	pass
+
+
+# UPDATER
+def WeekSummary():
+	pass
+
+# HISTORY
 
 def FoodHistory():
+	pass
+
+# BARCODES ------------
 
 def BarcodeSearch():
+	pass
 
 def GetBarcode():
+	pass
 
+def EditBarcode():
+	pass
+
+def RemoveBarcode():
+	pass
+
+
+# PRESETS -----------------
 def RemovePreset():
-
-def EditPreset(): # Edit Preset
+	pass
 
 def GetPreset(): # Get Preset
-
-def DisplayFoodItem():
-
-def SearchAlgorithm():
-
-
-def BulkEntry(): # Bulk Entry
+	pass
 
 def MakePreset(): # Make Preset
+	pass
+
+def EditPreset(): # Edit Preset
+	pass
+
+def RemovePreset():
+	pass
+
+# MISC -----------------------------
+
+def BulkEntry(): # Bulk Entry
+	pass
 
 def FoodsList(): # Foods List
-
-def LogAlgorithm(): # Log Algorithm
+	pass
 
 def GetRecent(): # "Get Recent"
+	pass
 
+# SHARED -------------
+
+def LogAlgorithm(dix): # Log Algorithm
+	'''
+	Update to use new backlog system
+	Update to use dictionary from input
+	{
+		'Date':..
+		'Food':...
+	}
+	'''
+	pass
+
+def DisplayFoodItem():
+	pass
+
+def SearchAlgorithm():
+	pass
 
 def NutriDix():
 	return ;;
 
 
 # GLOBAL VARS
-STORAGE_PATH = "Shortcuts/FLS"
+STORE = "Shortcuts/FLS"
 
 def Nutrition():
-	zero = 0
-	quick = 0
-	backprompt = 0
 
-	one = 1
+	TRUE = 1
+	FALSE = 0
+
+	checkForUpdates = TRUE
+	# user manually wants to clear backlog 
+	reqBacklogClear = FALSE
+
 	result = run("NutriDix")
 	NutriDic = Dictionary(result)
 
@@ -50,6 +127,7 @@ def Nutrition():
 
 	deviceModel = GetDeviceDetails("Model")
 	if deviceModel != 'iPhone':
+		clearBacklog = FALSE
 		text = f"Foods logged on {deviceModel} will be added to backlog"
 
 	else:
@@ -76,14 +154,6 @@ def Nutrition():
 		if Count("Items", Ks) < 1:
 			Ks = 0
 
-		file = GetFile("Shortcuts/FLS/Other/backtag.txt")
-
-		if file is not None:
-			toClear = str(file.read())
-
-		else
-			toClear = 0
-
 		IFRESULT = f"You've eaten {Ks} Calories Today."
 
 	Prompt = IFRESULT
@@ -102,6 +172,9 @@ def Nutrition():
 		])
 
 	if mainMenu.opt("Quick Log"):
+		# quick log so dont check for updates
+		checkForUpdates = FALSE
+
 		# InRecents does not exist!
 		for item in run("Get Recent", input=InRecents):
 			CurFood = item
@@ -110,15 +183,14 @@ def Nutrition():
 			# translates to set dictionary value in CurFood and then set dictionary
 			CurFood['Servings'] = AskForInput(text, Input.Number, default=1, allowDecimalNumbers=True, allowNegativeNumbers=True)
 
-			LogList.Append(f"{Date.CurrentDate}\n{CurFood}")
+			dix = {
+				'Date': str(Date.CurrentDate)
+				'Food': dix(CurFood)
+			}
+			LogList.append(dix)
 
 		for item in LogList:
 			run("Log Algorithm", input=item)
-
-		if toClear == 1:
-			quick = toClear
-		else
-			return
 
 	elif mainMenu.opt("Log Foods"):
 		if GetDeviceDetails("Model") == 'iPhone':
@@ -134,8 +206,12 @@ def Nutrition():
 
 		for item in run("Foods List"):
 			CurFood = item
-			text = f"{Dating}\n{CurFood}"
-			CurLoggedFood = run("Log Algorithm", input=text)
+			dix = {
+				'Date': str(Dating)
+				'Food': dix(CurFood)
+			}
+
+			CurLoggedFood = run("Log Algorithm", input=dix)
 			
 			# Comment: Get the logged food dictionary and add it into the logged foods dix,
 			# with key: servings of food and value: food dictionary
@@ -184,10 +260,14 @@ def Nutrition():
 
 		if postSearchMenu.opt("Log Entry"):
 			date = AskForInput("Date:", Input.DateAndTime, default=Date.CurrentDate)
-			text = f"{date}\n{searchResult}"
+
+			dix = {
+				'Date': str(date)
+				'Food': dix(searchResult)
+			}
 			res = run(
 				"Log Algorithm",
-				input=text)
+				input=dix)
 
 			LoggedFoods2 = res
 
@@ -230,7 +310,7 @@ def Nutrition():
 
 		elif prm.opt("Remove Preset(s)"):
 			# retrieve preset names, let user choose preset then retrieve food dix and delete it by running remove preset
-			file = GetFile(f"{STORAGE_PATH}/Presets/presetNames.txt")
+			file = GetFile(f"{STORE}/Presets/presetNames.txt")
 			res = SplitText(file, SplitText.ByNewLines)
 			
 			presetsToBeDeleted = ChooseFrom(res, selectMultiple=True)
@@ -238,7 +318,7 @@ def Nutrition():
 			ShowAlert("Do You Want To Continue?", title="Presets About to Be Deleted", showCancel=True)
 
 			for item in presetsToBeDeleted:
-				file = GetFile(f"{STORAGE_PATH}/Presets/Foods/{item}.txt")
+				file = GetFile(f"{STORE}/Presets/Foods/{item}.txt")
 				text = file.read()
 				run("Remove Preset", text)
 
@@ -278,7 +358,7 @@ def Nutrition():
 
 
 	elif mainMenu.opt("Food History"):
-		file = GetFile(f"{STORAGE_PATH}/Other/backtag.txt")
+		file = GetFile(f"{STORE}/Other/backtag.txt")
 		if file is not None:
 			res = run("Get Barcode")
 			for item in res:
@@ -287,30 +367,31 @@ def Nutrition():
 		run("Food History")
 
 	elif mainMenu.opt("Clear Backlog"):
-		backprompt = one
+		reqBacklogClear = TRUE
 
 
 	# clearing the backlog
 	if GetDeviceDetails("Device Model") == "iPhone":
-		if toClear == 1:
-			ShowNotification("Logging foods in backlog...", title="Backlog Detected")
+		# check if the backlog has any files
+		res = Dictionary(GetFile(f"{STORE}/Other/backlog.json"))
+		backlog = res['content']
 
-			file = GetFile(f"{STORAGE_PATH}/Other/backlog.txt")
-			res = SplitText(file, ByNewLines)
+		if Count(backlog) > 0:
+			# clear items by logging them
+			for item in backlog:
+				run("Log Algorithm", input=item)
 
-			for item in res:
-				text = f"{item['Date']}\n{item['Food']}"
-				run("Log Algorithm", input=text)
-
-			text = 0
-			SaveFile(text, path=f"{STORAGE_PATH}/Other/backlog.txt")
-			SaveFile(text, path=f"{STORAGE_PATH}/Other/backtag.txt")
+			# erase the backlog
+			text = "{ 'content': [] }"
+			SaveFile(text, path=f"{STORE}/Other/backlog.json")
 
 		else:
-			if backprompt == 1:
-				ShowAlert("Nothing to clear")
+			# nothing to clear
+			if reqBacklogClear == TRUE:
+				# if user req clear backlog let them no there was nothing to clear
+				ShowAlert("There are no foods in the backlog")
 
-	if quick == 0:
+	if checkForUpdates == TRUE:
 		run("NutriDix Updater")
 
 
