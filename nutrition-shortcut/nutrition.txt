@@ -1,3 +1,19 @@
+def WeekSummary():
+
+def NutriDixUpdater():
+
+def FoodHistory():
+
+def BarcodeSearch():
+
+def GetBarcode():
+
+def RemovePreset():
+
+def EditPreset(): # Edit Preset
+
+def GetPreset(): # Get Preset
+
 def DisplayFoodItem():
 
 def SearchAlgorithm():
@@ -18,13 +34,16 @@ def NutriDix():
 	return ;;
 
 
+# GLOBAL VARS
+STORAGE_PATH = "Shortcuts/FLS"
+
 def Nutrition():
 	zero = 0
-	quick = zero
-	backprompt = quick
+	quick = 0
+	backprompt = 0
 
 	one = 1
-	result = RunShortcut("NutriDix")
+	result = run("NutriDix")
 	NutriDic = Dictionary(result)
 
 	DVal = NutriDic['Total Energy Today']
@@ -60,10 +79,10 @@ def Nutrition():
 		file = GetFile("Shortcuts/FLS/Other/backtag.txt")
 
 		if file is not None:
-			ToClear = str(file.read())
+			toClear = str(file.read())
 
 		else
-			ToClear = 0
+			toClear = 0
 
 		IFRESULT = f"You've eaten {Ks} Calories Today."
 
@@ -82,9 +101,9 @@ def Nutrition():
 			"Clear Backlog",
 		])
 
-	if mainMenu.selected == "Quick Log"
+	if mainMenu.opt("Quick Log"):
 		# InRecents does not exist!
-		for item in RunShortcut("Get Recent", input=InRecents):
+		for item in run("Get Recent", input=InRecents):
 			CurFood = item
 			text = f"How many servings of {CurFood['Name']}\n(1 serving = {CurFood['Serving Size']})"
 			
@@ -94,14 +113,14 @@ def Nutrition():
 			LogList.Append(f"{Date.CurrentDate}\n{CurFood}")
 
 		for item in LogList:
-			RunShortcut("Log Algorithm", input=item)
+			run("Log Algorithm", input=item)
 
-		if ToClear == 1:
-			Quick = ToClear
+		if toClear == 1:
+			quick = toClear
 		else
 			return
 
-	elif mainMenu.selected == "Log Foods"
+	elif mainMenu.opt("Log Foods"):
 		if GetDeviceDetails("Model") == 'iPhone':
 			# action will be discontinued in later versions
 			ContinueInShortcutsApp()
@@ -113,10 +132,10 @@ def Nutrition():
 		Dating = AskForInput("What date and time? Click Done for Right Now", Input.DateAndTime)
 
 
-		for item in RunShortcut("Foods List"):
+		for item in run("Foods List"):
 			CurFood = item
 			text = f"{Dating}\n{CurFood}"
-			CurLoggedFood = RunShortcut("Log Algorithm", input=text)
+			CurLoggedFood = run("Log Algorithm", input=text)
 			
 			# Comment: Get the logged food dictionary and add it into the logged foods dix,
 			# with key: servings of food and value: food dictionary
@@ -127,7 +146,7 @@ def Nutrition():
 
 		makePresetMenu = Menu(prompt="Make Preset?", options=["Yes", "No"])
 
-		if makePresetMenu.selected == "Yes":
+		if makePresetMenu.opt("Yes"):
 			# Get the keys from the logged foods dix so users can select what foods they want to make into a preset
 			res = Filter( 
 				SplitText(Text(LoggedFoodsDix.Keys)), 
@@ -144,44 +163,156 @@ def Nutrition():
 				ChosenFoods.Append( LoggedFoodsDix[item] )
 
 			# run make preset with chosen foods
-			RunShortcut("Make Preset", input=ChosenFoods)
+			run("Make Preset", input=ChosenFoods)
 
-		elif makePresetMenu.selected == "No":
+		elif makePresetMenu.opt("No"):
 			pass
 
-	elif mainMenu.selected == "Log Foods In Bulk"
+	elif mainMenu.opt("Log Foods In Bulk"):
 		if GetDeviceDetails("Model") == 'iPhone':
 			# action will be discontinued in later versions
 			ContinueInShortcutsApp()
 
-		RunShortcut("Bulk Entry")
+		run("Bulk Entry")
 
-	elif mainMenu.selected == "Search and View"
+	elif mainMenu.opt("Search and View"):
 		# run search algorithm and display food with 
 
-		SearchResult = RunShortcut("Display Food Item", input=RunShortcut("Search Algorithm"))
+		searchResult = run("Display Food Item", input=run("Search Algorithm"))
 
-		postSearchMenu = Menu(options=["Log Entry", "Make Preset", "Exit"])
+		postSearchMenu = Menu(["Log Entry", "Make Preset", "Exit"])
 
-		if postSearchMenu.selected == "Log Entry":
-			text = Text(f"{AskForInput("Date:", Input.DateAndTime, default=Date.CurrentDate)}\n{SearchResult}")
-			res = RunShortcut(
+		if postSearchMenu.opt("Log Entry"):
+			date = AskForInput("Date:", Input.DateAndTime, default=Date.CurrentDate)
+			text = f"{date}\n{searchResult}"
+			res = run(
 				"Log Algorithm",
 				input=text)
 
 			LoggedFoods2 = res
+
+			svp = Menu(["Yes", "No"], prompt="Save As Preset?")
+
+			if svp.opt("Yes"):
+				RunShorctut("Make Preset", input=LoggedFoods2)
+			if svp.opt("No"):
+				pass
+
+		elif postSearchMenu.opt("Make Preset"):
+			run("Make Preset", input=searchResult)
+
+		elif postSearchMenu.opt("Exit"):
+			pass
+
+	elif mainMenu.opt("Presets"):
+
+		prm = Menu(prompt="Presets", options=["View Presets", "Make Preset", "Edit Preset", "Remove Preset(s)"])
+
+		if prm.opt("View Presets"):
+			res = run("Get Preset")
+			for repeatItem in res:
+				run("Display Food Item", input=repeatItem)
+
+		elif prm.opt("Make Preset"):
+			# run foods list to get list of foods to be made into a preset
+			res = run("Foods List")
+
+			for item in res:
+				curFood = item
+				loggedFoods3.append(curFood)
+
+			run("Make Preset", loggedFoods3)
+
+
+		elif prm.opt("Edit Preset"):
+			run("Edit Preset")
+
+
+		elif prm.opt("Remove Preset(s)"):
+			# retrieve preset names, let user choose preset then retrieve food dix and delete it by running remove preset
+			file = GetFile(f"{STORAGE_PATH}/Presets/presetNames.txt")
+			res = SplitText(file, SplitText.ByNewLines)
 			
+			presetsToBeDeleted = ChooseFrom(res, selectMultiple=True)
 
-	elif mainMenu.selected == "Presets"
+			ShowAlert("Do You Want To Continue?", title="Presets About to Be Deleted", showCancel=True)
 
-	elif mainMenu.selected == "Barcodes"
+			for item in presetsToBeDeleted:
+				file = GetFile(f"{STORAGE_PATH}/Presets/Foods/{item}.txt")
+				text = file.read()
+				run("Remove Preset", text)
 
-	elif mainMenu.selected == "Recent Meals"
+	elif mainMenu.opt("Barcodes"):
+		brm = Menu(prompt="Barcodes", options=[
+			"View Personal Database",
+			"Add to Personal Database",
+			"Edit Items in Personal Database",
+			"Remove From Personal Database"
+			])
 
-	elif mainMenu.selected == "Weekly Summary"
 
-	elif mainMenu.selected == "Food History"
+		if brm.opt("View Personal Database"):
+			res = run("Get Barcode")
+			for item in res:
+				run("Display Food Item", input=item)
 
-	elif mainMenu.selected == "Clear Backlog"
+		elif brm.opt("Add to Personal Database"):
+			run("Barcode Search")
+
+		elif brm.opt("Edit Items in Personal Database"):
+			run("Edit Barcode")
+
+		elif brm.opt("Remove From Personal Database"):
+			res = run("Get Barcode")
+			run("Remove Barcode", input=res)
+		
+
+	elif mainMenu.opt("Recent Meals"):
+		res = run("Get Recent")
+		for item in res:
+			run("Display Food Item", input=item)
+
+
+	elif mainMenu.opt("Weekly Summary"):
+		run("Week Summary")
+
+
+	elif mainMenu.opt("Food History"):
+		file = GetFile(f"{STORAGE_PATH}/Other/backtag.txt")
+		if file is not None:
+			res = run("Get Barcode")
+			for item in res:
+				run("Display Food Item", input=item)
+
+		run("Food History")
+
+	elif mainMenu.opt("Clear Backlog"):
+		backprompt = one
+
+
+	# clearing the backlog
+	if GetDeviceDetails("Device Model") == "iPhone":
+		if toClear == 1:
+			ShowNotification("Logging foods in backlog...", title="Backlog Detected")
+
+			file = GetFile(f"{STORAGE_PATH}/Other/backlog.txt")
+			res = SplitText(file, ByNewLines)
+
+			for item in res:
+				text = f"{item['Date']}\n{item['Food']}"
+				run("Log Algorithm", input=text)
+
+			text = 0
+			SaveFile(text, path=f"{STORAGE_PATH}/Other/backlog.txt")
+			SaveFile(text, path=f"{STORAGE_PATH}/Other/backtag.txt")
+
+		else:
+			if backprompt == 1:
+				ShowAlert("Nothing to clear")
+
+	if quick == 0:
+		run("NutriDix Updater")
+
+
 
 
