@@ -7,6 +7,6 @@
 
 	"version": 1.02,
 	"link": "https://www.icloud.com/shortcuts/1ed1f39586b6485c99c005a62cc7ed57",
-	"releaseNotes": "- Update checks now happen at the end of shortcut action rather than beginnning",
+	"releaseNotes": "- Update checks now happen at the end of shortcut action rather than beginning",
 	"releaseTime": "2023-06-09"
 }
