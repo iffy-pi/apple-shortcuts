@@ -7,6 +7,6 @@
 
 	"version": 1.5,
 	"link": "https://www.icloud.com/shortcuts/76f874376b59485dbd76e26e2cb60f39",
-	"releaseNotes": "- Updated to improve push type identification for text and fukes\\n- Option for user to specify push type when type cannot be identified\\n- MIME file types is now pulled and updated remotely.\\n- Update checks now happen at the end of shortcut action rather than beginnning",
+	"releaseNotes": "- Updated to improve push type identification for text and files\\n- Option for user to specify push type when type cannot be identified\\n- MIME file types is now pulled and updated remotely.\\n- Update checks now happen at the end of shortcut action rather than beginnning",
 	"releaseTime": "2023-06-09"
 }
