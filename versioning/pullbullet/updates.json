@@ -6,7 +6,7 @@
 	"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/pullbullet/updates.json",
 
 	"version": 1.02,
-	"link": "https://www.icloud.com/shortcuts/1ed1f39586b6485c99c005a62cc7ed57",
-	"releaseNotes": "- Update checks now happen at the end of shortcut action rather than beginning",
+	"link": "https://www.icloud.com/shortcuts/c6b821fe23f44354a6f1c4a61034b113",
+	"releaseNotes": "- Update checks now happen at the end of shortcut action rather than beginning\\n-Fixed update bug",
 	"releaseTime": "2023-06-09"
 }
