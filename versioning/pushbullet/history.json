@@ -1,0 +1,13 @@
+[
+	{
+		"id": 1,
+		"version": 1.41,
+		"name": "PushBullet",
+		"type": "independent",
+		"rhub": "https://routinehub.co/shortcut/15515",
+		"link": "https://www.icloud.com/shortcuts/487953b46b484de182ddfb2a15d0e4d1",
+		"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/updates.json",
+		"releaseNotes": "- Fixed RoutineHub versioning.\\n- Migrated to remote updates using GitHub Pages rather than UpdateKit to resolve performance issues.\\n- General debugging improvements.",
+		"releaseTime": "2023-06-07T21:55:30-04:00"
+	}
+]

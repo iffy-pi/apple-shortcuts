@@ -1,11 +1,12 @@
 {
 	"id": 1,
-	"version": 1.41,
 	"name": "PushBullet",
 	"type": "independent",
 	"rhub": "https://routinehub.co/shortcut/15515",
-	"link": "https://www.icloud.com/shortcuts/487953b46b484de182ddfb2a15d0e4d1",
 	"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/updates.json",
-	"releaseNotes": "- Fixed RoutineHub versioning.\\n- Migrated to remote updates using GitHub Pages rather than UpdateKit to resolve performance issues.\\n- General debugging improvements.",
-	"releaseTime": "2023-06-07T21:55:30-04:00"
+
+	"version": 1.5,
+	"link": "https://www.icloud.com/shortcuts/76f874376b59485dbd76e26e2cb60f39",
+	"releaseNotes": "- Updated to improve push type identification for text and fukes\\n- Option for user to specify push type when type cannot be identified\\n- MIME file types is now pulled and updated remotely.\\n- Update checks now happen at the end of shortcut action rather than beginnning",
+	"releaseTime": "2023-06-09"
 }
