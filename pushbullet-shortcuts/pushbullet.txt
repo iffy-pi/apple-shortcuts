@@ -11,29 +11,10 @@ def main(ShortcutInput, type="Any", source="Share Sheet", default="Clipboard"):
 	- Update MIME to remote calls to github pages
 	'''
 
-	@SETUP
 	UpdateInfo = {
 		'updateLink': 'https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/updates.json'
 		'version': 1.41,
-		'user': ''
 	}
-
-	UpdateRes = GetContentsOfURL(UpdateInfo['updateLink'])
-
-
-	if Number(UpdateRes['version']) > UpdateInfo['version']:
-		split = SplitText(UpdateRes['releaseNotes'], SplitText.By.NewLines)
-		dt = Date(UpdateRes['releaseTime'])
-
-		text = f'''
-			Pushbullet Shortcut Update
-			An update is available for this shortcut
-			...
-		'''
-		note = CreateNote(Text)
-		OpenNote(note)
-
-		return
 
 	@SETUP
 	AccessToken = '...'
@@ -123,37 +104,51 @@ def main(ShortcutInput, type="Any", source="Share Sheet", default="Clipboard"):
 				pushType = typeId['link']
 
 		# do note
+		# clipboard.c clipboard.46 clipboard.txt apple.txt "text"
 		if pushType == -1:
-			text = f"{itemType}/{itemFext}"
+			# only do text or rich text
+			isTextorRichText = MatchText("(text)|(rich text)", itemType, caseSensitive=False)
+			if isTextorRichText is not None:
+				isRawText = FALSE
 
-			'''
-			Use regex matching to find:
-			type is "text", or "rich text"
-			extension is made up of only numbers
-			((text)|(rich text))/([0-9][0-9]*[^a-z])*
-			'''
+				# check if extension is all numbers
+				extIsAllNumbers = MatchText("([0-9][0-9]*[^a-z])", itemFext, caseSensitive=False)
+				if extIsAllNumbers is not None:
 
-			res = MatchText("((text)|(rich text))/([0-9][0-9]*[^a-z])*", text, caseSensitive=False)
-
-			if res is not None:
-				# check if the size is greater than 5kb, might be a file
-				if itemSize.Kilobytes() < 5:
-					pushType = typeId['note']
+					res = MatchText(".*clipboard.*", itemFname, caseSensitive=False)
+					if res is not None:
+						# if extension is all numbers and came from clipboard, most likely raw text
+						# otherwise, it will be treated as file
+						isRawText = TRUE
+					
 				else:
-					pushType = -2
+					res = filter(f".{itemFext}", whereAny=["Name" is ".txt", "Name" is "."])
+					if res is not None:
+						# if txt extension or no extension treat as raw text
+						# other extensions that are not all numbers will be treated as a file (fall through)
+						isRawText = TRUE
+					
+
+				if isRawText == TRUE:
+					# assume its valid text
+					pushType = ['note']
+
+					# text greater than 63kb must be a file as they dont fit in text box
+					if itemSize.Kilobytes() > 63:
+						pushType = typeId['file']
+						itemFname = "text"
+						itemFext = "txt"
+
+					else:
+						# if its greater than 5, might be a txt file being interpreted as text 
+						# let user decide
+						if itemSize.Kilobytes() > 5:
+							pushType = -2
 
 		# do file
 		if pushType == -1:
 			# assume its file
 			pushType = typeId['file']
-
-			if Mime[itemFext] is None:
-				# check if entire extension is just made of numbers, ask the user
-				res = MatchText("[0-9][0-9]*[^a-z]", itemFext, caseSensitive=False)
-
-				if res is not None:
-					# extension of all numbers thats not in the MIME, ask the user
-					pushType = -2
 
 		# user selects for negative values
 		if pushType < 0:
@@ -332,8 +327,21 @@ def main(ShortcutInput, type="Any", source="Share Sheet", default="Clipboard"):
 		note = CreateNote(text)
 		OpenNote(note)
 
+	# Check for updates
+	UpdateRes = GetContentsOfURL(UpdateInfo['updateLink'])
+	if Number(UpdateRes['version']) > UpdateInfo['version']:
+		split = SplitText(UpdateRes['releaseNotes'], SplitText.By.NewLines)
+		dt = Date(UpdateRes['releaseTime'])
 
+		text = f'''
+			Pushbullet Shortcut Update
+			An update is available for this shortcut
+			...
+		'''
+		note = CreateNote(Text)
+		OpenNote(note)
 
+		return
 
 
 
