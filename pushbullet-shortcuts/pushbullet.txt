@@ -2,7 +2,7 @@
 
 def main(ShortcutInput, type="Any", source="Share Sheet", default="Clipboard"):
 	'''
-	v1.5 (https://www.icloud.com/shortcuts/9ef158fa0dc04deca468a523e4c9caa0)
+	v1.51 (https://www.icloud.com/shortcuts/99bf20d3538240ada2dacaca8245d486)
 	TODO:
 
 	DONE:
@@ -40,6 +40,9 @@ def main(ShortcutInput, type="Any", source="Share Sheet", default="Clipboard"):
 
 	@SETUP
 	pushbulletPremium = 0
+
+	TRUE = 1
+	FALSE = 0
 
 	remoteFiles = {
 		'mime' : 'https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/data/ext_to_mime.json',
@@ -85,14 +88,17 @@ def main(ShortcutInput, type="Any", source="Share Sheet", default="Clipboard"):
 
 		itemPushBody = pushBody
 		
-
+		# -1 means still determining type
+		# -2 means user must determine type
 		pushType = -1
 
 		itemType = GetTypeOf(item)
 		itemFname = GetFileDetails("Name", item)
+		itemSize = GetFileDetails("Size", item)
 		itemFext = GetFileDetails("File Extension", item)
 
 		itemErrorCode = 0
+		ambiguousType
 		itemErrorMsg = ''
 
 
@@ -130,7 +136,11 @@ def main(ShortcutInput, type="Any", source="Share Sheet", default="Clipboard"):
 			res = MatchText("((text)|(rich text))/([0-9][0-9]*[^a-z])*", text, caseSensitive=False)
 
 			if res is not None:
-				pushType = typeId['note']
+				# check if the size is greater than 5kb, might be a file
+				if itemSize.Kilobytes() < 5:
+					pushType = typeId['note']
+				else:
+					pushType = -2
 
 		# do file
 		if pushType == -1:
@@ -143,41 +153,78 @@ def main(ShortcutInput, type="Any", source="Share Sheet", default="Clipboard"):
 
 				if res is not None:
 					# extension of all numbers thats not in the MIME, ask the user
-					pushType = -1
+					pushType = -2
 
-
-		if pushType == -1:
+		# user selects for negative values
+		if pushType < 0:
 			# let user select
-			text = f'''
-				The type of the input could not be determined:
-				Name: {itemFname}.{itemFext}
-				Content: {item}
-				What is the type of this input?
-			'''
-			typeMenu = Menu(
-					prompt=text,
-					[
-						"Text",
-						"Link/URL",
-						"File"
-					]
-				)
+			maxLoops = 15
+			exitLoop = FALSE
 
-			if typeMenu.selected == "Text":
-				# set the push type to text
-				pushType = typeId['note']
-				item = Text(item)
+			for _ in range(maxLoops):
+				if exitLoop is FALSE:
+					# assume the loop will exit after one iteration
+					exitLoop = TRUE
 
-			elif typeMenu.selected == "Link/URL":
-				pushType = typeId['link']
+					# then do the stuff
+					text = f'''
+						The type of the input could not be determined:
+						Name: 
+						{itemFname}.{itemFext}
 
-			elif typeMenu.selected == "File":
-				# if the item mime type is none, then we have an errror
-				if Mime[itemFext] is not None:
-					pushType = typeId['file']
-				else
-					itemErrorCode = 5
-					itemErrorMsg = f"Extension: {itemFext}"
+						Inferred Type:
+						{itemType}
+
+						Size:
+						{itemSize}
+
+						What is the type of this input?
+					'''
+					typeMenu = Menu(
+							prompt=text,
+							[
+								"Text",
+								"Link/URL",
+								"File",
+								"View Item",
+							]
+						)
+
+					if typeMenu.opt("Text"):
+						# set the push type to text
+						pushType = typeId['note']
+						item = Text(item)
+
+					elif typeMenu.opt("Link/URL"):
+						pushType = typeId['link']
+
+					elif typeMenu.opt("File"):
+						# filename might be confusing give users a chance to rename
+						cm = Menu(prompt=f"Filename: {itemFname}.{itemFext}", options=["Accept Name", "Change Name", "Back"])
+
+						if cm.opt("Change Name"):
+							res = AskForInput(Input.Text, prompt="Format: {filename}.{ext}", multipleLines=False)
+							matches = MatchText("(.*)\\.(.*)", res)
+							itemFname = GetMatchGroupAt(0, matches)
+							itemFext = GetMatchGroupAt(1, matches)
+
+						if cm.opt("Back"):
+							exitLoop = FALSE
+
+						filename = AskForInput
+						# if the item mime type is none, then we have an errror
+						if Mime[itemFext] is not None:
+							pushType = typeId['file']
+						else
+							itemErrorCode = 5
+							itemErrorMsg = f"Extension: {itemFext}"
+
+					elif typeMenu.opt("View Item"):
+						# reloop to give user options again
+						ShowResult(item)
+						exitLoop = FALSE
+
+
 
 
 		# ------------ HANDLE ITEM --------------
@@ -198,13 +245,13 @@ def main(ShortcutInput, type="Any", source="Share Sheet", default="Clipboard"):
 				item = ConvertImage(item, "JPEG")
 				itemFext = GetFileDetails("File Extension", item)
 
-			goodFileSize = 1
+			goodFileSize = TRUE
 
 			if GetFileDetails("File Size", item).MegaBytes() > 25:
 				if pushbulletPremium != 1:
-					goodFileSize = 0
+					goodFileSize = FALSE
 
-			if goodFileSize != 1:
+			if goodFileSize is FALSE:
 				itemErrorCode = 4
 
 			else
