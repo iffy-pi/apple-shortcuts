@@ -8,9 +8,9 @@ v1.51
 - Improved type detection for text files
 
 ## Pullbullet
-1.02
-- Update checks now happen at the end of shortcut action rather than beginnning
+1.1
+- Expanded options for dealing with links, including copying title or messages
+- Improved link detection from non-link type text
+
 
 ## PushList
-1.03
-- Update checks now happen at the end of shortcut action rather than beginning
