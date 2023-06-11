@@ -21,17 +21,24 @@ A repository for handling the updates and versioning of my apple shortcuts, and 
 2. Update version number in shortcut
 3. Write out the changelog for this new update somewhere (will need it later)
 4. Copy shortcut's icloud link
-5. Create new version with the new version number on RoutineHub, use the changelog wrtten earlier.
-6. Copy the current version of the shortcut's `updates.json`, and prepend it to the list in `history.json`.
-7. Update the shortcut's `updates.json`
+5. Copy the current version of the shortcut's `updates.json`, and prepend it to the list in `history.json`.
+6. Update the shortcut's `updates.json`
 	- `version` should match the new shortcut version
 	- Update shortcut link
 	- Update release notes (use changelog and replace newlines with `\\n`)
 	- Update release time
-8. Run shortcut to double check update mechanism
-	- Revert to shortcut previous version and test that the update has been deployed
+7. Verify update is pushed correctly (see below)
+8. Create new version with the new version number on RoutineHub, using the version, icloud link and release notes from `updates.json`
 
-**If there are shortcut bugs, simply fix them and then update the icloud links in the RoutineHub version and the GHP version**.
+### Verifying an update has been pushed correctly
+1. Within the shortcut, downgrade the version
+2. Run the shortcut to test that it sees there is an update
+3. Download the shortcut packaged with the update and verify its
+	- Set up process, has set up configured
+	- Version number
+	- Update configuration
+
+**If the shortcut does not pass this test, fix the bugs and update the icloud link in the versioning, then re-run the test**
 
 ## Configuring Versioning System For Shortcut
 The version system works with two files under `versioning/myshortcut`. `updates.json` contains the latest version of the shortcut, while `history.json` contains the previous versions of the shortcut. 
@@ -47,13 +54,16 @@ Independent shortcuts use the format:
 ```json
 {
 	// Remember to remove the comment and update the fields when copy pasting!
+	// These never change
 	"id": "<id>",
-	"version": 3.24,
 	"name": "My Shortcut",
 	"type": "independent",
-	"link": "<icloud link>",
 	"rhub": "https://routinehub.co/shortcut/15515",
 	"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/myshortcut/updates.json",
+
+	// These will change for every update
+	"version": 3.24,
+	"link": "<icloud link>",
 	"releaseNotes": "...",
 	"releaseTime": "2023-06-09"
 }
@@ -81,21 +91,23 @@ Framework shortcuts have a similar format but introduces new fields:
 {
 	// Remember to remove the comment and update the fields when copy pasting!
 	"id": "<id>",
-	"version": 3.24,
 	"name": "<framework name>",
 	"type": "framework",
 	"rhub": "https://routinehub.co/shortcut/15515",
-	"link": "<updater shortcut icloud link>",
 	"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/myshortcut/updates.json",
+
+	"version": 3.24,
+	"link": "<updater shortcut icloud link>",
 	"releaseNotes": "...",
 	"releaseTime": "2023-06-09",
 	"children": [
 		{
 			"id": "<id>",
-			"version": 1.24,
 			"name": "name",
-			"link": "<icloud link>",
 			"type": "child",
+
+			"version": 1.24,
+			"link": "<icloud link>",
 		},
 		// ...
 		// can have multiple children for shortcut frameworks
