@@ -34,17 +34,6 @@ def main():
 			]
 		)
 
-	'''
-- Itinerary:
-
-- Ona will check if she can leave on the 23rd
-- Ugonna will let us know if she can change her train from Kingston on 22nd to Ottawa on 23rd
-	- Exchange fees
-	- New time
-- Both will let us know tomorrow June 12
-	'''
-
-
 	if filterContents is not None:
 		# note or link, but could contain a URL in the body
 		foundLink = None
