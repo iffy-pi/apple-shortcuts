@@ -69,6 +69,8 @@ SHORTCUTS:
 }
 '''
 
+# GLOBAL VARS
+STORE = "Shortcuts/FLS"
 
 # ----------------
 def ConvertTextFileToJSON():
@@ -88,6 +90,8 @@ def WeekSummary():
 
 def FoodHistory():
 	pass
+
+def AddToFoodHistory():
 
 # BARCODES ------------
 
@@ -142,7 +146,234 @@ def LogAlgorithm(dix): # Log Algorithm
 		'Food':...
 	}
 	'''
-	pass
+
+	ContinueInShortcutsApp()
+
+	TRUE = 1
+	FALSE = 0
+
+	GetFile(f"{STORE}/History/foodHistoryDix.txt")
+
+	nutrDix = Dictionary(run("NutrDix"))
+
+	res = SplitText(ShortcutInput, ByNewLines)
+
+	loggingDate = Date(res[0])
+	foodDix = res[-1]
+
+	foodName = foodDix['Name']
+	servingSize = foodDix['Serving Size']
+
+	dixValue = foodDix['Servings']
+	if res is None:
+		IFRESULT = AskForInput(Input.Number, prompt=f"How many servings? (1 serving = {servingSize})",
+					default=1, allowDecimals=True, allowNegatives=True)
+	else:
+		IFRESULT = GetNumbers(dixValue)
+
+	mulitplier = IFRESULT
+
+
+	dix = Dictionary(GetFile(f"{STORE}/Other/env.json"))
+	hasHelathApp = dix['HasHealthApp']
+
+
+	if hasHealthApp == FALSE:
+		Notification(
+			"Food will be logged when next on iPhone",
+			title=f'{foodName} Has Been Added to Backlog',
+		)
+
+		foodDix['Servings'] = multiplier
+		foodDix = run(nutrDix["Correct Dictionary"], input=foodDix)
+
+		dix = {
+			'Date': Text(loggingDate),
+			'Food': Text(foodDix)
+		}
+
+		# get the backlog file 
+		file = GetFile(f"{STORE}/Other/backlog.json", noErrors=True)
+
+		if file is not None:
+			IFRESULT = Dictionary(file)
+		else:
+			IFRESULT = { 'backlog': [] }
+
+		backlog = IFRESULT['backlog']
+
+		backlog.append(dix)
+
+		# add it to list
+
+		# save file
+		dd = { 'backlog': backlog }
+		SaveFile(dd, f"{STORE}/Other/backlog.json", overwrite=True)
+
+		return foodDix
+
+	# do standard logging
+	for repeatItem in foodDix.keys:
+		item = repeatItem
+
+		num = GetNumbers(foodDix[item])
+		num = Round(num, "hundredths")
+		amount = num * multiplier
+
+		if amount != 0:
+			if item == "Carbs":
+				LogHealthSample("Carbohydrates", amount, "g", loggingDate)
+			else:
+				if item == "Fiber":
+					LogHealthSample("Fiber", amount, "g", loggingDate)
+				else:
+					if item == "Sugar":
+						LogHealthSample("Dietary Sugar", amount, "g", loggingDate)
+					else:
+						if item == "Fat":
+							LogHealthSample("Total Fat", amount, "g", loggingDate)
+						else:
+							if item == "Polyunsaturated":
+								LogHealthSample("Polyunsaturated Fat", amount, "g", loggingDate)
+							else:
+								if item == "Monounsaturated":
+									LogHealthSample("Monounsaturated Fat", amount, "g", loggingDate)
+								else:
+									if item == "Saturated":
+										LogHealthSample("Saturated Fat", amount, "g", loggingDate)
+									else:
+										if item == "Protein":
+											LogHealthSample("Protein", amount, "g", loggingDate)
+										else:
+											if item == "Sodium":
+												LogHealthSample("Sodium", amount, "mg", loggingDate)
+											else:
+												if item == "Potassium":
+													LogHealthSample("Potassium", amount, "mg", loggingDate)
+												else:
+													if item == "Cholesterol":
+														LogHealthSample("Dietary Cholesterol", amount, "mg", loggingDate)
+													else:
+														if item == "VitA":
+															LogHealthSample("Vitamin A", amount, "mcg", loggingDate)
+														else:
+															if item == "VitC":
+																LogHealthSample("Vitamin C", amount, "mg", loggingDate)
+															else:
+																if item == "Calcium":
+																	LogHealthSample("Calcium", amount, "mcg", loggingDate)
+																else:
+																	if item == "Iron":
+																		LogHealthSample("Iron", amount, "mg", loggingDate)
+																	else:
+																		if item == "Calories":
+																			LogHealthSample("Dietary Energy", amount, "kcal", loggingDate)
+
+	Notification(
+		f'{foodName} has been logged to your meals',
+		title='Yummy!'
+	)
+
+	# update history
+	num = Numbers(foodDix['Calories']) * multiplier
+	num = Round(num, "hundredths")
+
+	entry = f"{multiplier} x {foodName} ({num} kCal) | {loggingDate}"
+
+	toPortOver = 0
+	split = SplitText(entry, " | ")
+	info = split[0]
+	entryDate = Date(split[-1])
+	dateKey = entryDate.format(date="short", time=None)
+
+	file = GetFile(f"{STORE}/History/foodHistoryDix.txt", noErrors=True)
+
+	'''
+	Food history format:
+	{
+		'YYYY-MM-DD': {
+			'HH-MM': food1,
+			'HH-MM': food2
+		}
+	}
+	'''
+
+	'''
+	{
+		history: [
+			{
+				'Food': ...,
+				'Servings': ...,
+				'Total Calories': ...,
+				'Date': ...
+			},
+			....
+		]
+	}
+	'''
+
+
+	if file is None:
+		toPortOver = 1
+		IFRESULT = { 'SAMPLE': 'SAMPLE' }
+	else:
+		IFRESULT = file
+
+	foodHistoryDix = IFRESULT 
+
+	dixval = foodHistoryDix[dateKey] 
+	if dixval is None:
+		# no entry for that date key, so this is the first food for that day
+		# log in the format: time :  food info
+		dix = {
+			entryDate.format(date=None, time="short") : info
+		}
+		IFRESULT = dix
+	else:
+		# there is an entry for date
+		# check if there is a time for the entry
+		foodListDix = dixval
+		
+		dixval2 = foodListDix[entryDate.format(date=none, time="short")]
+		if dixval2 is None:
+			# no entry for this time so this is the only one
+			IFRESULT = info
+		else:
+			# it does have entries, so just put it on newline
+			listOfFoods = dixval2
+			IFRESULT = f"{info}\n{listOfFoods}"
+
+		foodListDix[entryDate.format(date=none, time="short")] = IFRESULT
+		IFRESULT = foodListDix
+
+	# log the changed dictionary
+	foodHistoryDix[entryDate.format(date="short", time=None)] = IFRESULT
+
+	SaveFile(foodHistoryDix, f"{STORE}/History/foodHistoryDix.txt", overwrite=True)
+
+	# port over information from old format
+	if toPortOver == 1:
+		file = GetFile(f"{STORE}/History/foodHistory.txt")
+		split = SplitText(file, ByNewLines)
+		res = filter(
+				split,
+				where="Name" is not entry,
+			)
+
+		for item in res:
+			run("Add To Food History", item)
+
+	# add servings to dictionary incase preset is made
+	foodDix["Servings"] = multiplier
+	foodDix = run(nutrDix["Correct Dictionary"], input=foodDix)
+
+	return foodDix
+
+
+
+
+
+
 
 def DisplayFoodItem():
 	pass
@@ -173,12 +404,7 @@ def SaveEnvVars(Dictionary(newVars)):
 	SaveFile(text, f"{STORE}/Other/env.json", overwrite=True)
 
 
-
-# GLOBAL VARS
-STORE = "Shortcuts/FLS"
-
 def Nutrition():
-
 	TRUE = 1
 	FALSE = 0
 
