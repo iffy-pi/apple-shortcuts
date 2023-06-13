@@ -136,7 +136,7 @@ def main(ShortcutInput, type="Any", source="Share Sheet", default="Clipboard"):
 					# text greater than 63kb must be a file as they dont fit in text box
 					if itemSize.Kilobytes() > 63:
 						pushType = typeId['file']
-						itemFname = "text"
+						itemFname = "Pushed Text"
 						itemFext = "txt"
 
 					else:
@@ -254,6 +254,8 @@ def main(ShortcutInput, type="Any", source="Share Sheet", default="Clipboard"):
 				itemMimeType = Mime[itemFext]
 				if itemMimeType is None:
 					itemMimeType = Mime['bin']
+
+				itemFname = itemFname.replace(",", "")
 
 				text = f"{itemFname}.{itemFext}"
 

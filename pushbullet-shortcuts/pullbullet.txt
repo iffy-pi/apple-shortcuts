@@ -92,7 +92,13 @@ def main():
 		# it is a file
 		urlContents = GetContentsOfURL(Item['file_url'])
 		renamedItem = SetName(urlContents, item['file_name'], dontIncludeFileExtension=True)
-		QuickLook(renamedItem)
+
+		if item['file_name'] == 'Pushed Text.txt':
+			# was text that overflowed
+			CopyToClipboard(urlContents)
+			Notification(urlContents, title="Most recent push has been copied to your clipboard")
+		else:
+			QuickLook(renamedItem)
 
 	# Check for updates
 	UpdateRes = GetContentsOfURL(UpdateInfo['updateLink'])
