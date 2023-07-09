@@ -665,15 +665,21 @@ def SearchAlgorithm():
 
     NutriDix = Dictionary(RunShorctut( "NutriDix" ))
 
+    # vcard base64 photo icons
+    servingSizeIcon = # ... , see servingSizeIcon.txt
+    forwardIcon = # forwardIcon.txt
+    backwardIcon = # backwardIcon.txt
+    searchIcon = # searchIcon.txt
+
+
     resCount = 7
-    maxLoops = 50
     searchExit = FALSE
     pageNo = 1
 
 
     query = AskForInput(Input.Text, prompt="What Food/Drink?")
 
-    for _ in range (maxLoops):
+    for _ in range (50):
         if searchExit == FALSE:
             searchItems = {}
 
@@ -699,7 +705,7 @@ def SearchAlgorithm():
 
 
                 if item['brand_name'] is not None:
-                    IFRESULT=f"{item['brand_name']}, {servingSize}"
+                    IFRESULT=f"{item['brand_name']} | {servingSize}"
                 else:
                     IFRESULT = f"{servingSize}"
                 subtitle = IFRESULT
@@ -707,9 +713,9 @@ def SearchAlgorithm():
                 text = f'''
                 BEGIN:VCARD
                 VERSION:3.0
-                N;CHARSET=UTF-8:{item['description']};
-                ORG;CHARSET=UTF-8:{subtitle};
-                NOTE;CHARSET=UTF-8:{itemId};
+                N;CHARSET=UTF-8:{item['description']}
+                ORG;CHARSET=UTF-8:{subtitle}
+                NOTE;CHARSET=UTF-8:{itemId}
                 END:VCARD
                 '''
                 
@@ -725,27 +731,30 @@ def SearchAlgorithm():
 
                 BEGIN:VCARD
                 VERSION:3.0
-                N;CHARSET=utf-8: Next Page;
-                ORG: Page {nextPage};
+                N;CHARSET=utf-8: Next Page
+                ORG: Page {nextPage}
+                {forwardIcon}
                 END:VCARD
 
                 BEGIN:VCARD
                 VERSION:3.0
-                N;CHARSET=utf-8: Previous Page;
-                ORG: Page {prevPage};
+                N;CHARSET=utf-8: Previous Page
+                ORG: Page {prevPage}
+                {backwardIcon}
                 END:VCARD
 
                 BEGIN:VCARD
                 VERSION:3.0
-                N;CHARSET=utf-8: New Search;
-                ORG: Try a different query;
+                N;CHARSET=utf-8: New Search
+                ORG: Try a different query
+                {searchIcon}
                 END:VCARD
             '''
 
             renamedItem = SetName(text, 'vcard.vcf')
             contacts = GetContacts(renamedItem)
 
-            chosenItem = ChooseFrom(contacts)
+            chosenItem = ChooseFrom(contacts, prompt=f'"{query}" Search Results | Page {pageNo}')
             isControlItem = FALSE
 
             if chosenItem.Name == 'Next Page':
@@ -778,15 +787,16 @@ def SearchAlgorithm():
                     curSize = Dictionary(repeatItem)
                     servingVal = Number(curSize['value'])
                     num = baseCal * curSize['nutrition_multiplier']
-                    sizeCal = RoundNumber(num, ones)
+                    sizeCal = RoundNumber(num, hundredths)
 
                     # create the vcard
                     text = f'''
                         BEGIN:VCARD
                         VERSION:3.0
-                        N;CHARSET=UTF-8:{servingVal} {curSize['unit']};
-                        ORG;CHARSET=UTF-8:{sizeCal};
-                        NOTE;CHARSET=UTF-8:{curSize['nutrition_multiplier']};
+                        N;CHARSET=UTF-8:{servingVal} {curSize['unit']}
+                        ORG;CHARSET=UTF-8:{sizeCal}
+                        NOTE;CHARSET=UTF-8:{curSize['nutrition_multiplier']}
+                        {servingSizeIcon}
                         END:VCARD
                         '''
                     REPEATRESULTS.append(text)
@@ -796,15 +806,16 @@ def SearchAlgorithm():
                     {REPEATRESULTS}
                     BEGIN:VCARD
                     VERSION:3.0
-                    N;CHARSET=UTF-8:Back;
-                    ORG;CHARSET=UTF-8:Go Back To Search;
+                    N;CHARSET=UTF-8:Back
+                    ORG;CHARSET=UTF-8:Go Back To Search
+                    {backwardIcon}
                     END:VCARD
                     '''
                 # choose from it
                 renamedItem = SetName(text, 'vcard.vcf')
                 contacts = GetContacts(renamedItem)
 
-                chosenSize = ChooseFrom(contacts)
+                chosenSize = ChooseFrom(contacts, prompt="Which Serving Size?")
 
                 if chosenSize.Name != "Back"
                     # we have the users food now we just need to create it
@@ -818,12 +829,13 @@ def SearchAlgorithm():
     # first convert to our food dictionary format using the values
 
     # Check for illegal characters in 
+    name = ReplaceText(item['description'], r'[\*\/\\><\.":\?\|]', '-', regex=True)
 
     outputFood = {
         # that special dictionary that has all the values
         # set Calories to item['nutritional_contents.energy.value']
         # set serving size to selectedServingSize 
-        # set name to item['description']
+        # set name to name
     }
 
     # vitamins are inputted as percentages, change them to exact values
@@ -872,7 +884,7 @@ def SearchAlgorithm():
         outputFood[item] = num
 
     return outputFood
-    
+
     # noSearchResults = 7
     # zero = 0
     # one = 1
