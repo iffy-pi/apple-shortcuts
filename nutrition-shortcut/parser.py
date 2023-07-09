@@ -1,6 +1,8 @@
 import json
 import re
 
+
+
 regex1 = r"([0-9][0-9]*[\.]*[0-9]*)x (.*) \(([0-9][0-9]*[\.]*[0-9]*) [kK][cC]al\)"
 regex2 = r"([0-9][0-9]*[\.]*[0-9]*) \[(.*) \(([0-9][0-9]*[\.]*[0-9]*) [kK][cC]al\)\]"
 
@@ -66,5 +68,27 @@ with open('foodHistoryDix.json', 'w') as file:
 
 
 
+def history():
+	# certain day, between, past week, past month, all time
 
+	# endDate date, 
+
+	# certai day
+	startDate = date
+	endDate = AddToDate(startDate, days=1)
+
+	# between
+	startDate = input(Date)
+	endDate = AddToDate(input(Date), days=1)
+
+	# past week
+	startDate = SubFromDate(curDate, days=7 )
+	endDate = AddToDate(curDate, mins=1)
+
+	# past month
+	startDate = SubFromDate(curDate, months=1 )
+	endDate = AddToDate(curDate, mins=1)
+
+	# all time 
+	# just go through all the keys
 
