@@ -1,0 +1,141 @@
+{
+   "order":[
+      215,
+      187,
+      199,
+      181,
+      183,
+      161,
+      189,
+      196,
+      204,
+      159,
+      178,
+      212,
+      168,
+      197,
+      172,
+      175,
+      176,
+      210,
+      171,
+      209,
+      166,
+      173,
+      205,
+      203,
+      177,
+      190,
+      193
+   ],
+   "foodInfo":{
+      "173":{
+         "foodname":"Regular Pepsi",
+         "filename":"173_regular_pepsi"
+      },
+      "181":{
+         "foodname":"Mac and Cheese",
+         "filename":"181_mac_and_cheese"
+      },
+      "205":{
+         "foodname":"Regular Fries",
+         "filename":"205_regular_fries"
+      },
+      "178":{
+         "foodname":"Mayonnaise",
+         "filename":"178_mayonnaise"
+      },
+      "199":{
+         "foodname":"Ketchup (0.5 cup)",
+         "filename":"199_ketchup_(0_5_cup)"
+      },
+      "161":{
+         "foodname":"Mixed Berries Smoothie",
+         "filename":"161_mixed_berries_smoothie"
+      },
+      "190":{
+         "foodname":"Jollof Rice",
+         "filename":"190_jollof_rice"
+      },
+      "166":{
+         "foodname":"Yogurt and Granola",
+         "filename":"166_yogurt_and_granola"
+      },
+      "187":{
+         "foodname":"Bacon",
+         "filename":"187_bacon"
+      },
+      "210":{
+         "foodname":"Banana Milk Shake",
+         "filename":"210_banana_milk_shake"
+      },
+      "175":{
+         "foodname":"Strawberry",
+         "filename":"175_strawberry"
+      },
+      "183":{
+         "foodname":"Chicken Drumstick (Cooked)",
+         "filename":"183_chicken_drumstick_(cooked)"
+      },
+      "196":{
+         "foodname":"Nutella Spread",
+         "filename":"196_nutella_spread"
+      },
+      "215":{
+         "foodname":"Sunny-side Up Egg",
+         "filename":"215_sunny-side_up_egg"
+      },
+      "159":{
+         "foodname":"Dempsters Bread",
+         "filename":"159_dempsters_bread"
+      },
+      "171":{
+         "foodname":"Grilled Cheese Sandwich",
+         "filename":"171_grilled_cheese_sandwich"
+      },
+      "203":{
+         "foodname":"Bacon Cheese Grillburger",
+         "filename":"203_bacon_cheese_grillburger"
+      },
+      "168":{
+         "foodname":"Mr. Noodles Chicken",
+         "filename":"168_mr__noodles_chicken"
+      },
+      "176":{
+         "foodname":"Oatmeal",
+         "filename":"176_oatmeal"
+      },
+      "189":{
+         "foodname":"Vege Tomato Pasta",
+         "filename":"189_vege_tomato_pasta"
+      },
+      "172":{
+         "foodname":"Peanut Butter Sandwich",
+         "filename":"172_peanut_butter_sandwich"
+      },
+      "197":{
+         "foodname":"Chewy Bars",
+         "filename":"197_chewy_bars"
+      },
+      "193":{
+         "foodname":"Fried egg",
+         "filename":"193_fried_egg"
+      },
+      "212":{
+         "foodname":"Burger and Fries",
+         "filename":"212_burger_and_fries"
+      },
+      "204":{
+         "foodname":"Multigrain",
+         "filename":"204_multigrain"
+      },
+      "177":{
+         "foodname":"Greek yogurt",
+         "filename":"177_greek_yogurt"
+      },
+      "209":{
+         "foodname":"Vegetable Fried Rice",
+         "filename":"209_vegetable_fried_rice"
+      }
+   }
+}

@@ -68,6 +68,13 @@ UDPATES AND CHANGES:
         - Port Over Food History
             - Converts old foodHistoryDix.txt format to foodHistory.json
 
+        - Port Over Foods
+            - Updates food files to JSON
+            - Adds a unique ID so they can be identified
+
+        - Generate Food ID
+            - Generates a unique id for each food object
+
     - Removed Shortcuts
         - Get History On
 
@@ -141,7 +148,9 @@ CURRENT STATE:
                     "Add Preset":"Add Preset 1.1",
                     "Make Preset":"Make Preset 2.2",
                     "Save Env Vars": "Save Env Vars",
-                    "Port Over Food History": "Port Over Food History"
+                    "Port Over Food History": "Port Over Food History",
+                    "Port Over Foods": "Port Over Foods",
+                    "GFID": "Generate Food ID"
                 }
             - shortcutLinksDix.txt : ? Maps shortcuts to their icloud links
             - Search
@@ -156,6 +165,52 @@ FLS = "Shortcuts/FLS"
 def ConvertTextFileToJSON():
     GetFile(f"{folder}/{filename}.txt")
     RenameFile(f"{filename}.json")
+
+def GenFoodId():
+    file = GetFile(f"{FLS}/Other/nextFoodId.txt")
+    if file is not None:
+        IFRESULT = file
+    else:
+        IFRESULT = "0"
+    
+    _id = Number(IFRESULT)
+    num = _id + 1
+    SaveFile(num, f"{FLS}/Other/nextFoodId.txt")
+    return 
+
+
+
+def PortOverFoods():
+
+    file = GetFile(f"{FLS}/Other/nextFoodId.txt")
+    if file is not None:
+        IFRESULT = file
+    else:
+        IFRESULT = "0"
+    nextId = Number(IFRESULT)
+
+    foodLocs = [
+        f"{FLS}/Recents/Foods",
+        f"{FLS}/Presets/Foods"
+        f"{FLS}/Barcodes/Foods"
+    ]
+
+    for loc in foodLocs:
+        dirr = GetFile(f"{loc}", errorIfNotFound=False)
+        for item in GetContentsOfFolder(dirr):
+            food = Dictionary(item)
+            food['id'] = nextId
+            nextId  = nextId + 1
+
+            # save the new food file
+            SaveFile(food, f"{loc}/{food['Name']}.json")
+
+            file = GetFile(f"{loc}/{food['Name']}.txt", errorIfNotFound=False)
+            if file is not None:
+                DeleteFile(file, deleteImmediately=True)
+
+    SaveFile(nextId, f"{FLS}/Other/nextFoodId.txt", overwrite=True)
+
 
 
 #---------------------------------------------------------------------------------------------------------------------------------
@@ -181,7 +236,7 @@ def FoodHistory():
     # used for logs between certain days
     useDateList = FALSE
 
-    file = File(f"{FLS}/History/foodHistory.json")
+    file = GetFile(f"{FLS}/History/foodHistory.json")
     if file is not None:
         IFRESULT = file
     else:
@@ -328,7 +383,7 @@ def PortOverFoodHistory():
     '''
 
     newHistory = Dictionary();
-    history = Dictionary(File(f"{FLS}/History/foodHistoryDix.txt"))
+    history = Dictionary(GetFile(f"{FLS}/History/foodHistoryDix.txt"))
 
     regex1 = text("([0-9][0-9]*[\.]*[0-9]*)x (.*) \(([0-9][0-9]*[\.]*[0-9]*) [kK][cC]al\)")
     regex2 = text("([0-9][0-9]*[\.]*[0-9]*) \[(.*) \(([0-9][0-9]*[\.]*[0-9]*) [kK][cC]al\)\]")
@@ -444,7 +499,175 @@ def FoodsList(): # Foods List
 #---------------------------------------------------------------------------------------------------------------------------------
 
 def GetRecent(): # "Get Recent"
-    pass
+    file = GetFile(f"{FLS}/Recents/recents.json", errorIfNotFound=False)
+    if file is not None:
+        IFRESULT = file
+    else:
+        IFRESULT = '{ "order": [], "foodInfo": {}}'
+    dix = Dictionary(IFRESULT)
+
+    order = dix['order']
+    foodInfo = dix['foodInfo']
+
+    if Count(order) == 0:
+        Alert("There are no recent items")
+        return None
+
+    # get the items
+    for foodId in order:
+        foodName = foodInfo[foodId]
+                    .GetDictionaryValue('foodname')
+
+        text = f'''
+            BEGIN:VCARD
+            VERSION:3.0
+            N;CHARSET=UTF-8: {foodName}
+            NOTE;CHARSET=UTF-8:{foodId}
+            END:VCARD
+        '''
+        REPEATRESULTS.append(text)
+
+    contacts = Text(REPEATRESULTS)
+                .SetName('vcard.vcf')
+                .GetContactsFromInput()
+
+    chosen = ChooseFrom(contacts, prompt="Select Recent Food")
+
+    curInfo = foodInfo[chosen.Notes]
+    foodFile = curInfo['filename']
+
+    file = GetFile(f"{FLS}/Recents/Foods/{foodFile}.json")
+    return Dictionary(file)
+
+
+#---------------------------------------------------------------------------------------------------------------------------------
+
+def AddRecent():
+    food = Dictionary(ShortcutInput)
+
+    nutrDix = Dictionary(run("NutrDix"))
+    
+    maxRecents = 70
+
+
+    if food['id'] is not None:
+        IFRESULT = food['id']
+    else:
+        IFRESULT = RunShorctut(nutrDix['GFID'])
+    
+    foodId = IFRESULT
+    foodName = food['Name']
+
+    # get the ordered items
+    file = GetFile(f"{FLS}/Recents/recents.json", errorIfNotFound=False)
+    if file is not None:
+        IFRESULT = file
+    else:
+        IFRESULT = '{ "order": [], "foodInfo": {}}'
+    dix = Dictionary(IFRESULT)
+
+    order = dix['order']
+    foodInfo = dix['foodInfo']
+
+    # if food is already in recents then we move it to the top
+
+    # if its not already in recents then add it, check against max and delete
+    res = filter(order, where=['Name' != foodId])
+    order = []
+
+    # puts food at the top
+    order.append(foodId)
+    order.append(res)
+
+    # place the food in the filenames dictionary
+    if foodInfo[foodId] is None:
+        # generate filename from foodname 
+
+        fileName = Text(f"{foodId}_{foodName}")
+                    .ReplaceText(r'[\*\/\\><\.":\?\| ]', '_', regex=True)
+                    .ToLowerCase()
+        
+        curInfo = {
+            'foodname': foodName,
+            'filename': fileName
+        }
+
+        foodInfo[foodId] = curInfo
+
+        # save the file
+        SaveFile(food, f"{FLS}/Recents/Foods/{fileName}.json")
+
+
+    if Count(order) > maxRecents:
+        for _ in range(Count(order)-maxRecents):
+            deleteId = order.getLastItem()
+
+            # remove from ordered list
+            order = filter(order, where=['Name' != deleteId])
+
+            curInfo = foodInfo[foodId]
+
+            # remove the id mapping from the foodInfo dictionary
+            val = f'"{foodId}":{curInfo}'
+
+            foodInfo = Text(FoodInfo)
+                        .ReplaceText(f',{val},', ',')
+                        .ReplaceText(f'{val},', '')
+                        .ReplaceText(f',{val}', '')
+                        .ToDictionary()
+
+            # delete the food file
+            foodFile = GetFile(f"{FLS}/Recents/Foods/{curInfo['filename']}.json")
+            DeleteFile(foodFile, deleteImmediately=True)
+
+    # save dictionaries to json
+    newDix = {}
+    newDix['order'] = order
+    newDix['foodInfo'] = foodInfo
+    SaveFile(newDix, f"{FLS}/Recents/recents.json", overwrite=True)
+
+#---------------------------------------------------------------------------------------------------------------------------------
+
+def PortOverRecents():
+
+    file = GetFile(f"{FLS}/Recents/recentNames.txt")
+    names = SplitText(file, '\n')
+
+    foodsDir = f"{FLS}/Recents/Foods"
+
+    foodInfo = {}
+
+    for name in names:
+        # Add the name to list
+
+        file = GetFile(f"{foodsDir}/{name}.json")
+        if file is not None:
+            food = Dictionary(file)
+            foodId = food['id']
+
+            order.append(foodId)
+
+            fileName = Text(f"{foodId}_{foodName}")
+                        .ReplaceText(r'[\*\/\\><\.":\?\| ]', '_', regex=True)
+                        .ToLowerCase()
+
+            curInfo = {
+                'foodname': name,
+                'filename': filename
+            }
+
+            foodInfo[foodId] = curInfo
+
+            # rename the file to its correct file name
+            file = GetFile(f"{foodsDir}/{name}.json")
+            RenameFile(file, f"{filename}.json")
+
+    newDix = {}
+    newDix['order'] = order
+    newDix['foodInfo'] = foodInfo
+    SaveFile(newDix, f"{FLS}/Recents/recents.json", overwrite=True)
+
+
 
 #---------------------------------------------------------------------------------------------------------------------------------
 # SHARED ---------------------------------------------------------------------------------------------------------------------------------
@@ -552,6 +775,7 @@ def LogAlgorithm(dix): # Log Algorithm
     # store the nutrients in the dictionary
     for item in SplitText(text, ByNewLines):
         num = GetNumbers(foodDix[item])
+        foodDix[item] = RoundNumber(num, hundredths)
         if num > 0:
             num = num * servings
             num = Round(num, "hundredths")
@@ -831,11 +1055,15 @@ def SearchAlgorithm():
     # Check for illegal characters in 
     name = ReplaceText(item['description'], r'[\*\/\\><\.":\?\|]', '-', regex=True)
 
+    # used to generate id for shortcut
+    res = RunShorctut(NutriDix['GFID'])
+
     outputFood = {
         # that special dictionary that has all the values
         # set Calories to item['nutritional_contents.energy.value']
         # set serving size to selectedServingSize 
         # set name to name
+        # set id to res
     }
 
     # vitamins are inputted as percentages, change them to exact values
@@ -884,227 +1112,6 @@ def SearchAlgorithm():
         outputFood[item] = num
 
     return outputFood
-
-    # noSearchResults = 7
-    # zero = 0
-    # one = 1
-
-    # searchDix = {
-    #     'SAMPLE' : 'SAMPLE'
-    # }
-
-    # visitedPagesDix = searchDix
-    # brandPagesDix = searchDix
-    
-    # searchIndent = 1
-    # pageNo = 1
-
-    # pageVisited = zero
-    # searchExit = zero
-
-    # query = AskForInput(Input.Text, prompt="What Food/Drink?")
-
-    # for _ in range(42):
-    #     if searchExit == 1:
-    #         pass
-    #     else:
-    #         if visitedPagesDix[pageNo] is not None:
-    #             # if the page is in the dictionary that means it has been visited
-    #             pageVisited = one
-                
-    #             # pull the search result names and the brand names
-    #             searchResultNames = visitedPagesDix[pageNo]
-    #             brandNames = brandPagesDix[pageNo]
-    #         else:
-    #             # page is not visited, init new result names and brand names
-    #             searchResultNames = []
-    #             brandNames = []
-    #             pageVisited = zero
-
-    #         if pageVisited == 1:
-    #             localInd = 1
-                
-    #             for _ in range(noSearchResults):
-    #                 name = searchResultNames.atIndex(localInd)
-    #                 brandName = brandNames.atIndex(localInd)
-
-    #                 localInd = localInd + 1
-
-    #                 # if the page is visited, pull the brand name and search name to form the contact cards
-    #                 text = f'''
-    #                     BEGIN:VCARD
-    #                     VERSION:3.0
-    #                     N;CHARSET=utf-8: {name};
-    #                     ORG: {brandName} ;
-    #                     END:VCARD
-    #                 '''
-    #                 REPEATRESULT.append(text)
-
-    #             IFRESULT = CombineText(REPEATRESULT, '\n')
-    #         else:
-    #             # we have to make a call to my fitness pal 
-    #             url = URL(f"https://api.myfitnesspal.com/public/nutrition?q={query}&page={pageNo}&per_page={noSearchResults}")
-    #             res = GetContentsOfURL(URL)
-
-    #             for repeatItem2 in res['items']:
-    #                 # caching items from the query
-
-    #                 dix = repeatItem2
-    #                 name = dix['item.description']
-
-    #                 # to make sure each search result has a unique name, we index it
-    #                 # using the searchIndent value
-    #                 files = filter(searchDix.keys(), where=["Name" is name])
-    #                 if Count(files) >= 1:
-    #                     indentedName = f"{name} ({searchIndent})"
-    #                     searchIndent = searchIndent + 1
-    #                     IFRESULT = Text(indentedName)
-    #                 else:
-    #                     IFRESULT = Text(name)
-    #                 name = IFRESULT
-
-    #                 searchResultNames.append(name)
-
-    #                 servingSizes = dix['item.serving_sizes']
-
-    #                 # then get the brand name
-    #                 brandName = dix['item.brand_name']
-    #                 if brandName is None:
-    #                     IFRESULT = Text()
-    #                 else
-    #                     IFRESULT = Text(f"{brandName} | ")
-    #                 brandName = IFRESULT
-
-    #                 nutritionalInfo = item['item.nutritional_contents']
-    #                 energyVal = nutritionalInfo['energy.value']
-    #                 energy = f"{energyVal} {nutritionalInfo['energy.unit']}"
-
-    #                 brandNames.append(f"{brandName}{energy}")
-
-    #                 # then we convert the nutritional contents keys to our keys
-    #                 # this creates our food structure
-    #                 acDix = {
-    #                     'VitA' : nutritionalInfo['vitamin_a'],
-    #                     # ... theres more
-    #                 }
-
-    #                 curFoodDix = Text(acDix)
-
-    #                 curFoodDix['Serving Sizes'] = servingSizes
-    #                 curFoodDix['Name'] = name
-    #                 curFoodDix['Calories'] = energyVal
-
-    #                 # save the found food dix with the unique search name
-    #                 searchDix[name] = Text(curFoodDix)
-
-    #                 # if the page is visited, pull the brand name and search name to form the contact cards
-    #                 text = f'''
-    #                     BEGIN:VCARD
-    #                     VERSION:3.0
-    #                     N;CHARSET=utf-8: {name};
-    #                     ORG: {brandName}{energy};
-    #                     END:VCARD
-    #                 '''
-    #                 REPEATRESULT.append(text)
-
-    #             # save search results and brand names
-    #             visitedPagesDix[pageNo] = searchResultNames
-    #             brandPagesDix[pageNo] = brandNames
-    #             pageVisited = 1
-
-    #             IFRESULT = CombineText(REPEATRESULT, '\n')
-
-    #         displayList = IFRESULT
-    #         Next = pageNo + 1
-    #         prev = Next - 2
-
-    #         text = f'''
-    #             {displayList}
-
-    #             <contact card name=Next Page, org = Page {Next}>
-
-    #             <contact card name=Previous Page, org = Page {prev}>
-
-    #             <contact card name=New Search, org = Try A Different Query>
-
-    #         '''
-    #         item = SetName(text, 'VCARD.vcf')
-    #         contacts = GetContacts(item)
-
-    #         chosen = ChooseFrom(contacts)
-
-    #         if chosen.Name == 'Next Page':
-    #             pageNo = pageNo + 1
-
-    #         else:
-    #             if chosen.Name == 'Previous Page':
-    #                 pageNo = pageNo - 1
-    #                 if pageNo == 0:
-    #                     Alert("This is the first page of the search!")
-    #                     pageNo = pageNo + 1
-    #             else:
-    #                 if chosen.Name == 'New Search':
-    #                     res = RunShorctut(NutriDix['Search Algorithm'])
-    #                     return res
-
-
-    #             outputFoodDix = searchDix[chosen.Name]
-    #             sampleCal = Number(outputFoodDix['Calories'])
-
-    #             servingsDix = { 'SAMPLE': 'SAMPLE' }
-    #             servingNamesList = []
-
-    #             servingSizes = outputFoodDix['Serving Sizes']
-    #             for item in servingSizes:
-    #                 curServingDix = Dictionary(item)
-    #                 num = Number( curServingDix['nutrition_multiplier'])
-    #                 num = num * sampleCal
-    #                 num = RoundNumber(num, ones)
-    #                 servingName = f"{curServingDix['value']} {curServingDix['unit']} ({num} cal)"
-
-    #                 servingNamesList.append(servingName)
-    #                 servingsix[servingName] = curServingDix
-
-    #             servingNamesList.append("Back")
-
-    #             chosenServingName = ChooseFrom(servingNamesList)
-
-    #             if chosenServingName != "Back":
-    #                 searchExit = 1
-
-    # chosenServingDix = servingsDix[chosenServingName]
-    # multiplier = chosenServingDix['nutrition_multiplier']
-
-    # newFoodDix = MakeFoodDictionary()
-    # for item in newFoodDix.nutrientKeys():
-    #     curKey = item
-    #     newFoodDix[curKey] = outputFoodDix[curKey] * multiplier
-
-    # # set the name and serving size using keys
-    # # serving size uses {curServingDix['value']} {curServingDix['unit']} 
-    # # the rest just get the name from the output dictionary
-
-    # outputFoodDix = newFoodDix
-
-    # # vitamins come in as percentages so set them appropriately
-    # # use full values vita = 900, vitc= 65, calcium = 1100, iron = 14
-    # # multiply percentage value by the vita value and then set in dictioanry
-
-    # # replace any slashes in the food name
-    # outputFoodDix['Name'] = ReplaceText(outputFoodDix['Name'] )
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #---------------------------------------------------------------------------------------------------------------------------------
 
