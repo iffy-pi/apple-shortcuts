@@ -14,6 +14,11 @@ UDPATES AND CHANGES:
         - This includes Food files, and any other relevant dictionaries
         - Done with port over to JSON
 
+    - Food IDs
+        - Each food is assigned a unique ID to track it within the system
+        - The shortcut Generate Food ID is used to generate the food ID
+        - ID is tracked with FLS/Other/nextFoodId.txt
+
     - New backlogging:
         - Backlog is now stored in new format at FLS/Other/backlog.json
         - Backlog is managed in Nutrition function as usual, but is now deleted when it is empty
@@ -59,6 +64,24 @@ UDPATES AND CHANGES:
         - Used to contain flags or values that we would like to share between shortcuts:
             - Share hasHealthApp between Nutrition and Log Algorithm
 
+    - New Recents Format
+        - Foods are named food_<food ID>.json
+        - Foods are now sorted by date when getting recents
+        - Shortcut Port Over Recents converts files to new format
+
+    - New Presets Format
+        - There is a file presets.json that maintains access times of Presets
+            {
+                '219' : {
+                    'date': '2023-06-09 09:41' # the last time the food was accessed
+                },
+                < more food IDs>
+            }
+        - Also have a vcardCache.txt, which is used to cache the vcards used in selecting presets. It is of the format:
+            <vcard for food where name=food name, org = serving size, notes = food id>
+        - Foods in Presets folder are named in food_<food ID>.json
+        - Shortcut Port Over Presets converts files to new format
+
 - Shortcut Changes
     - Added Shortcuts
         - Save Env Vars
@@ -74,6 +97,9 @@ UDPATES AND CHANGES:
 
         - Generate Food ID
             - Generates a unique id for each food object
+
+        - Port Over Recents and Presets
+            - Converting to new format for recents and presets
 
     - Removed Shortcuts
         - Get History On
@@ -91,6 +117,14 @@ UDPATES AND CHANGES:
         - Food History
             - Refactored to handle new food history format
             - Other improvements are under the hood
+
+        - Search Algorithm
+        - Get Recents
+        - Add Recent
+        - Get Preset
+        - Make Preset
+        - Remove Preset
+        - Edit Preset
 
 
 CURRENT STATE:
@@ -116,6 +150,9 @@ CURRENT STATE:
 
         - Other
             - backlog.txt and backtag.txt => backlog.json
+            - nextFoodId.txt : Generates next Unique ID for food
+            - lastUpdateCheck: : Date of last checked update
+            - nutriKeys.txt : Keys in the food dictionary that are the nutrients
             - env.json
             - shortcutDix.txt : ?Maps in script shortcut names to the actual shortcut names
                 {
@@ -150,6 +187,7 @@ CURRENT STATE:
                     "Save Env Vars": "Save Env Vars",
                     "Port Over Food History": "Port Over Food History",
                     "Port Over Foods": "Port Over Foods",
+                    "Port Over Recents and Presets": "Port Over Recents and Presets",
                     "GFID": "Generate Food ID"
                 }
             - shortcutLinksDix.txt : ? Maps shortcuts to their icloud links
@@ -166,23 +204,10 @@ def ConvertTextFileToJSON():
     GetFile(f"{folder}/{filename}.txt")
     RenameFile(f"{filename}.json")
 
-def GenFoodId():
-    file = GetFile(f"{FLS}/Other/nextFoodId.txt")
-    if file is not None:
-        IFRESULT = file
-    else:
-        IFRESULT = "0"
-    
-    _id = Number(IFRESULT)
-    num = _id + 1
-    SaveFile(num, f"{FLS}/Other/nextFoodId.txt")
-    return 
-
-
+#---------------------------------------------------------------------------------------------------------------------------------
 
 def PortOverFoods():
-
-    file = GetFile(f"{FLS}/Other/nextFoodId.txt")
+    file = GetFile("FLS/Other/nextFoodId.txt")
     if file is not None:
         IFRESULT = file
     else:
@@ -190,9 +215,9 @@ def PortOverFoods():
     nextId = Number(IFRESULT)
 
     foodLocs = [
-        f"{FLS}/Recents/Foods",
-        f"{FLS}/Presets/Foods"
-        f"{FLS}/Barcodes/Foods"
+        "FLS/Recents/Foods",
+        "FLS/Presets/Foods"
+        "FLS/Barcodes/Foods"
     ]
 
     for loc in foodLocs:
@@ -209,9 +234,7 @@ def PortOverFoods():
             if file is not None:
                 DeleteFile(file, deleteImmediately=True)
 
-    SaveFile(nextId, f"{FLS}/Other/nextFoodId.txt", overwrite=True)
-
-
+    SaveFile(nextId, "FLS/Other/nextFoodId.txt", overwrite=True)
 
 #---------------------------------------------------------------------------------------------------------------------------------
 # UPDATER #---------------------------------------------------------------------------------------------------------------------------------
@@ -229,14 +252,8 @@ def WeekSummary():
 # HISTORY #---------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------
 
-def FoodHistory():
-    TRUE = 1
-    FALSE = 0
-
-    # used for logs between certain days
-    useDateList = FALSE
-
-    file = GetFile(f"{FLS}/History/foodHistory.json")
+def FoodHistory()
+    file = GetFile("FLS/History/foodHistory.json")
     if file is not None:
         IFRESULT = file
     else:
@@ -348,14 +365,8 @@ def FoodHistory():
     elif mainMenu.opt("Exit"):
         return
 
-
-
 #---------------------------------------------------------------------------------------------------------------------------------
 
-def AddToFoodHistory():
-    pass
-
-#---------------------------------------------------------------------------------------------------------------------------------
 def PortOverFoodHistory():
 
     '''
@@ -383,7 +394,7 @@ def PortOverFoodHistory():
     '''
 
     newHistory = Dictionary();
-    history = Dictionary(GetFile(f"{FLS}/History/foodHistoryDix.txt"))
+    history = Dictionary(GetFile("FLS/History/foodHistoryDix.txt"))
 
     regex1 = text("([0-9][0-9]*[\.]*[0-9]*)x (.*) \(([0-9][0-9]*[\.]*[0-9]*) [kK][cC]al\)")
     regex2 = text("([0-9][0-9]*[\.]*[0-9]*) \[(.*) \(([0-9][0-9]*[\.]*[0-9]*) [kK][cC]al\)\]")
@@ -437,8 +448,7 @@ def PortOverFoodHistory():
         newHistory[dayKey] = newDayDix;
 
         # save it to the file
-        SaveFile(newHistory, f"{FLS}/History/foodHistory.json", overwrite=True)
-
+        SaveFile(newHistory, "FLS/History/foodHistory.json", overwrite=True)
 
 #---------------------------------------------------------------------------------------------------------------------------------
 # BARCODES #---------------------------------------------------------------------------------------------------------------------------------
@@ -465,24 +475,310 @@ def RemoveBarcode():
 #---------------------------------------------------------------------------------------------------------------------------------
 # PRESETS #---------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------
-def RemovePreset():
-    pass
+
+def PortOverRecentsAndPresets():
+    nameFiles = [
+        "FLS/Presets/presetNames.txt",
+        "FLS/Recents/recentNames.txt"
+    ]
+
+    foodDirs = [
+        "FLS/Presets/Foods",
+        "FLS/Recents/Foods"
+    ]
+
+    for REPEATITEM in nameFiles:
+        foodsDir = foodDirs.getItemAtIndex(REPEATINDEX)
+        file = GetFile(REPEATITEM, errorIfNotFound=False)
+        names = SplitText(file, '\n')
+        for name in names:
+            # Add the name to list
+            file = GetFile(f"{foodsDir}/{name}.json")
+            if file is not None:
+                food = Dictionary(file)
+                foodId = food['id']
+
+                # rename the file to its correct file name
+                file = GetFile(f"{foodsDir}/{name}.json")
+                RenameFile(file, f"food_{foodId}.json")
 
 #---------------------------------------------------------------------------------------------------------------------------------
-def GetPreset(): # Get Preset
-    pass
+
+def GetPreset(): # Get Preset (base version from get reecent)
+    TRUE = 1
+    FALSE = 0
+
+    cancelIcon = Text() 
+
+    deleteMode = FALSE
+
+    if Dictionary(ShortcutInput) is not None:
+        if ShortcutInput['deleteMode'] is not None:
+            deleteMode = TRUE
+
+    file = GetFile("FLS/Presets/vcardCache.txt", errorIfNotFound=False)
+    if file is not None:
+        IFRESULT = Text(file)
+    else:
+        # create the vcard cache
+        dir_ = GetFile("FLS/Presets/Foods")
+        files = GetContentsOfFolder(dir_)
+        files = filter(files, sortBy='Last Modified Date', order='Latest First')
+        for item in files:
+            food = Dictionary(file)
+            text = f'''
+                BEGIN:VCARD
+                VERSION:3.0
+                N;CHARSET=UTF-8:{food['Name']}
+                ORG;CHARSET=UTF-8:{food['Serving Size']}
+                NOTE;CHARSET=UTF-8:{foodId}
+                END:VCARD
+            '''
+            REPEATRESULTS.append(text)
+
+        IFRESULT = Text(REPEATRESULTS)
+
+    vcardCache = IFRESULT
+
+
+    text = f'''
+        BEGIN:VCARD
+        VERSION:3.0
+        N;CHARSET=UTF-8:Cancel
+        NOTE;CHARSET=UTF-8:No Foods will be selected
+        {cancelIcon}
+        END:VCARD
+        {vcardCache}
+    '''
+
+    renamedItem = SetName(text, 'vcard.vcf')
+    contacts = GetContacts(renamedItem)
+
+    selectedItems = ChooseFrom(contacts, prompt="Select Preset(s)", selectMultiple=True)
+    for chosen in selectedItems:
+        if chosen.Name == 'Cancel':
+            return None
+
+        foodId = chosen.Notes
+
+        # make this the most used one
+        file = GetFile("FLS/Presets/Foods/food_{foodId}.json")
+        food = Dictionary(file)
+
+        vcardVal = f'''
+            BEGIN:VCARD
+            VERSION:3.0
+            N;CHARSET=UTF-8:{food['Name']}
+            ORG;CHARSET=UTF-8:{food['Serving Size']}
+            NOTE;CHARSET=UTF-8:{foodId}
+            END:VCARD
+        '''
+
+        if deleteMode == TRUE:
+            # delete the file
+            DeleteFile(file, deleteImmediately=True)
+        else:
+            # save the file to update last modified after
+            SaveFile(file, f"FLS/Presets/Foods/food_{foodId}.json", overwrite=True)
+        
+
+        # remove vcard from the vcard cache
+        updatedText = ReplaceText(vcardCache, f'\n{vcardVal}\n', '\n')
+        updatedText = ReplaceText(updatedText, f'{vcardVal}\n', '')
+        vcardCache = ReplaceText(updatedText, f'\n{vcardVal}', '')
+
+        if deleteMode == FALSE:
+            # if we are not deleting, then add to the top of the vcache
+            vcardCache = f'''
+                {vcardVal}
+                {updatedText}
+            '''
+
+        # add the food
+        selectedFoods.append(food)
+
+    # save the vcard cache
+    SaveFile(vcardCache, "FLS/Presets/vcardCache.txt", overwrite=True)
+
+    return selectedFoods
+
 #---------------------------------------------------------------------------------------------------------------------------------
 
 def MakePreset(): # Make Preset
-    pass
+    # < whatever method we use to make the preset >
+
+    TRUE = 1
+    FALSE = 0
+
+    nutrDix = Dictionary(RunShortcut("NutrDix"))
+    if ShortcutInput is not None:
+        IFRESULT = ShortcutInput
+    else:
+        IFRESULT = RunShortcut(nutrDix['Foods List'])
+
+    foods = IFRESULT
+
+    file = GetFile('FLS/Other/nutriKeys.txt')
+    nutriKeys = SplitText(file, '\n')
+
+    presetFood = {}
+
+    for item in foods:
+        food = Dictionary(item)
+
+        defaultSize = food['Serving Size']
+        defaultName = food['Name']
+
+        if food['Servings'] is None:
+            IFRESULT = AskForInput(Input.Number, prompt=f"How many servings? (1 serving = {food['Serving Size']})",
+                        default=1, allowDecimals=True, allowNegatives=False)
+        else:
+            IFRESULT = Number(food['Servings'])
+        servings = IFRESULT
+
+        for nutr in nutriKeys:
+            num = Number(food[nutr])
+            # multiply nutrients by serving size
+            num = num * servings
+
+            # add to total nutrients of preset
+            num2 = Number(presetFood[nutr])
+            num = num + num2
+
+            presetFood[nutr] = num
+
+
+    # now presetFood will have all the items
+    if Count(foods) > 1:
+        defaultSize = ''
+        defaultName = ''
+
+    servingSize = AskForInput(Input.Text, prompt="What is the serving size of this preset?", default=defaultSize)
+    name = AskForInput(Input.Text, prompt="What is the name of this preset?", default=defaultName)
+
+    # check to make sure it doesnt clash with other food names
+    folder = GetFile("FLS/Presets/Foods", errorIfNotFound=False)
+    for file in GetContentsOfFolder(folder):
+        presetNames.append(file['Name'])
+
+    if Count(presetNames) > 0:
+        breakLoop = FALSE
+        for _ in range(10):
+            if breakLoop == FALSE:
+                res = filter(presetNames, where['Name' == name])
+                if res is not None:
+                    name = AskForInput(Input.Text, prompt=f'"{name}" already exists, please select a new name', default=name)
+                else:
+                    breakLoop = TRUE
+
+    # then set in the food
+    foodId = RunShortcut(nutrDix["GFID"])
+    presetFood['id'] = foodId
+    presetFood['Serving Size'] = servingSize
+    presetFood['Name'] = name
+
+    # save to file
+    SaveFile(presetFood, f"FLS/Presets/Foods/food_{foodId}.json", overwrite=True)
+
+    file = GetFile("FLS/Presets/vcardCache.txt", errorIfNotFound=False)
+    # add to vcard
+    text = f'''
+            BEGIN:VCARD
+            VERSION:3.0
+            N;CHARSET=UTF-8:{presetFood['Name']}
+            ORG;CHARSET=UTF-8:{presetFood['Serving Size']}
+            NOTE;CHARSET=UTF-8:{foodId}
+            END:VCARD
+            {file}
+        '''
+    SaveFile(text, "FLS/Presets/vcardCache.txt", overwrite=True)
+
 #---------------------------------------------------------------------------------------------------------------------------------
 
 def EditPreset(): # Edit Preset
-    pass
+
+    TRUE = 1
+    FALSE = 0
+
+    nutrDix = Dictionary(RunShortcut("NutrDix"))
+    selectedPresets = RunShortcut(nutrDix['Get Preset'])
+
+    # before editing
+    oldFood = ...
+
+    oldVcard = f'''
+            N;CHARSET=UTF-8:{oldFood['Name']}
+            ORG;CHARSET=UTF-8:{oldFood['Serving Size']}
+            NOTE;CHARSET=UTF-8:{foodId}
+        '''
+
+    foodId = food['id']
+
+
+    Menu(f"What type of editing would you like to do for {oldFood['Name']}?"):
+        case 'Scale Up Serving Size':
+            mult = AskForInput(Input.Number, prompt=f'What is the scaling factor?', default=1, allowDecimals=True)
+            if mult != 1:
+                file = GetFile("FLS/Other/nutriKeys.txt")
+                for item in SplitText(file, '\n'):
+                    num = oldFood[item] * mult
+                    oldFood[item] = num
+            
+            MENURESULT = oldFood
+
+        case 'Edit Food Fields Manually':
+            # do display food editign
+            ...
+            MENURESULT = res
+
+    newFood = MENURESULT
+    name = Text(newFood['Name'])
+
+    if name != oldFood['Name']:
+        # need to ensure it isnt taken by something else
+
+        # check to make sure it doesnt clash with other food names
+        folder = GetFile("FLS/Presets/Foods", errorIfNotFound=False)
+        for food in GetContentsOfFolder(folder):
+            presetNames.append(food['Name'])
+
+        breakLoop = FALSE
+        for _ in range(10):
+            if breakLoop == FALSE:
+                res = filter(presetNames, whereAll=['Name' == name, 'Name' != oldFood['Name']])
+                if res is not None:
+                    name = AskForInput(Input.Text, prompt=f'"{name}" already exists, please select a new name')
+                else:
+                    breakLoop = TRUE
+
+    newFood['Name'] = name
+
+
+    # save the file
+    SaveFile(newFood, f"FLS/Presets/Foods/food_{foodId}.json", overwrite=True)
+
+    # rewrite the vcard cache
+    file = GetFile("FLS/Presets/vcardCache.txt", errorIfNotFound=False)
+    vcardCache = Text(file)
+
+    # add to vcard
+    newVcard = f'''
+            N;CHARSET=UTF-8:{presetFood['Name']}
+            ORG;CHARSET=UTF-8:{presetFood['Serving Size']}
+            NOTE;CHARSET=UTF-8:{foodId}
+        '''
+
+    vcardCache = ReplaceText(vcardCache, oldVcard, newVcard)
+    SaveFile(text, "FLS/Presets/vcardCache.txt", overwrite=True)
 
 #---------------------------------------------------------------------------------------------------------------------------------
+
 def RemovePreset():
-    pass
+    dix = {
+        'deleteMode' : True
+    }
+    nutrDix = Dictionary(run("NutrDix"))
+    RunShortcut(nutrDix['Get Preset'], input=dix)
 
 #---------------------------------------------------------------------------------------------------------------------------------
 # MISC #---------------------------------------------------------------------------------------------------------------------------------
@@ -497,57 +793,65 @@ def FoodsList(): # Foods List
     pass
 
 #---------------------------------------------------------------------------------------------------------------------------------
+# Recents #---------------------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------------------------------------
 
 def GetRecent(): # "Get Recent"
-    file = GetFile(f"{FLS}/Recents/recents.json", errorIfNotFound=False)
-    if file is not None:
-        IFRESULT = file
-    else:
-        IFRESULT = '{ "order": [], "foodInfo": {}}'
-    dix = Dictionary(IFRESULT)
+    backwardIcon = # ... from search algorithm
 
-    order = dix['order']
-    foodInfo = dix['foodInfo']
+    dir_ = GetFile(f"FLS/Recents/Foods")
 
-    if Count(order) == 0:
-        Alert("There are no recent items")
-        return None
+    files = GetContentsOfFolder(dir_, errorIfNotFound=False)
+    files = filter(files, sortBy='Last Modified Date', order='Latest First')
 
-    # get the items
-    for foodId in order:
-        foodName = foodInfo[foodId]
-                    .GetDictionaryValue('foodname')
+    for item in files:
+        date = Text(item.lastModifiedDate.format(date="How Long Ago/Until"))
+        food = Dictionary(item)
 
         text = f'''
             BEGIN:VCARD
             VERSION:3.0
-            N;CHARSET=UTF-8: {foodName}
-            NOTE;CHARSET=UTF-8:{foodId}
+            N;CHARSET=UTF-8:{food['name']}
+            ORG;CHARSET=UTF-8:{date}
+            NOTE;CHARSET=UTF-8:{food['id']}
             END:VCARD
         '''
         REPEATRESULTS.append(text)
 
-    contacts = Text(REPEATRESULTS)
-                .SetName('vcard.vcf')
+    text = f'''
+        BEGIN:VCARD
+        VERSION:3.0
+        N;CHARSET=UTF-8:Back
+        ORG;CHARSET=UTF-8:Go Back to Previous Page
+        {backwardIcon}
+        END:VCARD
+        {REPEATRESULTS}
+    '''
+    contacts = SetName(text, 'vcard.vcf')
                 .GetContactsFromInput()
 
-    chosen = ChooseFrom(contacts, prompt="Select Recent Food")
+    selectedItems = ChooseFrom(contacts, prompt="Select Recent Foods", selectMultiple=True)
 
-    curInfo = foodInfo[chosen.Notes]
-    foodFile = curInfo['filename']
+    for chosen in selectedItems:
+        if chosen.Name == 'Back':
+            return None
 
-    file = GetFile(f"{FLS}/Recents/Foods/{foodFile}.json")
-    return Dictionary(file)
-
+        file = GetFile(f"FLS/Recents/Foods/food_{chosen.Notes}.json")
+        selectedFoods.append(Dictionary(file))
+    
+    return selectedFoods
 
 #---------------------------------------------------------------------------------------------------------------------------------
 
 def AddRecent():
     food = Dictionary(ShortcutInput)
 
-    nutrDix = Dictionary(run("NutrDix"))
+    if food is None:
+        return
+
+    nutrDix = Dictionary(RunShortcut("NutrDix"))
     
-    maxRecents = 70
+    maxRecents = 30
 
 
     if food['id'] is not None:
@@ -556,118 +860,19 @@ def AddRecent():
         IFRESULT = RunShorctut(nutrDix['GFID'])
     
     foodId = IFRESULT
-    foodName = food['Name']
 
-    # get the ordered items
-    file = GetFile(f"{FLS}/Recents/recents.json", errorIfNotFound=False)
-    if file is not None:
-        IFRESULT = file
-    else:
-        IFRESULT = '{ "order": [], "foodInfo": {}}'
-    dix = Dictionary(IFRESULT)
+    # add food to recent if it doesn't already exist
+    # by saving it, it will be at top of list since sorted by modified after
+    SaveFile(food, f"FLS/Recents/Foods/{fileName}.json", overwrite=True)
 
-    order = dix['order']
-    foodInfo = dix['foodInfo']
+    dir_ = GetFile("FLS/Recents/Foods")
+    files = GetContentsOfFolder(dir_)
+    files = filter(files, sortBy='Last Modified Date', order='Latest First')
 
-    # if food is already in recents then we move it to the top
-
-    # if its not already in recents then add it, check against max and delete
-    res = filter(order, where=['Name' != foodId])
-    order = []
-
-    # puts food at the top
-    order.append(foodId)
-    order.append(res)
-
-    # place the food in the filenames dictionary
-    if foodInfo[foodId] is None:
-        # generate filename from foodname 
-
-        fileName = Text(f"{foodId}_{foodName}")
-                    .ReplaceText(r'[\*\/\\><\.":\?\| ]', '_', regex=True)
-                    .ToLowerCase()
-        
-        curInfo = {
-            'foodname': foodName,
-            'filename': fileName
-        }
-
-        foodInfo[foodId] = curInfo
-
-        # save the file
-        SaveFile(food, f"{FLS}/Recents/Foods/{fileName}.json")
-
-
-    if Count(order) > maxRecents:
-        for _ in range(Count(order)-maxRecents):
-            deleteId = order.getLastItem()
-
-            # remove from ordered list
-            order = filter(order, where=['Name' != deleteId])
-
-            curInfo = foodInfo[foodId]
-
-            # remove the id mapping from the foodInfo dictionary
-            val = f'"{foodId}":{curInfo}'
-
-            foodInfo = Text(FoodInfo)
-                        .ReplaceText(f',{val},', ',')
-                        .ReplaceText(f'{val},', '')
-                        .ReplaceText(f',{val}', '')
-                        .ToDictionary()
-
-            # delete the food file
-            foodFile = GetFile(f"{FLS}/Recents/Foods/{curInfo['filename']}.json")
+    if Count(files) > maxRecents:
+        for _ in range(Count(files)-maxRecents):
+            deletefile = files.getLastItem()
             DeleteFile(foodFile, deleteImmediately=True)
-
-    # save dictionaries to json
-    newDix = {}
-    newDix['order'] = order
-    newDix['foodInfo'] = foodInfo
-    SaveFile(newDix, f"{FLS}/Recents/recents.json", overwrite=True)
-
-#---------------------------------------------------------------------------------------------------------------------------------
-
-def PortOverRecents():
-
-    file = GetFile(f"{FLS}/Recents/recentNames.txt")
-    names = SplitText(file, '\n')
-
-    foodsDir = f"{FLS}/Recents/Foods"
-
-    foodInfo = {}
-
-    for name in names:
-        # Add the name to list
-
-        file = GetFile(f"{foodsDir}/{name}.json")
-        if file is not None:
-            food = Dictionary(file)
-            foodId = food['id']
-
-            order.append(foodId)
-
-            fileName = Text(f"{foodId}_{foodName}")
-                        .ReplaceText(r'[\*\/\\><\.":\?\| ]', '_', regex=True)
-                        .ToLowerCase()
-
-            curInfo = {
-                'foodname': name,
-                'filename': filename
-            }
-
-            foodInfo[foodId] = curInfo
-
-            # rename the file to its correct file name
-            file = GetFile(f"{foodsDir}/{name}.json")
-            RenameFile(file, f"{filename}.json")
-
-    newDix = {}
-    newDix['order'] = order
-    newDix['foodInfo'] = foodInfo
-    SaveFile(newDix, f"{FLS}/Recents/recents.json", overwrite=True)
-
-
 
 #---------------------------------------------------------------------------------------------------------------------------------
 # SHARED ---------------------------------------------------------------------------------------------------------------------------------
@@ -711,12 +916,11 @@ def LogAlgorithm(dix): # Log Algorithm
     # set servings in food dictionary
     mulitplier = IFRESULT
     foodDix['Servings'] = multiplier
-    foodDix = run(nutrDix["Correct Dictionary"], input=foodDix)
     servings = Number(foodDix['Servings'])
 
 
     # get health app environment var
-    dix = Dictionary(GetFile(f"{FLS}/Other/env.json"))
+    dix = Dictionary(GetFile("FLS/Other/env.json"))
     hasHelathApp = dix['HasHealthApp']
 
     # add to backlog and exit if we are not on a device with a health app
@@ -727,7 +931,7 @@ def LogAlgorithm(dix): # Log Algorithm
         )
 
         # get the backlog file 
-        file = GetFile(f"{FLS}/Other/backlog.json", noErrors=True)
+        file = GetFile("FLS/Other/backlog.json", noErrors=True)
 
         if file is not None:
             IFRESULT = Dictionary(file)
@@ -746,35 +950,19 @@ def LogAlgorithm(dix): # Log Algorithm
 
         # save file
         dix = { 'backlog': backlog }
-        SaveFile(dix, f"{FLS}/Other/backlog.json", overwrite=True)
+        SaveFile(dix, "FLS/Other/backlog.json", overwrite=True)
 
         return foodDix
 
 
     # comment set of nutrients logged by the system
-    text = "Protein",
-          "Trans",
-          "Cholesterol",
-          "Sugar",
-          "Monounsaturated",
-          "Polyunsaturated",
-          "Fat",
-          "Fiber",
-          "VitC",
-          "Calories",
-          "Iron",
-          "VitA",
-          "Potassium",
-          "Saturated",
-          "Sodium",
-          "Calcium",
-          "Carbs",
 
     nutrients = Dictionary()
 
+    file = GetFile('FLS/Other/nutriKeys.txt')
     # store the nutrients in the dictionary
-    for item in SplitText(text, ByNewLines):
-        num = GetNumbers(foodDix[item])
+    for item in SplitText(file, ByNewLines):
+        num = Number(foodDix[item])
         foodDix[item] = RoundNumber(num, hundredths)
         if num > 0:
             num = num * servings
@@ -843,7 +1031,7 @@ def LogAlgorithm(dix): # Log Algorithm
     cals = RoundNumber(nutrients['Calories'], ones)
 
     # check if cache file exists and make one by default if not available
-    file = GetFile(f"{FLS}/History/foodHistoryCache.json", errorIfNotFound=False)
+    file = GetFile("FLS/History/foodHistoryCache.json", errorIfNotFound=False)
     if file is not None:
         IFRESULT = Text(file)
     else:
@@ -867,7 +1055,7 @@ def LogAlgorithm(dix): # Log Algorithm
     }
 
     # save cache away for later
-    SaveFile(dix, f"{FLS}/History/foodHistoryCache.json", overwrite=True)
+    SaveFile(dix, "FLS/History/foodHistoryCache.json", overwrite=True)
 
 
     # TODO in Main: Check and empty food history cache
@@ -875,11 +1063,27 @@ def LogAlgorithm(dix): # Log Algorithm
 
     return foodDix
 
-
 #---------------------------------------------------------------------------------------------------------------------------------
 
 def DisplayFoodItem():
     pass
+
+#---------------------------------------------------------------------------------------------------------------------------------
+
+def GenerateFoodId():
+    file = GetFile("FLS/Other/nextFoodId.txt")
+    if file is not None:
+        IFRESULT = file
+    else:
+        IFRESULT = "0"
+    
+    _id = Number(IFRESULT)
+    num = _id + 1
+    SaveFile(num, "FLS/Other/nextFoodId.txt")
+    return 
+
+#---------------------------------------------------------------------------------------------------------------------------------
+
 
 #---------------------------------------------------------------------------------------------------------------------------------
 
@@ -1087,27 +1291,11 @@ def SearchAlgorithm():
         outputFood[item] = num
 
     # apply servings multiplier on nutrients
-    text = "Protein",
-          "Trans",
-          "Cholesterol",
-          "Sugar",
-          "Monounsaturated",
-          "Polyunsaturated",
-          "Fat",
-          "Fiber",
-          "VitC",
-          "Calories",
-          "Iron",
-          "VitA",
-          "Potassium",
-          "Saturated",
-          "Sodium",
-          "Calcium",
-          "Carbs",
-
-    nutrients = SplitText(text, '\n')
+    file = GetFile('FLS/Other/nutriKeys.txt')
+    nutrients = SplitText(file, '\n')
     for item in nutrients:
-        num = outputFood[item] * multiplier
+        num = Number(outputFood[item])
+        num = num * multiplier
         num = RoundNumber(num, hundredths)
         outputFood[item] = num
 
@@ -1123,7 +1311,7 @@ def NutriDix():
 def SaveEnvVars(Dictionary(newVars)):
     # get the environment file
     # NOT DONE: SAVE TO ENVIRONMENT FILE SO SYSTEM HAS ACCESS TO IT
-    GetFile(f"{FLS}/Other/env.json", noError=True)
+    GetFile("FLS/Other/env.json", noError=True)
     if file is not None:
         IFRESULT = Dictionary(file)
     else:
@@ -1137,7 +1325,7 @@ def SaveEnvVars(Dictionary(newVars)):
 
     # save to file
     text = f"{env}"
-    SaveFile(text, f"{FLS}/Other/env.json", overwrite=True)
+    SaveFile(text, "FLS/Other/env.json", overwrite=True)
 
 #---------------------------------------------------------------------------------------------------------------------------------
 
@@ -1145,52 +1333,69 @@ def Nutrition():
     TRUE = 1
     FALSE = 0
 
-    checkForUpdates = TRUE
+    checkForUpdates = FALSE
+    exitAfterQuickLog = TRUE
+    
     # user manually wants to clear backlog 
     reqBacklogClear = FALSE
+    # Run food history after clearing the cache
+    runHistAfterClear = FALSE
 
     # load names of the shortcuts
-    res = GetFile(f"{FLS}/Other/shortcutDix.txt")
+    res = GetFile("FLS/Other/shortcutDix.txt")
     shortcutNames = Dictionary(res)
 
+    text = '''
+      Protein
+      Trans
+      Cholesterol
+      Sugar
+      Monounsaturated
+      Polyunsaturated
+      Fat
+      Fiber
+      VitC
+      Calories
+      Iron
+      VitA
+      Potassium
+      Saturated
+      Sodium
+      Calcium
+      Carbs
+    '''
+    SaveFile(text, "FLS/Other/nutriKeys.txt")
+
     # if device does not have health app then we will be adding to backlog
+    # using regex matching
     hasHealthApp = FALSE
-    if GetDeviceDetails("Model") == 'iPhone':
+    matches = MatchText(GetDeviceDetails("Model"), "(iPhone)")
+    if matches is not None:
         hasHealthApp = TRUE
 
     # save the state of the health app to environment
     dix = { 'HasHealthApp': hasHealthApp }
-    run(shortcutNames["Save Env Vars"], input=dix)
-
-
-    # get backlog if it exists
-    itemsInBacklog = FALSE
-    file = GetFile(f"{FLS}/Other/backlog.json", errorIfNotFound=False)
-    if file is not None:
-        IFRESULT = Text(file)
-    else:
-        IFRESULT = "{ 'backlog': [] }"
-
-    res = Dictionary(IFRESULT)
-    backlog = res['backlog']
-
-    if Count(backlog) > 0:
-        itemsInBacklog = TRUE
-
+    RunShortcut(shortcutNames["Save Env Vars"], input=dix)
 
     itemsInHistCache = FALSE
-    runHistAfterClear = FALSE
-    file = GetFile(f"{FLS}/History/foodHistoryCache.json", errorIfNotFound=False)
+    file = GetFile("FLS/History/foodHistoryCache.json", errorIfNotFound=False)
     if file is not None:
-        IFRESULT = Text(file)
-    else:
-        IFRESULT = "{ 'cache': [] }"
-
-    res = Dictionary(IFRESULT)
-    histCache = res['cache']
-
-    if Count(histCache) > 0:
         itemsInHistCache = TRUE
+        dix = Dictionary(file)
+        if Count(dix['cache']) >= 15:
+            # we need to eventually clear the history cache so that it does not bloat in size
+            exitAfterQuickLog = FALSE
+
+
+    # determine if we are checking for updates
+    file = GetFile("FLS/Other/lastUpdateCheck.txt", errorIfNotFound=False)
+    if file is not None:
+        IFRESULT = file
+    else:
+        IFRESULT = SubFromDate(CurrentDate(), weeks=1)
+
+    if TimeBetweenDates(IFRESULT, CurrentDate()) >= 1:
+        checkForUpdates = TRUE
 
 
     if hasHealthApp == FALSE:
@@ -1234,7 +1439,7 @@ def Nutrition():
 
     if mainMenu.opt("Quick Log"):
         # InRecents does not exist!
-        for item in run(shortcutNames["Get Recent"], input=InRecents):
+        for item in RunShortcut(shortcutNames["Get Recent"], input=InRecents):
             CurFood = item
             text = f"How many servings of {CurFood['Name']}\n(1 serving = {CurFood['Serving Size']})"
             
@@ -1248,9 +1453,10 @@ def Nutrition():
             LogList.append(dix)
 
         for item in LogList:
-            run(shortcutNames["Log Algorithm"], input=item)
+            RunShortcut(shortcutNames["Log Algorithm"], input=item)
 
-        return
+        if exitAfterQuickLog == TRUE:
+            return
 
     elif mainMenu.opt("Log Foods"):
         if GetDeviceDetails("Model") == 'iPhone':
@@ -1264,14 +1470,14 @@ def Nutrition():
         Dating = AskForInput("What date and time? Click Done for Right Now", Input.DateAndTime)
 
 
-        for item in run(shortcutNames["Foods List"]):
+        for item in RunShortcut(shortcutNames["Foods List"]):
             CurFood = item
             dix = {
                 'Date': str(Dating)
                 'Food': dix(CurFood)
             }
 
-            CurLoggedFood = run(shortcutNames["Log Algorithm"], input=dix)
+            CurLoggedFood = RunShortcut(shortcutNames["Log Algorithm"], input=dix)
             
             # Comment: Get the logged food dictionary and add it into the logged foods dix,
             # with key: servings of food and value: food dictionary
@@ -1299,7 +1505,7 @@ def Nutrition():
                 ChosenFoods.Append( LoggedFoodsDix[item] )
 
             # run shortcutNames[make preset ]with chosen foods
-            run(shortcutNames["Make Preset"], input=ChosenFoods)
+            RunShortcut(shortcutNames["Make Preset"], input=ChosenFoods)
 
         elif makePresetMenu.opt("No"):
             pass
@@ -1309,12 +1515,12 @@ def Nutrition():
             # action will be discontinued in later versions
             ContinueInShortcutsApp()
 
-        run(shortcutNames["Bulk Entry"])
+        RunShortcut(shortcutNames["Bulk Entry"])
 
     elif mainMenu.opt("Search and View"):
         # run shortcutNames[search algorithm ]and display food with 
 
-        searchResult = run(shortcutNames["Display Food Item"], input=run(shortcutNames["Search Algorithm"]))
+        searchResult = RunShortcut(shortcutNames["Display Food Item"], input=RunShortcut(shortcutNames["Search Algorithm"]))
 
         postSearchMenu = Menu(["Log Entry", "Make Preset", "Exit"])
 
@@ -1325,7 +1531,7 @@ def Nutrition():
                 'Date': str(date)
                 'Food': dix(searchResult)
             }
-            res = run(shortcutNames[
+            res = RunShortcut(shortcutNames[
                 "Log Algorithm"],
                 input=dix)
 
@@ -1339,7 +1545,7 @@ def Nutrition():
                 pass
 
         elif postSearchMenu.opt("Make Preset"):
-            run(shortcutNames["Make Preset"], input=searchResult)
+            RunShortcut(shortcutNames["Make Preset"], input=searchResult)
 
         elif postSearchMenu.opt("Exit"):
             pass
@@ -1349,28 +1555,28 @@ def Nutrition():
         prm = Menu(prompt="Presets", options=["View Presets", "Make Preset", "Edit Preset", "Remove Preset(s)"])
 
         if prm.opt("View Presets"):
-            res = run(shortcutNames["Get Preset"])
+            res = RunShortcut(shortcutNames["Get Preset"])
             for repeatItem in res:
-                run(shortcutNames["Display Food Item"], input=repeatItem)
+                RunShortcut(shortcutNames["Display Food Item"], input=repeatItem)
 
         elif prm.opt("Make Preset"):
             # run shortcutNames[foods list ]to get list of foods to be made into a preset
-            res = run(shortcutNames["Foods List"])
+            res = RunShortcut(shortcutNames["Foods List"])
 
             for item in res:
                 curFood = item
                 loggedFoods3.append(curFood)
 
-            run(shortcutNames["Make Preset"], loggedFoods3)
+            RunShortcut(shortcutNames["Make Preset"], loggedFoods3)
 
 
         elif prm.opt("Edit Preset"):
-            run(shortcutNames["Edit Preset"])
+            RunShortcut(shortcutNames["Edit Preset"])
 
 
         elif prm.opt("Remove Preset(s)"):
             # retrieve preset names, let user choose preset then retrieve food dix and delete it by runnshortcutNames[ing remove ]preset
-            file = GetFile(f"{FLS}/Presets/presetNames.txt")
+            file = GetFile("FLS/Presets/presetNames.txt")
             res = SplitText(file, SplitText.ByNewLines)
             
             presetsToBeDeleted = ChooseFrom(res, selectMultiple=True)
@@ -1378,9 +1584,9 @@ def Nutrition():
             ShowAlert("Do You Want To Continue?", title="Presets About to Be Deleted", showCancel=True)
 
             for item in presetsToBeDeleted:
-                file = GetFile(f"{FLS}/Presets/Foods/{item}.txt")
+                file = GetFile(f"FLS/Presets/Foods/{item}.txt")
                 text = file.read()
-                run(shortcutNames["Remove Preset"], text)
+                RunShortcut(shortcutNames["Remove Preset"], text)
 
     elif mainMenu.opt("Barcodes"):
         brm = Menu(prompt="Barcodes", options=[
@@ -1392,40 +1598,40 @@ def Nutrition():
 
 
         if brm.opt("View Personal Database"):
-            res = run(shortcutNames["Get Barcode"])
+            res = RunShortcut(shortcutNames["Get Barcode"])
             for item in res:
-                run(shortcutNames["Display Food Item"], input=item)
+                RunShortcut(shortcutNames["Display Food Item"], input=item)
 
         elif brm.opt("Add to Personal Database"):
-            run(shortcutNames["Barcode Search"])
+            RunShortcut(shortcutNames["Barcode Search"])
 
         elif brm.opt("Edit Items in Personal Database"):
-            run(shortcutNames["Edit Barcode"])
+            RunShortcut(shortcutNames["Edit Barcode"])
 
         elif brm.opt("Remove From Personal Database"):
-            res = run(shortcutNames["Get Barcode"])
-            run(shortcutNames["Remove Barcode"], input=res)
+            res = RunShortcut(shortcutNames["Get Barcode"])
+            RunShortcut(shortcutNames["Remove Barcode"], input=res)
         
 
     elif mainMenu.opt("Recent Meals"):
-        res = run(shortcutNames["Get Recent"])
+        res = RunShortcut(shortcutNames["Get Recent"])
         for item in res:
-            run(shortcutNames["Display Food Item"], input=item)
+            RunShortcut(shortcutNames["Display Food Item"], input=item)
 
 
     elif mainMenu.opt("Weekly Summary"):
-        run(shortcutNames["Week Summary"])
+        RunShortcut(shortcutNames["Week Summary"])
 
 
     elif mainMenu.opt("Food History"):
-            if itemsInBacklog == TRUE:
-                ShowAlert("There are items in the backlog, food history will not be accurate until backlog is cleared", showCancel=True)
-            
-            
-            if itemsInHistCache == TRUE:
-                    runHistAfterClear = TRUE
-                else:
-                    run(shortcutNames["Food History"])
+        file = GetFile("FLS/Other/backlog.json", errorIfNotFound=False)
+        if file is not None
+            ShowAlert("There are items in the backlog, food history will not be accurate until backlog is cleared", showCancel=True)
+        
+        if itemsInHistCache == TRUE:
+                runHistAfterClear = TRUE
+            else:
+                RunShortcut(shortcutNames["Food History"])
 
     elif mainMenu.opt("Clear Backlog"):
         reqBacklogClear = TRUE
@@ -1433,14 +1639,16 @@ def Nutrition():
 
     # clearing the backlog
     if hasHealthApp == TRUE:
-
-        if itemsInBacklog == TRUE:
+        file = GetFile("FLS/Other/backlog.json", errorIfNotFound=False)
+        if file is not None:
             # clear items by logging them
-            for item in backlog:
-                run(shortcutNames["Log Algorithm"], input=item)
+            dix = Dictionary(file)
+            for item in dix['backlog']:
+                RunShortcut(shortcutNames["Log Algorithm"], input=item)
 
             # erase the backlog
-            Delete(f"{FLS}/Other/backlog.json", deleteImmediately=True)
+            file = GetFile("FLS/Other/backlog.json")
+            DeleteFile(file, deleteImmediately=True)
 
         else:
             if reqBacklogClear == TRUE:
@@ -1449,23 +1657,17 @@ def Nutrition():
 
 
     # clear the cache
-    file = GetFile(f"{FLS}/History/foodHistoryCache.json", errorIfNotFound=False)
+    file = GetFile("FLS/History/foodHistoryCache.json", errorIfNotFound=False)
     if file is not None:
-        IFRESULT = Text(file)
-    else:
-        IFRESULT = "{ 'cache': [] }"
-    res = Dictionary(IFRESULT)
-    histCache = res['cache']
-
-    if Count(histCache) > 0:
-
-        file = OpenFile(f"{FLS}/History/foodHistory.json", errorIfNotFound=False)
+        dix = Dictionary(file)
+        histCache = dix['cache']
+        
+        file = OpenFile("FLS/History/foodHistory.json", errorIfNotFound=False)
         if file is not None:
             IFRESULT = file
         else:
             IFRESULT = {}
         history = Dictionary( IFRESULT )
-
 
         for item in histCache:
             dayKey = item['date']
@@ -1490,18 +1692,17 @@ def Nutrition():
             history[dayKey] = dayDix
 
         # save our history
-        SaveFile(history, f"{FLS}/History/foodHistory.json", overwrite=True)
+        SaveFile(history, "FLS/History/foodHistory.json", overwrite=True)
 
         # clear our cache by deleting the file
-        Delete(f"{FLS}/History/foodHistoryCache.json", deleteImmediately=True)
+        file = GetFile("FLS/History/foodHistoryCache.json")
+        DeleteFile(file, deleteImmediately=True)
 
-    if runHistAfterClear == TRUE:
-        run(shortcutNames["Food History"])
-
+        if runHistAfterClear == TRUE:
+            RunShortcut(shortcutNames["Food History"])
 
     if checkForUpdates == TRUE:
-        run(shortcutNames["NutriDix Updater"])
+        RunShortcut(shortcutNames["NutriDix Updater"])
+        SaveFile(Text(CurrentDate.format(date="short", time=None)), "FLS/Other/lastUpdateCheck.txt", overwrite=True)
 
-
-
-
+#---------------------------------------------------------------------------------------------------------------------------------
