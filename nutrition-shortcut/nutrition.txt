@@ -496,11 +496,32 @@ def PortOverRecentsAndPresets():
             file = GetFile(f"{foodsDir}/{name}.json")
             if file is not None:
                 food = Dictionary(file)
-                foodId = food['id']
 
-                # rename the file to its correct file name
-                file = GetFile(f"{foodsDir}/{name}.json")
-                RenameFile(file, f"food_{foodId}.json")
+                if food['id'] is None:
+                    res = RunShortcut(nutrDix['GFID'])
+                    food['id'] = res
+                    SaveFile(food, f'{foodsDir}/food_{foodId}.json', overwrite=True)
+                    IFRESULT = Number(res)
+                else:
+                    RenameFile(file, f"food_{IFARG}.json")
+                    IFRESULT = Number(IFARG)
+
+                foodId = IFRESULT
+
+                if name == 'FLS/Presets/presetNames.txt':
+                    text = f'''
+                        BEGIN:VCARD
+                        VERSION:3.0
+                        N;CHARSET=UTF-8:{food['Name']}
+                        ORG;CHARSET=UTF-8:{food['Serving Size']}
+                        NOTE;CHARSET=UTF-8:{foodId}
+                        END:VCARD
+
+                    '''
+                    vcardCache.append(text)
+
+    if vcardCache is not None:
+        SaveFile(Text(vcardCache), 'FLS/Presets/vcardCache.txt', overwrite=True)
 
 #---------------------------------------------------------------------------------------------------------------------------------
 
@@ -521,20 +542,26 @@ def GetPreset(): # Get Preset (base version from get reecent)
         IFRESULT = Text(file)
     else:
         # create the vcard cache
-        dir_ = GetFile("FLS/Presets/Foods")
-        files = GetContentsOfFolder(dir_)
+        Notification(title="Generating Preset Cache...", body='The cache allows the shortcut to be faster in future runs.')
+        folder = GetFile("FLS/Presets/Foods")
+        files = GetContentsOfFolder(folder)
         files = filter(files, sortBy='Last Modified Date', order='Latest First')
         for item in files:
             food = Dictionary(file)
+            # some weird bug is limiting me to have to pull ID separately
+            dixVal = food['id']
             text = f'''
                 BEGIN:VCARD
                 VERSION:3.0
                 N;CHARSET=UTF-8:{food['Name']}
                 ORG;CHARSET=UTF-8:{food['Serving Size']}
-                NOTE;CHARSET=UTF-8:{foodId}
+                NOTE;CHARSET=UTF-8:{dixVal}
                 END:VCARD
+
             '''
             REPEATRESULTS.append(text)
+
+        SaveFile(Text(REPEATRESULTS), f"FLS/Presets/vcardCache.txt", overwrite=True)
 
         IFRESULT = Text(REPEATRESULTS)
 
@@ -544,19 +571,30 @@ def GetPreset(): # Get Preset (base version from get reecent)
     text = f'''
         BEGIN:VCARD
         VERSION:3.0
-        N;CHARSET=UTF-8:Cancel
-        NOTE;CHARSET=UTF-8:No Foods will be selected
+        N;CHARSET=UTF-8:No Selection
+        NOTE;CHARSET=UTF-8:No foods will be selected
         {cancelIcon}
         END:VCARD
-        {vcardCache}
     '''
 
     renamedItem = SetName(text, 'vcard.vcf')
-    contacts = GetContacts(renamedItem)
+    contact = GetContacts(renamedItem)
+    choices.append(contact)
 
-    selectedItems = ChooseFrom(contacts, prompt="Select Preset(s)", selectMultiple=True)
+    SetName(vcardCache, 'vcard.vcf')
+    contacts = GetContacts(renamedItem)
+    files = filter(contacts, sortBy='Name')
+    choices.append(files)
+
+
+    if deleteMode == TRUE:
+        IFRESULT = "Select Preset(s) to Delete"
+    else:
+        IFRESULT = "Select Preset(s)"
+
+    selectedItems = ChooseFrom(choices, prompt=IFRESULT, selectMultiple=True)
     for chosen in selectedItems:
-        if chosen.Name == 'Cancel':
+        if chosen.Name == 'No Selection':
             return None
 
         foodId = chosen.Notes
@@ -565,40 +603,21 @@ def GetPreset(): # Get Preset (base version from get reecent)
         file = GetFile("FLS/Presets/Foods/food_{foodId}.json")
         food = Dictionary(file)
 
-        vcardVal = f'''
-            BEGIN:VCARD
-            VERSION:3.0
-            N;CHARSET=UTF-8:{food['Name']}
-            ORG;CHARSET=UTF-8:{food['Serving Size']}
-            NOTE;CHARSET=UTF-8:{foodId}
-            END:VCARD
-        '''
-
         if deleteMode == TRUE:
             # delete the file
             DeleteFile(file, deleteImmediately=True)
+            Notification(f'Preset {food['Name']} has been deleted!')
         else:
             # save the file to update last modified after
             SaveFile(file, f"FLS/Presets/Foods/food_{foodId}.json", overwrite=True)
         
-
-        # remove vcard from the vcard cache
-        updatedText = ReplaceText(vcardCache, f'\n{vcardVal}\n', '\n')
-        updatedText = ReplaceText(updatedText, f'{vcardVal}\n', '')
-        vcardCache = ReplaceText(updatedText, f'\n{vcardVal}', '')
-
-        if deleteMode == FALSE:
-            # if we are not deleting, then add to the top of the vcache
-            vcardCache = f'''
-                {vcardVal}
-                {updatedText}
-            '''
-
         # add the food
         selectedFoods.append(food)
 
-    # save the vcard cache
-    SaveFile(vcardCache, "FLS/Presets/vcardCache.txt", overwrite=True)
+    if deleteMode == TRUE:
+        # delete the cache since it is invalid
+        file = GetFile("FLS/Presets/vcardCache.txt")
+        DeleteFile(file, deleteImmediately=True)
 
     return selectedFoods
 
@@ -680,18 +699,9 @@ def MakePreset(): # Make Preset
     # save to file
     SaveFile(presetFood, f"FLS/Presets/Foods/food_{foodId}.json", overwrite=True)
 
-    file = GetFile("FLS/Presets/vcardCache.txt", errorIfNotFound=False)
-    # add to vcard
-    text = f'''
-            BEGIN:VCARD
-            VERSION:3.0
-            N;CHARSET=UTF-8:{presetFood['Name']}
-            ORG;CHARSET=UTF-8:{presetFood['Serving Size']}
-            NOTE;CHARSET=UTF-8:{foodId}
-            END:VCARD
-            {file}
-        '''
-    SaveFile(text, "FLS/Presets/vcardCache.txt", overwrite=True)
+    # delete the cache since it is invalid
+    file = GetFile("FLS/Presets/vcardCache.txt")
+    DeleteFile(file, deleteImmediately=True)
 
 #---------------------------------------------------------------------------------------------------------------------------------
 
@@ -703,73 +713,57 @@ def EditPreset(): # Edit Preset
     nutrDix = Dictionary(RunShortcut("NutrDix"))
     selectedPresets = RunShortcut(nutrDix['Get Preset'])
 
-    # before editing
-    oldFood = ...
+    for item in selectedPresets:
+        oldFood = Dictionary(item)
+        
+        foodId = food['id']
 
-    oldVcard = f'''
-            N;CHARSET=UTF-8:{oldFood['Name']}
-            ORG;CHARSET=UTF-8:{oldFood['Serving Size']}
-            NOTE;CHARSET=UTF-8:{foodId}
-        '''
+        Menu(f"What type of editing would you like to do for {oldFood['Name']}?"):
+            case 'Scale Up Serving Size':
+                mult = AskForInput(Input.Number, prompt=f'What is the scaling factor?', default=1, allowDecimals=True)
+                if mult != 1:
+                    file = GetFile("FLS/Other/nutriKeys.txt")
+                    for item in SplitText(file, '\n'):
+                        num = oldFood[item] * mult
+                        oldFood[item] = num
+                
+                MENURESULT = oldFood
 
-    foodId = food['id']
+            case 'Edit Food Fields Manually':
+                # do display food editing TODO
+                ...
+                MENURESULT = res
 
+        newFood = MENURESULT
+        name = newFood['Name']
 
-    Menu(f"What type of editing would you like to do for {oldFood['Name']}?"):
-        case 'Scale Up Serving Size':
-            mult = AskForInput(Input.Number, prompt=f'What is the scaling factor?', default=1, allowDecimals=True)
-            if mult != 1:
-                file = GetFile("FLS/Other/nutriKeys.txt")
-                for item in SplitText(file, '\n'):
-                    num = oldFood[item] * mult
-                    oldFood[item] = num
-            
-            MENURESULT = oldFood
+        if name != oldFood['Name']:
+            # need to ensure it isnt taken by something else
 
-        case 'Edit Food Fields Manually':
-            # do display food editign
-            ...
-            MENURESULT = res
+            # check to make sure it doesnt clash with other food names
+            folder = GetFile("FLS/Presets/Foods", errorIfNotFound=False)
+            for food in GetContentsOfFolder(folder):
+                presetNames.append(food['Name'])
 
-    newFood = MENURESULT
-    name = Text(newFood['Name'])
+            breakLoop = FALSE
+            for _ in range(10):
+                if breakLoop == FALSE:
+                    res = filter(presetNames, whereAll=['Name' == name, 'Name' != oldFood['Name']])
+                    if res is not None:
+                        name = AskForInput(Input.Text, prompt=f'"{name}" already exists, please select a new name')
+                    else:
+                        breakLoop = TRUE
 
-    if name != oldFood['Name']:
-        # need to ensure it isnt taken by something else
-
-        # check to make sure it doesnt clash with other food names
-        folder = GetFile("FLS/Presets/Foods", errorIfNotFound=False)
-        for food in GetContentsOfFolder(folder):
-            presetNames.append(food['Name'])
-
-        breakLoop = FALSE
-        for _ in range(10):
-            if breakLoop == FALSE:
-                res = filter(presetNames, whereAll=['Name' == name, 'Name' != oldFood['Name']])
-                if res is not None:
-                    name = AskForInput(Input.Text, prompt=f'"{name}" already exists, please select a new name')
-                else:
-                    breakLoop = TRUE
-
-    newFood['Name'] = name
+        newFood['Name'] = name
 
 
-    # save the file
-    SaveFile(newFood, f"FLS/Presets/Foods/food_{foodId}.json", overwrite=True)
+        # save the file
+        SaveFile(newFood, f"FLS/Presets/Foods/food_{foodId}.json", overwrite=True)
 
-    # rewrite the vcard cache
-    file = GetFile("FLS/Presets/vcardCache.txt", errorIfNotFound=False)
-    vcardCache = Text(file)
-
-    # add to vcard
-    newVcard = f'''
-            N;CHARSET=UTF-8:{presetFood['Name']}
-            ORG;CHARSET=UTF-8:{presetFood['Serving Size']}
-            NOTE;CHARSET=UTF-8:{foodId}
-        '''
-
-    vcardCache = ReplaceText(vcardCache, oldVcard, newVcard)
-    SaveFile(text, "FLS/Presets/vcardCache.txt", overwrite=True)
+    # delete the cache since it is invalid
+    file = GetFile("FLS/Presets/vcardCache.txt")
+    DeleteFile(file, deleteImmediately=True)
+    
 
 #---------------------------------------------------------------------------------------------------------------------------------
 
@@ -797,7 +791,7 @@ def FoodsList(): # Foods List
 # --------------------------------------------------------------------------------------------------------------------------------
 
 def GetRecent(): # "Get Recent"
-    backwardIcon = # ... from search algorithm
+    cancelIcon = # ... 
 
     dir_ = GetFile(f"FLS/Recents/Foods")
 
@@ -821,9 +815,9 @@ def GetRecent(): # "Get Recent"
     text = f'''
         BEGIN:VCARD
         VERSION:3.0
-        N;CHARSET=UTF-8:Back
-        ORG;CHARSET=UTF-8:Go Back to Previous Page
-        {backwardIcon}
+        N;CHARSET=UTF-8:No Selection
+        ORG;CHARSET=UTF-8:No foods will be selected
+        {cancelIcon}
         END:VCARD
         {REPEATRESULTS}
     '''
@@ -833,7 +827,7 @@ def GetRecent(): # "Get Recent"
     selectedItems = ChooseFrom(contacts, prompt="Select Recent Foods", selectMultiple=True)
 
     for chosen in selectedItems:
-        if chosen.Name == 'Back':
+        if chosen.Name == 'No Selection':
             return None
 
         file = GetFile(f"FLS/Recents/Foods/food_{chosen.Notes}.json")
@@ -1098,9 +1092,10 @@ def SearchAlgorithm():
     forwardIcon = # forwardIcon.txt
     backwardIcon = # backwardIcon.txt
     searchIcon = # searchIcon.txt
+    cancelIcon = # cancelIcon.txt
 
 
-    resCount = 7
+    resCount = 6
     searchExit = FALSE
     pageNo = 1
 
@@ -1159,22 +1154,29 @@ def SearchAlgorithm():
 
                 BEGIN:VCARD
                 VERSION:3.0
-                N;CHARSET=utf-8: Next Page
+                N;CHARSET=utf-8:Next Page
                 ORG: Page {nextPage}
                 {forwardIcon}
                 END:VCARD
 
                 BEGIN:VCARD
                 VERSION:3.0
-                N;CHARSET=utf-8: Previous Page
+                N;CHARSET=utf-8:Previous Page
                 ORG: Page {prevPage}
                 {backwardIcon}
                 END:VCARD
 
                 BEGIN:VCARD
                 VERSION:3.0
-                N;CHARSET=utf-8: New Search
+                N;CHARSET=utf-8:New Search
                 ORG: Try a different query
+                {searchIcon}
+                END:VCARD
+
+                BEGIN:VCARD
+                VERSION:3.0
+                N;CHARSET=utf-8:Cancel Search
+                ORG:No food will be selected
                 {searchIcon}
                 END:VCARD
             '''
@@ -1200,6 +1202,10 @@ def SearchAlgorithm():
                 isControlItem = TRUE
                 res = RunShorctut(NutriDix['Search Algorithm'])
                 return res
+
+            if chosenItem.Name == 'Cancel Search':
+                isControlItem = TRUE
+                return None
             
             if isControlItem == FALSE:
                 # then its not a control item
