@@ -1694,12 +1694,19 @@ def Nutrition():
 
     if mainMenu.opt("Quick Log"):
         # InRecents does not exist!
-        for item in RunShortcut(shortcutNames["Get Recent"], input=InRecents):
+
+        Menu('From Where?'):
+            case 'Preset(s)':
+                MENURESULT = RunShortcut(shortcutNames['Get Preset'])
+            case 'Recent(s)':
+                MENURESULT = RunShortcut(shortcutNames['Get Recent'])
+
+        for item in MENURESULT:
             CurFood = item
             text = f"How many servings of {CurFood['Name']}\n(1 serving = {CurFood['Serving Size']})"
             
             # translates to set dictionary value in CurFood and then set dictionary
-            CurFood['Servings'] = AskForInput(text, Input.Number, default=1, allowDecimalNumbers=True, allowNegativeNumbers=True)
+            CurFood['Servings'] = AskForInput(text, Input.Number, default=1, allowDecimalNumbers=True, allowNegativeNumbers=False)
 
             dix = {
                 'Date': str(Date.CurrentDate)
@@ -1716,7 +1723,6 @@ def Nutrition():
     elif mainMenu.opt("Log Foods"):
 
         Dating = AskForInput("What date and time? Click Done for Right Now", Input.DateAndTime)
-
 
         for item in RunShortcut(shortcutNames["Foods List"]):
             CurFood = item
