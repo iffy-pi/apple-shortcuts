@@ -197,6 +197,11 @@ CURRENT STATE:
 # GLOBAL VARS
 FLS = "Shortcuts/FLS"
 
+def textToContacts(var):
+    text = Text(var)
+    renamedItem = SetName(var, 'vcard.vcf')
+    return GetContacts(renamedItem)
+
 #---------------------------------------------------------------------------------------------------------------------------------
 # TO USE #---------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------
@@ -636,68 +641,104 @@ def MakePreset(): # Make Preset
         IFRESULT = RunShortcut(nutrDix['Foods List'])
 
     foods = IFRESULT
+    remainingFoods = IFRESULT
 
     file = GetFile('FLS/Other/nutriKeys.txt')
     nutriKeys = SplitText(file, '\n')
 
-    presetFood = {}
+    foodsDix = {}
+    selectedIds = []
+    nextId = 0
 
+
+    # create selection system
     for item in foods:
-        food = Dictionary(item)
-
-        defaultSize = food['Serving Size']
-        defaultName = food['Name']
-
-        if food['Servings'] is None:
-            IFRESULT = AskForInput(Input.Number, prompt=f"How many servings? (1 serving = {food['Serving Size']})",
-                        default=1, allowDecimals=True, allowNegatives=False)
-        else:
-            IFRESULT = Number(food['Servings'])
-        servings = IFRESULT
-
-        for nutr in nutriKeys:
-            num = Number(food[nutr])
-            # multiply nutrients by serving size
-            num = num * servings
-
-            # add to total nutrients of preset
-            num2 = Number(presetFood[nutr])
-            num = num + num2
-
-            presetFood[nutr] = num
-
-
-    # now presetFood will have all the items
-    if Count(foods) > 1:
-        defaultSize = ''
-        defaultName = ''
-
-    servingSize = AskForInput(Input.Text, prompt="What is the serving size of this preset?", default=defaultSize)
-    name = AskForInput(Input.Text, prompt="What is the name of this preset?", default=defaultName)
+        foodsDix[nextId] = item
+        selectedIds.append(nextId)
+        nextId = nextId+1
 
     # check to make sure it doesnt clash with other food names
     folder = GetFile("FLS/Presets/Foods", errorIfNotFound=False)
     for file in GetContentsOfFolder(folder):
         presetNames.append(file['Name'])
 
-    if Count(presetNames) > 0:
-        breakLoop = FALSE
-        for _ in range(10):
-            if breakLoop == FALSE:
-                res = filter(presetNames, where['Name' == name])
-                if res is not None:
-                    name = AskForInput(Input.Text, prompt=f'"{name}" already exists, please select a new name', default=name)
+    for _ in Count(foods):
+        if Count(selectedIds) > 0:
+            for listId in selectedIds
+                food = foodsDix[listId]
+                text = f'''
+                BEGIN:VCARD
+                VERSION:3.0
+                N;CHARSET=UTF-8:{food['Name']}
+                ORG;CHARSET=UTF-8:{food['Servings']} servings
+                NOTE;CHARSET=UTF-8:{listId}
+                END:VCARD
+                '''
+                REPEATRESULTS.append(text)
+
+            contacts = textToContacts(REPEATRESULTS)
+            chosenIds = ChooseFrom(contacts, selectMultiple=True, selectAll=True, prompt="Select Foods to be made into Preset")
+        
+            presetFood = {}
+
+            for contact in chosenIds:
+                # remove from selectedIds
+                selectedIds = filter(selectedIds, where='Name' != contact.Notes)
+
+                item = foodsDix[contact.Notes]
+                curFood = Dictionary(item)
+
+                defaultSize = curFood['Serving Size']
+                defaultName = curFood['Name']
+
+                if curFood['Servings'] is None:
+                    IFRESULT = AskForInput(Input.Number, prompt=f'How many servings of "{defaultName}"? (1 serving = {defaultSize})',
+                                default=1, allowDecimals=True, allowNegatives=False)
                 else:
-                    breakLoop = TRUE
+                    IFRESULT = Number(curFood['Servings'])
+                servings = IFRESULT
 
-    # then set in the food
-    foodId = RunShortcut(nutrDix["GFID"])
-    presetFood['id'] = foodId
-    presetFood['Serving Size'] = servingSize
-    presetFood['Name'] = name
+                for nutr in nutriKeys:
+                    num = Number(curFood[nutr])
+                    # multiply nutrients by serving size
+                    num = num * servings
 
-    # save to file
-    SaveFile(presetFood, f"FLS/Presets/Foods/food_{foodId}.json", overwrite=True)
+                    # add to total nutrients of preset
+                    num2 = Number(presetFood[nutr])
+                    num = num + num2
+                    num = RoundNumber(num, hundredths)
+
+                    presetFood[nutr] = num
+
+
+            # now presetFood will have all the items
+            if Count(chosenIds) > 1:
+                defaultSize = ''
+                defaultName = ''
+
+            name = AskForInput(Input.Text, prompt="What is the name of this preset?", default=defaultName)
+
+            if Count(presetNames) > 0:
+                breakLoop = FALSE
+                for _ in range(10):
+                    if breakLoop == FALSE:
+                        res = filter(presetNames, where['Name' == name])
+                        if res is not None:
+                            name = AskForInput(Input.Text, prompt=f'"{name}" already exists, please select a new name', default=name)
+                        else:
+                            presetNames.append(name)
+                            breakLoop = TRUE
+
+            servingSize = AskForInput(Input.Text, prompt="What is the serving size of this preset?", default=defaultSize)
+
+            # then set in the food
+            foodId = RunShortcut(nutrDix["GFID"])
+            presetFood['id'] = foodId
+            presetFood['Serving Size'] = servingSize
+            presetFood['Name'] = name
+
+            # save to file
+            SaveFile(presetFood, f"FLS/Presets/Foods/food_{foodId}.json", overwrite=True)
 
     # delete the cache since it is invalid
     file = GetFile("FLS/Presets/vcardCache.txt")
@@ -713,26 +754,31 @@ def EditPreset(): # Edit Preset
     nutrDix = Dictionary(RunShortcut("NutrDix"))
     selectedPresets = RunShortcut(nutrDix['Get Preset'])
 
+    file = GetFile("FLS/Other/nutriKeys.txt")
+    nutriKeys = SplitText(file, '\n')
+
     for item in selectedPresets:
         oldFood = Dictionary(item)
         
         foodId = food['id']
 
         Menu(f"What type of editing would you like to do for {oldFood['Name']}?"):
-            case 'Scale Up Serving Size':
+            case 'Scale Serving Size':
                 mult = AskForInput(Input.Number, prompt=f'What is the scaling factor?', default=1, allowDecimals=True)
                 if mult != 1:
-                    file = GetFile("FLS/Other/nutriKeys.txt")
-                    for item in SplitText(file, '\n'):
-                        num = oldFood[item] * mult
+                    for item in nutriKeys:
+                        num = Number(oldFood[item])
+                        num = num * mult
+                        num = RoundNumber(num, hundredths)
                         oldFood[item] = num
+
+                    oldFood['Serving Size'] = AskForInput(Input.Text, prompt="What is the new serving size?", default=f"{mult} of {oldFood['Serving Size']}")
                 
                 MENURESULT = oldFood
 
             case 'Edit Food Fields Manually':
                 # do display food editing TODO
-                ...
-                MENURESULT = res
+                MENURESULT = RunShortcut(nutrDix['Display Food Item'], input=oldFood)
 
         newFood = MENURESULT
         name = newFood['Name']
@@ -779,12 +825,161 @@ def RemovePreset():
 # --------------------------------------------------------------------------------------------------------------------------------
 
 def BulkEntry(): # Bulk Entry
-    pass
+    nutrDix = Dictionary(RunShortcut("NutrDix"))
+    selectedFoods = RunShortcut(nutrDix['Foods List'])
+
+    nextId = 0
+    foodsDix = {}
+    selectedIds = []
+
+
+    for food in selectedFoods:
+        # generate list Id for the item
+        foodsDix[nextId] = food
+        selectedIds.append(nextId)
+        nextId = nextId + 1
+
+    for _ in range(Count(selectedFoods)):
+        if Count(selectedIds) > 0:
+            for listId in selectedIds
+                food = foodsDix[listId]
+                text = f'''
+                BEGIN:VCARD
+                VERSION:3.0
+                N;CHARSET=UTF-8:{food['Name']}
+                ORG;CHARSET=UTF-8:{food['Servings']} servings
+                NOTE;CHARSET=UTF-8:{listId}
+                END:VCARD
+                '''
+                REPEATRESULTS.append(text)
+
+        # max repeat will be at most items
+        contacts = textToContacts(REPEATRESULTS)
+        chosen = ChooseFrom(contacts, prompt="Select foods to apply a date to", selectMultiple=True)
+        
+        date = AskForInput(Input.DateAndTime, "What date should be applied to the foods?")
+
+        for item in chosen:
+            # remove from the list
+            listId = Contact(item).Notes
+            selectedIds = filter(selectedIds, where=['Name' == listId])
+            food = foodsDix[listId]
+            text = {
+                'Date': date.format(date="medium", time="short"),
+                'Food': food
+            }
+            res = RunShortcut('Log Algorithm', input=text)
+            loggedFoods.append(res)
+        
+        Menu('Make Preset?'):
+            case 'Yes':
+                RunShortcut(nutrDix['Make Preset'], input=loggedFoods)
+            case 'No':
+                pass
 
 #---------------------------------------------------------------------------------------------------------------------------------
 
 def FoodsList(): # Foods List
-    pass
+    TRUE = 1
+    FALSE = 0
+
+    nutrDix = Dictionary(RunShortcut("NutrDix"))
+    
+    foodsDix = {}
+
+    # list ids
+    selectedIds = []
+
+    nextId = 0
+
+    maxLoops = 30
+    breakLoop = FALSE
+
+    for _ in range(maxLoops):
+        if breakLoop == FALSE:
+            for listId in selectedIds:
+                food = foodsDix[listId]
+                REPEATRESULTS.append(f'{food['Servings']}x {food['Name']}')
+
+            if REPEATRESULTS is not None:
+                IFRESULT = f'''
+                Current Selected Foods:
+                {REPEATRESULTS}
+                '''
+            else:
+                IFRESULT = f'''
+                No foods selected
+                '''
+
+            addMenuResult = TRUE
+
+            Menu(IFRESULT):
+            case 'Search Food':
+                MENURESULT = RunShortcut(nutrDix['Search Algorithm'])
+
+            case 'Get Preset(s)':
+                MENURESULT = RunShortcut(nutrDix['Get Preset'])
+
+            case 'Get Recent Meals':
+                MENURESULT = RunShortcut(nutrDix['Get Recent'])
+
+            case 'Get Barcoded Food':
+                MENURESULT = RunShortcut(nutrDix['Get Barcode'])
+
+            case 'Make Food Manually':
+                # TODO, make manual maker
+                MENURESULT = RunShortcut(nutrDix['Get Barcode'])
+
+            case 'Remove Selected Foods':
+                addMenuResult = FALSE
+                # Remove selection
+                for listId in selectedIds:
+                    food = foodsDix[listId]
+                    text = f'''
+                    BEGIN:VCARD
+                    VERSION:3.0
+                    N;CHARSET=UTF-8:{food['Name']}
+                    ORG;CHARSET=UTF-8:{food['Servings']} servings
+                    NOTE;CHARSET=UTF-8:{listId}
+                    END:VCARD
+                    '''
+                    REPEATRESULTS.append(text)
+
+                text = Text(REPEATRESULTS)
+                renamedItem = SetName(text, 'vcard.vcf')
+                contacts = GetContacts(renamedItem)
+
+                deletes = ChooseFrom(contacts, selectMultiple=True, prompt='Select foods to remove')
+
+                for delete in deletes:
+                    listId = Contact(delete).Notes
+                    # remove it from the list
+                    selectedIds = filter(selectedIds, where=['Name' != listId])
+
+            case 'Done Selecting Foods':
+                addMenuResult = FALSE
+                for listId in selectedIds:
+                    food = foodsDix[listId]
+                    RunShortcut(nutrDix['Add Recent'], input=food)
+                    REPEATRESULTS.append(food)
+                
+                return REPEATRESULTS
+
+            if addMenuResult == TRUE:
+                # add the foods to our selected foods
+                for food in MENURESULT:
+                    # Ask for the servings
+                    servings = AskForInput(Input.Number, f'How many servings of {food['Name']}? (1 serving = {food['Serving Size']})', allowDecimals=True, allowNegatives=False)
+                    food['Servings'] = servings
+
+                    # generate list Id for the item
+                    foodsDix[nextId] = food
+                    selectedIds.append(nextId)
+                    nextId = nextId + 1
+
+
+
+
 
 #---------------------------------------------------------------------------------------------------------------------------------
 # Recents #---------------------------------------------------------------------------------------------------------------------------------
@@ -872,7 +1067,7 @@ def AddRecent():
 # SHARED ---------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------
 
-def LogAlgorithm(dix): # Log Algorithm
+def LogAlgorithm(): # Log Algorithm
     '''
     Update to use new backlog system
     Update to use dictionary from input
@@ -1060,7 +1255,64 @@ def LogAlgorithm(dix): # Log Algorithm
 #---------------------------------------------------------------------------------------------------------------------------------
 
 def DisplayFoodItem():
-    pass
+    foodDix = ShortcutInput
+
+    g = '(g)'
+    mg = '(mg)'
+
+    # The goal is to display the dictionary in a way that makes sense to the user
+    # So we have to use special keys for the dictionary
+
+
+    # unit Dix maps the keys of the food dictionary to their user understandable fields
+
+    # displayDix maps the user fields to the appropriate key values
+
+    # displayKeys translate keys in foodDix to the key that will be displayed to user
+    displayKeys = {
+       "Name":            "Name",
+       "Barcode":         "Barcode",
+       "Serving Size":    "Serving Size",
+       "Calories":        "Calories (cal)",
+       "Carbs":           "Carbs (g)",
+       "Protein":         "Protein (g)",
+       "Fat":             "Fat (g)",
+       "Sugar":           "Sugar (g)",
+       "Fiber":           "Fiber (g)",
+       "Monounsaturated": "Monounsaturated (g)",
+       "Polyunsaturated": "Polyunsaturated (g)",
+       "Saturated":       "Saturated (g)",
+       "Cholesterol":     "Cholesterol (mg)",
+       "Trans":           "Trans (g)",
+       "Sodium":          "Sodium (mg)",
+       "Potassium":       "Potassium (mg)",
+       "VitA":            "VitA (mcg)",
+       "VitC":            "VitC (mg)",
+       "Calcium":         "Calcium (mg)",
+       "Iron":            "Iron (mg)"
+    }
+
+    # display dix is where the user does the actual editing
+    displayDix = {
+        # uses the displayKeys (i.e. for key i, the key field in displayDix is displayKeys[i])
+        ... # see actual shortcut
+    }
+
+    file = GetFile('FLS/Other/nutriKeys.txt')
+    nutriKeys = SplitText(file, '\n')
+
+    for key in displayKeys.keys():
+        field = displayKeys[key]
+
+        # get the field from the displayDix and set it in food
+        res = filter(nutriKeys, where=['Name' == key])
+        if res is not None:
+            num = Number(displayDix[field])
+            IFRESULT = RoundNumber(num, hundredths)
+        else:
+            IFRESULT = displayDix[field]
+
+        foodDix[key] = IFRESULT
 
 #---------------------------------------------------------------------------------------------------------------------------------
 
@@ -1075,9 +1327,6 @@ def GenerateFoodId():
     num = _id + 1
     SaveFile(num, "FLS/Other/nextFoodId.txt")
     return 
-
-#---------------------------------------------------------------------------------------------------------------------------------
-
 
 #---------------------------------------------------------------------------------------------------------------------------------
 
@@ -1465,13 +1714,6 @@ def Nutrition():
             return
 
     elif mainMenu.opt("Log Foods"):
-        if GetDeviceDetails("Model") == 'iPhone':
-            # action will be discontinued in later versions
-            ContinueInShortcutsApp()
-
-        LoggedFoodsDix = {
-            'SAMPLE' : 'SAMPLE'
-        }
 
         Dating = AskForInput("What date and time? Click Done for Right Now", Input.DateAndTime)
 
@@ -1483,44 +1725,18 @@ def Nutrition():
                 'Food': dix(CurFood)
             }
 
-            CurLoggedFood = RunShortcut(shortcutNames["Log Algorithm"], input=dix)
-            
-            # Comment: Get the logged food dictionary and add it into the logged foods dix,
-            # with key: servings of food and value: food dictionary
-
-            roundedNumber = Round(Number(CurLoggedFood['Servings']), "Hundredths")
-            LoggedFoodsDix[ f"{roundedNumber}x{CurLoggedFood['name']}" ] = CurLoggedFood
-
+            res = RunShortcut(shortcutNames["Log Algorithm"], input=dix)
+            REPEATRESULTS.append(res)
 
         makePresetMenu = Menu(prompt="Make Preset?", options=["Yes", "No"])
 
         if makePresetMenu.opt("Yes"):
-            # Get the keys from the logged foods dix so users can select what foods they want to make into a preset
-            res = Filter( 
-                SplitText(Text(LoggedFoodsDix.Keys)), 
-                where=[
-                    "Name" is not "SAMPLE",
-                ])
-
-            chosenItems = ChooseFrom(res, prompt="Select Foods For Preset", selectMultiple=True)
-
-            for item in chosenItems:
-                # With each chosen key we use the key to retrieve the value from logged food dix
-                # and add it to the list of foods to be made into a preset (chosenFoods)
-                # each item in this case are the keys from the loggedfoodsdix
-                ChosenFoods.Append( LoggedFoodsDix[item] )
-
-            # run shortcutNames[make preset ]with chosen foods
-            RunShortcut(shortcutNames["Make Preset"], input=ChosenFoods)
-
+            RunShortcut(shortcutNames["Make Preset"], input=REPEATRESULTS)
+        
         elif makePresetMenu.opt("No"):
             pass
 
     elif mainMenu.opt("Log Foods In Bulk"):
-        if GetDeviceDetails("Model") == 'iPhone':
-            # action will be discontinued in later versions
-            ContinueInShortcutsApp()
-
         RunShortcut(shortcutNames["Bulk Entry"])
 
     elif mainMenu.opt("Search and View"):
@@ -1567,32 +1783,13 @@ def Nutrition():
 
         elif prm.opt("Make Preset"):
             # run shortcutNames[foods list ]to get list of foods to be made into a preset
-            res = RunShortcut(shortcutNames["Foods List"])
-
-            for item in res:
-                curFood = item
-                loggedFoods3.append(curFood)
-
-            RunShortcut(shortcutNames["Make Preset"], loggedFoods3)
-
+            RunShortcut(shortcutNames["Make Preset"])
 
         elif prm.opt("Edit Preset"):
             RunShortcut(shortcutNames["Edit Preset"])
 
-
         elif prm.opt("Remove Preset(s)"):
-            # retrieve preset names, let user choose preset then retrieve food dix and delete it by runnshortcutNames[ing remove ]preset
-            file = GetFile("FLS/Presets/presetNames.txt")
-            res = SplitText(file, SplitText.ByNewLines)
-            
-            presetsToBeDeleted = ChooseFrom(res, selectMultiple=True)
-
-            ShowAlert("Do You Want To Continue?", title="Presets About to Be Deleted", showCancel=True)
-
-            for item in presetsToBeDeleted:
-                file = GetFile(f"FLS/Presets/Foods/{item}.txt")
-                text = file.read()
-                RunShortcut(shortcutNames["Remove Preset"], text)
+            RunShortcut(shortcutNames["Remove Preset"])
 
     elif mainMenu.opt("Barcodes"):
         brm = Menu(prompt="Barcodes", options=[
