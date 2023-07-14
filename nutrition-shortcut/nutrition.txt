@@ -478,6 +478,63 @@ def RemoveBarcode():
     pass
 
 #---------------------------------------------------------------------------------------------------------------------------------
+
+def ManualLogging(): # Manual Logging 3
+    nutrDix = Dictionary(RunShortcut("NutrDix"))
+    exactValDix = {
+        'VitA': 1000,
+        'VitC': 60,
+        'Calcium': 1100,
+        'Iron': 14
+    }
+
+    foodDix = RunShortcut(nutrDix['Display Food Item'])
+
+    # we need to check if there are any vitamin values before
+    num = foodDix['VitA'] + foodDix['VitC']
+    num = num + foodDix['Calcium']
+    num = num + foodDix['Iron']
+
+    if num > 0:
+        Menu('Vitamins and Minerals are in'):
+            case 'Exact Values':
+                MENURESULT = 0
+            case 'Daily Percentages':
+                MENURESULT = 1
+        IFRESULT = 1
+    else:
+        IFRESULT = 0
+
+    if IFRESULT == 1:
+        for vitKey in exactValDix.keys():
+            num = foodDix[vitKey] / 100
+            num = num * exactValDix[vitKey]
+            num = RoundNumber(num)
+            foodDix[vitKey] = num
+
+    # check to make sure food has a name and a serving size
+    text = f'[{foodDix['Name']}]'
+    if text != '[]':
+        IFRESULT = foodDix['Name']
+    else:
+        IFRESULT = AskForInput(Input.Text, 'What is the name of the food?', allowMultipleLines=False)
+    name = IFRESULT
+
+    text = f'[{foodDix['Serving Size']}]'
+    if text != '[]':
+        IFRESULT = foodDix['Serving Size']
+    else:
+        IFRESULT = AskForInput(Input.Text, 'What is the serving size of the food?', allowMultipleLines=False)
+    servingSize = IFRESULT
+
+    foodId = RunShortcut(nutrDix['GFID'])
+    foodDix['id'] = foodId
+    foodDix['Name'] = name
+    foodDix['Serving Size'] = servingSize
+
+    return foodDix
+
+#---------------------------------------------------------------------------------------------------------------------------------
 # PRESETS #---------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------
 
@@ -741,7 +798,7 @@ def MakePreset(): # Make Preset
             SaveFile(presetFood, f"FLS/Presets/Foods/food_{foodId}.json", overwrite=True)
 
     # delete the cache since it is invalid
-    file = GetFile("FLS/Presets/vcardCache.txt")
+    file = GetFile("FLS/Presets/vcardCache.txt", errorIfNotFound=False)
     DeleteFile(file, deleteImmediately=True)
 
 #---------------------------------------------------------------------------------------------------------------------------------
@@ -807,10 +864,9 @@ def EditPreset(): # Edit Preset
         SaveFile(newFood, f"FLS/Presets/Foods/food_{foodId}.json", overwrite=True)
 
     # delete the cache since it is invalid
-    file = GetFile("FLS/Presets/vcardCache.txt")
+    file = GetFile("FLS/Presets/vcardCache.txt", errorIfNotFound=False)
     DeleteFile(file, deleteImmediately=True)
     
-
 #---------------------------------------------------------------------------------------------------------------------------------
 
 def RemovePreset():
@@ -976,10 +1032,6 @@ def FoodsList(): # Foods List
                     foodsDix[nextId] = food
                     selectedIds.append(nextId)
                     nextId = nextId + 1
-
-
-
-
 
 #---------------------------------------------------------------------------------------------------------------------------------
 # Recents #---------------------------------------------------------------------------------------------------------------------------------
@@ -1255,7 +1307,14 @@ def LogAlgorithm(): # Log Algorithm
 #---------------------------------------------------------------------------------------------------------------------------------
 
 def DisplayFoodItem():
-    foodDix = ShortcutInput
+    if ShortcutInput is not None:
+        IFRESULT = ShortcutInput
+    else:
+        # the default food dictionary
+        IFRESULT = '''
+        '''
+    foodDix = Dictionary(IFRESULT)
+
 
     g = '(g)'
     mg = '(mg)'
@@ -1273,7 +1332,7 @@ def DisplayFoodItem():
        "Name":            "Name",
        "Barcode":         "Barcode",
        "Serving Size":    "Serving Size",
-       "Calories":        "Calories (cal)",
+       "Calories":        "Calories (kCal)",
        "Carbs":           "Carbs (g)",
        "Protein":         "Protein (g)",
        "Fat":             "Fat (g)",
@@ -1295,24 +1354,51 @@ def DisplayFoodItem():
     # display dix is where the user does the actual editing
     displayDix = {
         # uses the displayKeys (i.e. for key i, the key field in displayDix is displayKeys[i])
+        # for key in displayKeys:
+        #     dispKey = displayKeys[key]
+        #     displayDix[key] = foodDix[key]
+
+        # Note: Number fields are typed as text because shortcuts dictionary does not support decimal number entering
         ... # see actual shortcut
     }
 
-    file = GetFile('FLS/Other/nutriKeys.txt')
-    nutriKeys = SplitText(file, '\n')
+    # Text takes keys in displayDix and maps them back to the food dictionary
+    # in code terms:
+    # for key in displayKeys:
+    #     dispKey = displayKeys[key]
+    #     textDix[key] = displayDix[dispKey]
+    text = ... # see actual shortcut
 
-    for key in displayKeys.keys():
-        field = displayKeys[key]
+    dix = Dictionary(text)
+    if dix is not None:
+        # it could be parsed correctly
+        # If the user keeps 0s before values, parsing will fail so we need to check
 
-        # get the field from the displayDix and set it in food
-        res = filter(nutriKeys, where=['Name' == key])
-        if res is not None:
-            num = Number(displayDix[field])
-            IFRESULT = RoundNumber(num, hundredths)
+        # set the food ID if it is present
+        if foodDix['id'] is not None:
+            dix['id'] = foodDix['id']
+            IFRESULT = dix
         else:
-            IFRESULT = displayDix[field]
+            IFRESULT = dix
 
-        foodDix[key] = IFRESULT
+        foodDix = dix
+    else:
+        # parsing failed, build it the normal way
+        file = GetFile('FLS/Other/nutriKeys.txt')
+        nutriKeys = SplitText(file, '\n')
+
+        for key in displayKeys.keys():
+            field = displayKeys[key]
+
+            # get the field from the displayDix and set it in food
+            res = filter(nutriKeys, where=['Name' == key])
+            if res is not None:
+                num = Number(displayDix[field])
+                IFRESULT = RoundNumber(IFRESULT, hundredths)
+            else:
+                IFRESULT = displayDix[field]
+
+            foodDix[key] = IFRESULT
 
 #---------------------------------------------------------------------------------------------------------------------------------
 
@@ -1559,11 +1645,14 @@ def SearchAlgorithm():
 #---------------------------------------------------------------------------------------------------------------------------------
 
 def NutriDix():
-    return ;;
+    GetFile('FLS/Other/shortcutDix.txt')
+    return file
 
 #---------------------------------------------------------------------------------------------------------------------------------
 
-def SaveEnvVars(Dictionary(newVars)):
+def SaveEnvVars():
+    newVars = Dictionary(ShortcutInput)
+
     # get the environment file
     # NOT DONE: SAVE TO ENVIRONMENT FILE SO SYSTEM HAS ACCESS TO IT
     GetFile("FLS/Other/env.json", noError=True)
@@ -1703,6 +1792,9 @@ def Nutrition():
 
         for item in MENURESULT:
             CurFood = item
+
+            RunShortcut(shortcutNames["Add Recents"], input=dix)
+
             text = f"How many servings of {CurFood['Name']}\n(1 serving = {CurFood['Serving Size']})"
             
             # translates to set dictionary value in CurFood and then set dictionary
@@ -1712,10 +1804,7 @@ def Nutrition():
                 'Date': str(Date.CurrentDate)
                 'Food': dix(CurFood)
             }
-            LogList.append(dix)
-
-        for item in LogList:
-            RunShortcut(shortcutNames["Log Algorithm"], input=item)
+            RunShortcut(shortcutNames["Log Algorithm"], input=dix)
 
         if exitAfterQuickLog == TRUE:
             return
