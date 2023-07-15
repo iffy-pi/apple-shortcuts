@@ -98,7 +98,10 @@ def main():
 			CopyToClipboard(urlContents)
 			Notification(urlContents, title="Most recent push has been copied to your clipboard")
 		else:
-			QuickLook(renamedItem)
+			# _type = GetType(renamedItem)
+			# files = filter(_type, whereAny=['Name' == 'Image', 'Name' == 'Media'])
+			# if files has any va
+			Share(renamedItem)
 
 	# Check for updates
 	UpdateRes = GetContentsOfURL(UpdateInfo['updateLink'])
