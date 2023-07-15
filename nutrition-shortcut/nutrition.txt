@@ -692,13 +692,15 @@ def MakePreset(): # Make Preset
     FALSE = 0
 
     nutrDix = Dictionary(RunShortcut("NutrDix"))
+    
     if ShortcutInput is not None:
-        IFRESULT = ShortcutInput
+        # if we dont do this, then if result will be the item above the if
+        # i.e. nutrDix
+        IFRESULT = GetVariable(ShortcutInput)
     else:
         IFRESULT = RunShortcut(nutrDix['Foods List'])
 
     foods = IFRESULT
-    remainingFoods = IFRESULT
 
     file = GetFile('FLS/Other/nutriKeys.txt')
     nutriKeys = SplitText(file, '\n')
@@ -1053,7 +1055,7 @@ def GetRecent(): # "Get Recent"
             BEGIN:VCARD
             VERSION:3.0
             N;CHARSET=UTF-8:{food['name']}
-            ORG;CHARSET=UTF-8:{date}
+            ORG;CHARSET=UTF-8:{food['Serving Size']} ⸱ {date}
             NOTE;CHARSET=UTF-8:{food['id']}
             END:VCARD
         '''
@@ -1757,12 +1759,8 @@ def Nutrition():
                 ],
                 Unit=cal
             )
-
-
-        for sample in healthSamples:
-            calsToday = Health.Sample.GetDetails(sample, "Value") + calsToday
-
-        calsToday = Round (calsToday, "hundredths")
+        _sum = CalculateStatistics(healthSamples, "Sum")
+        calsToday = Round (_sum, "hundredths")
 
         IFRESULT = f"You've eaten {Ks} Calories Today."
 
@@ -1872,9 +1870,21 @@ def Nutrition():
         prm = Menu(prompt="Presets", options=["View Presets", "Make Preset", "Edit Preset", "Remove Preset(s)"])
 
         if prm.opt("View Presets"):
+            deletePresetCache = FALSE
             res = RunShortcut(shortcutNames["Get Preset"])
             for repeatItem in res:
-                RunShortcut(shortcutNames["Display Food Item"], input=repeatItem)
+                changedFood = Dictionary(RunShortcut(shortcutNames["Display Food Item"], input=repeatItem))
+                Menu(f'Save Changes to {changedFood['Name']}?'):
+                    case 'Yes':
+                        SaveFile(changedFood, f"FLS/Presets/Foods/food_{changedFood['id']}.json", overwrite=True)
+                        deletePresetCache = TRUE
+                    case 'No':
+                        pass
+
+                if deletePresetCache == TRUE:
+                    file = GetFile('FLS/Presets/vcardCache.txt', errorIfNotFound=False)
+                    DeleteFile(file, deleteImmediately=True)
+
 
         elif prm.opt("Make Preset"):
             # run shortcutNames[foods list ]to get list of foods to be made into a preset
@@ -2004,3 +2014,5 @@ def Nutrition():
         SaveFile(Text(CurrentDate.format(date="short", time=None)), "FLS/Other/lastUpdateCheck.txt", overwrite=True)
 
 #---------------------------------------------------------------------------------------------------------------------------------
+
+def testing1():
