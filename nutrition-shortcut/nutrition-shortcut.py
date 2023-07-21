@@ -533,7 +533,7 @@ def BarcodeSearch():
     nutrDix = Dictionary(GetFile('FLS/Other/shortcutNames.json'))
     Menu("Get Food"):
         case 'Select from Personal Database':
-            return RunShortcut(nutrDix['Get Saved Food'])
+            return RunShortcut(nutrDix['Get Saved Food'], input=)
 
         case 'Scan Barcode':
             barcode = Text(ScanBarcode())
