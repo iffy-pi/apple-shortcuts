@@ -1,0 +1,37 @@
+{
+    "Nutrition":"Nutrition",
+
+    "Foods List":"Foods List",
+    "Log Algorithm":"Log Algorithm",
+    "Search Algorithm":"Search Algorithm",
+    "GFID": "Generate Food ID",
+    "Display Food Item":"Display Food Item",
+
+    "Log Foods At Time" : "Log Foods At Time",
+    "Bulk Entry":"Bulk Entry",
+    "Saved And Search" : "Saved And Search",
+    "Clear Cache And Backlog": "Clear Cache And Backlog",
+
+    "Edit Saved Food": "Edit Saved Food",
+    "Select Saved Foods": "Select Saved Foods",
+
+    "Make Preset":"Make Preset",
+
+    "Get Recent":"Get Recent",
+    "Add Recent":"Add Recent",
+
+    "Get Barcode":"Get Barcode",
+    "Barcode Search":"Barcode Search",
+    "Manual Logging":"Manual Log",
+    "Edit Barcode":"Edit Barcode",
+    "Remove Barcode":"Remove Barcode",
+
+    "Food History":"Food History",
+
+    "Day Summary":"Day Summary",
+    "Plot Day Summary":"Plot Day Summary",
+    "Week Summary":"Week Summary",
+    "Plot Week Summary":"Plot Week Summary",
+
+    "NutrDix Updater":"Nutri-Hub",
+}

@@ -1,3 +1,4 @@
+# pylint: skip-file
 '''
 ON THE TODO:
     - Shortcut Review
@@ -132,17 +133,19 @@ CURRENT STATE:
         - Presets
             - presetNames.txt : For names of presets
             - Foods
-                - Food.txt dictionaries ...
+                - Food JSON files in the format of food_{food id}.json
 
         - Recents:
             - recentNames.txt : For names of recents foods
             - Foods:
-                - Food.txt dictionaries ...
+                - Food JSON files in the format of food_{food id}.json
 
         - Barcodes
+            - barcodesInfo.json : Maps barcodes to food IDs
+
             - barcodeDix.txt : Maps barcodes to food names
             - Foods
-                - Food.txt dictionaries ...
+                - Food JSON files in the format of food_{food id}.json
         
         - History
             - foodHistoryDix.txt => foodHistory.json
@@ -153,45 +156,25 @@ CURRENT STATE:
             - nextFoodId.txt : Generates next Unique ID for food
             - lastUpdateCheck: : Date of last checked update
             - nutriKeys.txt : Keys in the food dictionary that are the nutrients
-            - env.json
-            - shortcutDix.txt : ?Maps in script shortcut names to the actual shortcut names
+            - env.json : Stores environment variables
+            - shortcutNames.json : Stores the name of shortcuts which are used in Run Shortcut actions, ideally should allow user to configure it
+                See saved version
+                // The porting over shortcuts
                 {
-                    "Edit Preset":"Edit Preset2.0",
-                    "Correct Dictionary":"Correct Dictionary",
-                    "Food History":"Food History",
-                    "Foods List":"Foods List 1.3",
-                    "Bulk Entry":"Bulk Entry",
-                    "Plot Week Summary":"Plot Week Summary",
-                    "Log Algorithm":"Log Algorithm",
-                    "Edit Barcode":"Edit Barcode",
-                    "Day Summary":"Day Summary",
-                    "Get Barcode":"Get Barcode",
-                    "NutrDix":"NutrDix",
-                    "Remove Barcode":"Remove Barcode",
-                    "Plot Day Summary":"Plot Day Summary",
-                    "Remove Preset":"Remove Preset2.0",
-                    "NutrDix Updater":"Nutri-Hub",
-                    "Barcode Search":"Barcode Search",
-                    "Number Converter":"Number Converter",
-                    "Manual Logging":"Manual Logging 3",
-                    "Make Food Item":"Make Food Item",
-                    "Nutrition":"Nutrition",
-                    "Get Preset":"Get Preset",
-                    "Get Recent":"Get Recent",
-                    "Add Recents":"Add Recents",
-                    "Week Summary":"Week Summary",
-                    "Search Algorithm":"Search Algorithm",
-                    "Display Food Item":"Display Food Item 1.2",
-                    "Add Preset":"Add Preset 1.1",
-                    "Make Preset":"Make Preset 2.2",
-                    "Save Env Vars": "Save Env Vars",
                     "Port Over Food History": "Port Over Food History",
                     "Port Over Foods": "Port Over Foods",
                     "Port Over Recents and Presets": "Port Over Recents and Presets",
-                    "GFID": "Generate Food ID"
                 }
+                // deperectated
+                {
+                    "Correct Dictionary":"Correct Dictionary",
+                    "Number Converter":"Number Converter",
+                    "Make Food Item":"Make Food Item",
+                    "Save Env Vars": "Save Env Vars",
+                    "Add Preset":"Add Preset 1.1",
+                }
+
             - shortcutLinksDix.txt : ? Maps shortcuts to their icloud links
-            - Search
 '''
 
 # GLOBAL VARS
@@ -202,14 +185,11 @@ def textToContacts(var):
     renamedItem = SetName(var, 'vcard.vcf')
     return GetContacts(renamedItem)
 
-#---------------------------------------------------------------------------------------------------------------------------------
-# TO USE #---------------------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------------------
-def ConvertTextFileToJSON():
+def convertTextFileToJSON():
     GetFile(f"{folder}/{filename}.txt")
     RenameFile(f"{filename}.json")
 
-#---------------------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------------------PortOverFoods
 
 def PortOverFoods():
     file = GetFile("FLS/Other/nextFoodId.txt")
@@ -241,21 +221,195 @@ def PortOverFoods():
 
     SaveFile(nextId, "FLS/Other/nextFoodId.txt", overwrite=True)
 
-#---------------------------------------------------------------------------------------------------------------------------------
-# UPDATER #---------------------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------------------PortOverRecentsAndPresets
+
+def PortOverRecentsAndPresets():
+    nameFiles = [
+        "FLS/Presets/presetNames.txt",
+        "FLS/Recents/recentNames.txt"
+    ]
+
+    foodDirs = [
+        "FLS/Presets/Foods",
+        "FLS/Recents/Foods"
+    ]
+
+    # note files are originally text files without food ids
+
+    for REPEATITEM in nameFiles:
+        foodsDir = foodDirs.getItemAtIndex(REPEATINDEX)
+        file = GetFile(REPEATITEM, errorIfNotFound=False)
+        names = SplitText(file, '\n')
+        for name in names:
+            # Add the name to list
+            file = GetFile(f"{foodsDir}/{name}.json")
+            if file is not None:
+                food = Dictionary(file)
+
+                if food['id'] is None:
+                    res = RunShortcut(nutrDix['GFID'])
+                    food['id'] = res
+                    SaveFile(food, f'{foodsDir}/food_{foodId}.json', overwrite=True)
+                    IFRESULT = Number(res)
+                else:
+                    RenameFile(file, f"food_{IFARG}.json")
+                    IFRESULT = Number(IFARG)
+
+                foodId = IFRESULT
+
+                if name == 'FLS/Presets/presetNames.txt':
+                    text = f'''
+                        BEGIN:VCARD
+                        VERSION:3.0
+                        N;CHARSET=UTF-8:{food['Name']}
+                        ORG;CHARSET=UTF-8:{food['Serving Size']}
+                        NOTE;CHARSET=UTF-8:{foodId}
+                        END:VCARD
+
+                    '''
+                    vcardCache.append(text)
+
+    if vcardCache is not None:
+        SaveFile(Text(vcardCache), 'FLS/Presets/vcardCache.txt', overwrite=True)
+
+#---------------------------------------------------------------------------------------------------------------------------------PortOverRecentsAndPresets
+
+def PortOverBarcodes():
+    # note files are originally text files without food ids
+
+    barcodesFile = GetFile('FLS/Barcodes/barcodeDix.txt', errorIfNotFound=False)
+    barcodes = Dictionary(barcodesFile)
+
+    file = GetFile("FLS/Other/nextFoodId.txt", errorIfNotFound=False)
+    if file is not None:
+        IFRESULT = Number(file)
+    else:
+        IFRESULT = 0
+    nextId = IFRESULT
+
+    for item in barcodes.keys():
+        barcode = Text(item)
+        foodName = barcodes[item]
+        file = GetFile(f'FLS/Barcodes/Foods/{foodName}.json', errorIfNotFound=False)
+        if file is not None:
+            food = Dictionary(file)
+            if food['id'] is None:
+                num = nextId
+                nextId = nextId+1
+                IFRESULT = num
+            else:
+                IFRESULT = food['id']
+            foodId = IFRESULT
+
+            food['id'] = foodId
+            food['Barcode'] = barcode
+            SaveFile(f'FLS/Barcodes/Foods/food_{nextId}.json', overwrite=True)
+
+            nextId = nextId+1
+
+            DeleteFile(file)
+
+    DeleteFile(barcodesFile, deleteImmediately=True)
+    SaveFile(nextId, "FLS/Other/nextFoodId.txt", overwrite=True)
+
+#---------------------------------------------------------------------------------------------------------------------------------PortOverFoodHistory
+
+def PortOverFoodHistory():
+
+    '''
+    New Food history format:
+    {
+        'YYYY-MM-DD': {
+            'HH-MM': [{
+                'food': ...,
+                'servings': ...,
+                'cals': ...,
+            },
+            ...
+            ...
+            ],
+            
+            # can either be dictionary if only one item or list of dictionaries if more
+        }
+    }
+    
+    For: "1x Fried egg (90.16 kCal"
+    ([0-9][0-9]*[\.]*[0-9]*)x (.*) \(([0-9][0-9]*[\.]*[0-9]*) kCal\)
+    
+    For "1 [Chicken Noodles Super Pack (430 Kcal)]"
+    ([0-9][0-9]*[\.]*[0-9]*) \[(.*) \(([0-9][0-9]*[\.]*[0-9]*) Kcal\)\]
+    '''
+
+    newHistory = Dictionary();
+    history = Dictionary(GetFile("FLS/History/foodHistoryDix.txt"))
+
+    regex1 = text("([0-9][0-9]*[\.]*[0-9]*)x (.*) \(([0-9][0-9]*[\.]*[0-9]*) [kK][cC]al\)")
+    regex2 = text("([0-9][0-9]*[\.]*[0-9]*) \[(.*) \(([0-9][0-9]*[\.]*[0-9]*) [kK][cC]al\)\]")
+
+    for repeatItem in history.keys():
+        dayKey = repeatItem
+        text = history[dayKey]
+        dayDix = Dictionary(text)
+        newDayDix = newHistory[dayKey]
+
+        if newDayDix is None:
+            newDayDix = Dictionary()
+        
+        for repeatItem2 in dayDix.keys().filter( name => name != "SAMPLE"):
+            timeKey = repeatItem2
+            logText = dayDix[timeKey]
+            newTimeList = newDayDix[timeKey]
+
+            # if it does not have any value, we will add it to the variable
+
+            for log in logText.splitByNewLines():
+                logGroup = []
+
+                # 0 -> servings
+                # 1 -> food name
+                # 2 -> calories
+
+                # try the first regex
+                logGroup = GetAllGroups( MatchText(log, regex1) )
+                if Count(logGroup) == 0:
+                    # try the other regex
+                    logGroup = GetAllGroups( MatchText(log, regex2) )
+                    if Count(logGroup) == 0:
+                        logGroup = [1, log, 0]
+
+                totalCals = RoundNumber(logGroup[2])
+                servings = Number(logGroup[0])
+
+                dix = {
+                    'servings': servings,
+                    'food': logGroup[1],
+                    'cals': totalCals
+                }
+
+                newTimeList.append(dix)
+
+            # set in the new day dix
+            newDayDix[timeKey] = newTimeList
+
+        # set the new day key
+        newHistory[dayKey] = newDayDix;
+
+        # save it to the file
+        SaveFile(newHistory, "FLS/History/foodHistory.json", overwrite=True)
+
+
+
+#---------------------------------------------------------------------------------------------------------------------------------NutriDixUpdater
+
 def NutriDixUpdater():
     pass
 
-#---------------------------------------------------------------------------------------------------------------------------------
-# WEEK SUMMARY #---------------------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------------------WeekSummary
+
 def WeekSummary():
     pass
 
-#---------------------------------------------------------------------------------------------------------------------------------
-# HISTORY #---------------------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------------------FoodHistory
 
 def FoodHistory()
     file = GetFile("FLS/History/foodHistory.json")
@@ -357,6 +511,7 @@ def FoodHistory()
                         resultsForDay.append( 
                             f'{logItem['servings']}x {logItem['food']} ({logItem['cals']} kCals) @ {dispTime}'
                         )
+                
                 logResults.append(f'''
                         {dayKey}
                         {resultsForDay}
@@ -370,117 +525,167 @@ def FoodHistory()
     elif mainMenu.opt("Exit"):
         return
 
-#---------------------------------------------------------------------------------------------------------------------------------
-
-def PortOverFoodHistory():
-
-    '''
-    New Food history format:
-    {
-        'YYYY-MM-DD': {
-            'HH-MM': [{
-                'food': ...,
-                'servings': ...,
-                'cals': ...,
-            },
-            ...
-            ...
-            ],
-            
-            # can either be dictionary if only one item or list of dictionaries if more
-        }
-    }
-    
-    For: "1x Fried egg (90.16 kCal"
-    ([0-9][0-9]*[\.]*[0-9]*)x (.*) \(([0-9][0-9]*[\.]*[0-9]*) kCal\)
-    
-    For "1 [Chicken Noodles Super Pack (430 Kcal)]"
-    ([0-9][0-9]*[\.]*[0-9]*) \[(.*) \(([0-9][0-9]*[\.]*[0-9]*) Kcal\)\]
-    '''
-
-    newHistory = Dictionary();
-    history = Dictionary(GetFile("FLS/History/foodHistoryDix.txt"))
-
-    regex1 = text("([0-9][0-9]*[\.]*[0-9]*)x (.*) \(([0-9][0-9]*[\.]*[0-9]*) [kK][cC]al\)")
-    regex2 = text("([0-9][0-9]*[\.]*[0-9]*) \[(.*) \(([0-9][0-9]*[\.]*[0-9]*) [kK][cC]al\)\]")
-
-    for repeatItem in history.keys():
-        dayKey = repeatItem
-        text = history[dayKey]
-        dayDix = Dictionary(text)
-        newDayDix = newHistory[dayKey]
-
-        if newDayDix is None:
-            newDayDix = Dictionary()
-        
-        for repeatItem2 in dayDix.keys().filter( name => name != "SAMPLE"):
-            timeKey = repeatItem2
-            logText = dayDix[timeKey]
-            newTimeList = newDayDix[timeKey]
-
-            # if it does not have any value, we will add it to the variable
-
-            for log in logText.splitByNewLines():
-                logGroup = []
-
-                # 0 -> servings
-                # 1 -> food name
-                # 2 -> calories
-
-                # try the first regex
-                logGroup = GetAllGroups( MatchText(log, regex1) )
-                if Count(logGroup) == 0:
-                    # try the other regex
-                    logGroup = GetAllGroups( MatchText(log, regex2) )
-                    if Count(logGroup) == 0:
-                        logGroup = [1, log, 0]
-
-                totalCals = RoundNumber(logGroup[2])
-                servings = Number(logGroup[0])
-
-                dix = {
-                    'servings': servings,
-                    'food': logGroup[1],
-                    'cals': totalCals
-                }
-
-                newTimeList.append(dix)
-
-            # set in the new day dix
-            newDayDix[timeKey] = newTimeList
-
-        # set the new day key
-        newHistory[dayKey] = newDayDix;
-
-        # save it to the file
-        SaveFile(newHistory, "FLS/History/foodHistory.json", overwrite=True)
-
-#---------------------------------------------------------------------------------------------------------------------------------
-# BARCODES #---------------------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------------------BarcodeSearch
 
 def BarcodeSearch():
-    pass
+    TRUE = 1
+    FALSE = 0
+    nutrDix = Dictionary(GetFile('FLS/Other/shortcutNames.json'))
+    Menu("Get Food"):
+        case 'Select from Personal Database':
+            return RunShortcut(nutrDix['Get Saved Food'])
 
-#---------------------------------------------------------------------------------------------------------------------------------
+        case 'Scan Barcode':
+            barcode = Text(ScanBarcode())
+
+            #
+            file = GetFile('FLS/Barcodes/barcodeCache.json', errorIfNotFound=False)
+            if file is not None:
+                IFRESULT = file
+            else:
+                barcodeCache = {}
+                folder = GetFile('FLS/Barcodes/Foods')
+                for item in GetContentsOfFolder(folder):
+                    barcodeCache[ item['Barcode'] ] = item['id']
+                IFRESULT = barcodeCache
+            barcodeCache = IFRESULT
+
+            if barcodeCache[barcode] is not None:
+                return Dictionary(file)
+
+
+    # if we get here that means we are creating a new food item
+    foodResolved = FALSE
+    doSearch = FALSE
+
+    # Search online database
+    url = URL(f'https://world.openfoodfacts.org/api/v0/product/{barcode}.json')
+    res = GetContentsOfURL(url)
+    if res['status'] == 1:
+        # we found the product, now we just map the dictionary values
+        nutrInfo = res['product.nutriments']
+
+        foodId = RunShortcut(nutrDix['GFID'])
+
+        outputFood = {
+            'Name': res['product.generic_name_en'],
+            'Barcode': barcode,
+            'id': foodId,
+            'Serving Size': res['product.serving_size'],
+            'Calories': nutrInfo['energy-kcal_value'],
+            'Carbs': nutrInfo['carbohydrates_value'],
+            'Fat': nutrInfo['fat_value'],
+            'Protein': nutrInfo['proteins_value'],
+            'Sugar': nutrInfo['sugars_value'],
+            'Fiber': nutrInfo['fiber_value'],
+            'Monounsaturated': nutrInfo[''],
+            'Polyunsaturated': nutrInfo[''],
+            'Saturated': nutrInfo['saturated-fat_value'],
+            'Trans': nutrInfo['trans-fat_value'],
+            'Sodium': nutrInfo['sodium_value'],
+            'Cholesterol': nutrInfo['cholesterol_value'],
+            'Potassium': nutrInfo['potassium_value'],
+            'VitA': 0,
+            'VitC': nutrInfo['vitamin-c_value'],
+            'Calcium': nutrInfo['calcium_value'],
+            'Iron': nutrInfo['iron_value'],
+        }
+
+        # vitamin a is in IU, convert to mcg
+        num = nutrInfo['vitamin-a_value'] * 0.3
+        outputFood['VitA'] = num
+
+        prompt = f'''
+        Search Result:
+        {outputFood['Name']} ({outputFood['Serving Size']})
+        Cals: {outputFood['Calories']} ⸱ Carbs: {outputFood['Carbs']}g ⸱ Fat: {outputFood['Fat']}g ⸱ Protein: {outputFood['Protein']}g
+        Sugar: {outputFood['Sugar']}g ⸱ Fiber: {outputFood['Fiber']}g ⸱ Saturated Fat: {outputFood['Saturated']}g
+        Sodium: {outputFood['Sodium']}mg ⸱ Cholesterol: {outputFood['Cholesterol']}mg ⸱ Potassium: {outputFood['Potassium']}mg
+        VitA: {outputFood['VitA']}mcg ⸱ VitC: {outputFood['VitC']}mg ⸱ Calcium: {outputFood['Calcium']}mg ⸱ Iron: {outputFood['Iron']}mg
+        '''
+        Menu(prompt):
+            case 'Accept And Continue':
+                foodResolved = TRUE
+            case 'Edit':
+                res = RunShorctut(NutriDix['Display Food Item'], input=outputFood)
+                Menu('Save changes?')
+                    case 'Yes':
+                        outputFood = res
+                        foodResolved = TRUE
+                    case 'No, use previous values':
+                        foodResolved = TRUE
+                    case 'No, search for food or make manually':
+                        pass
+            case 'Search for food or make food manually':
+                pass
+
+    if foodResolved == FALSE:
+        # no match in database or in search so we continue
+        Menu("There was no match found on OpenFoodFacts.org, what would you like to do?"):
+            case 'Search for Food':
+                doSearch = TRUE
+            case 'Make Food Manually':
+                pass
+
+    if doSearch == TRUE:
+        # perform search
+        outputFood = RunShortcut(nutrDix['Search Algorithm'])
+        
+        if outputFood is not None:
+            foodResolved = TRUE
+            
+        Menu('Search had no results'):
+            case 'Exit with no selection':
+                return None
+            case 'Make Food Manually':
+                pass
+
+    if foodResolved == FALSE:
+        # otherwise we fall through to make food manually
+        outputFood = RunShortcut(nutrDix['Manual Log'])
+
+    # save the new output food to database and then continue
+    SaveFile(outputFood, f'FLS/Barcodes/Foods/food_{outputFood['id']}.json', overwrite=True)
+    DeleteFile(GetFile('FLS/Barcodes/barcodeCache.json', errorIfNotFound=False), deleteImmediately=True)
+    return outputFood
+
+#---------------------------------------------------------------------------------------------------------------------------------GetBarcode
 
 def GetBarcode():
+    # allows user to select a barcode and retrieve it
+    # can be based on get preset
+    file = GetFile('FLS/Other/shortcutNames.json')
+    dix = {
+        'type': 'barcode'
+    }
+    RunShortcut(nutrDix['Select Saved Foods'], input=dix)
     pass
 
-#---------------------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------------------EditBarcode
 
 def EditBarcode():
+    file = GetFile('FLS/Other/shortcutNames.json')
+    dix = {
+        'type': 'barcode'
+    }
+    RunShortcut(nutrDix['Edit Saved Food'], input=dix)
     pass
 
-#---------------------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------------------RemoveBarcode
 
 def RemoveBarcode():
+    file = GetFile('FLS/Other/shortcutNames.json')
+    dix = {
+        'type': 'barcode',
+        'deleteMode': True
+    }
+    RunShortcut(nutrDix['Select Saved Foods'], input=dix)
     pass
 
-#---------------------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------------------ManualLog
 
-def ManualLogging(): # Manual Logging 3
-    nutrDix = Dictionary(RunShortcut("NutrDix"))
+def ManualLog(): # Manual Log
+    nutrDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
     exactValDix = {
         'VitA': 1000,
         'VitC': 60,
@@ -534,157 +739,7 @@ def ManualLogging(): # Manual Logging 3
 
     return foodDix
 
-#---------------------------------------------------------------------------------------------------------------------------------
-# PRESETS #---------------------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------------------
-
-def PortOverRecentsAndPresets():
-    nameFiles = [
-        "FLS/Presets/presetNames.txt",
-        "FLS/Recents/recentNames.txt"
-    ]
-
-    foodDirs = [
-        "FLS/Presets/Foods",
-        "FLS/Recents/Foods"
-    ]
-
-    for REPEATITEM in nameFiles:
-        foodsDir = foodDirs.getItemAtIndex(REPEATINDEX)
-        file = GetFile(REPEATITEM, errorIfNotFound=False)
-        names = SplitText(file, '\n')
-        for name in names:
-            # Add the name to list
-            file = GetFile(f"{foodsDir}/{name}.json")
-            if file is not None:
-                food = Dictionary(file)
-
-                if food['id'] is None:
-                    res = RunShortcut(nutrDix['GFID'])
-                    food['id'] = res
-                    SaveFile(food, f'{foodsDir}/food_{foodId}.json', overwrite=True)
-                    IFRESULT = Number(res)
-                else:
-                    RenameFile(file, f"food_{IFARG}.json")
-                    IFRESULT = Number(IFARG)
-
-                foodId = IFRESULT
-
-                if name == 'FLS/Presets/presetNames.txt':
-                    text = f'''
-                        BEGIN:VCARD
-                        VERSION:3.0
-                        N;CHARSET=UTF-8:{food['Name']}
-                        ORG;CHARSET=UTF-8:{food['Serving Size']}
-                        NOTE;CHARSET=UTF-8:{foodId}
-                        END:VCARD
-
-                    '''
-                    vcardCache.append(text)
-
-    if vcardCache is not None:
-        SaveFile(Text(vcardCache), 'FLS/Presets/vcardCache.txt', overwrite=True)
-
-#---------------------------------------------------------------------------------------------------------------------------------
-
-def GetPreset(): # Get Preset (base version from get reecent)
-    TRUE = 1
-    FALSE = 0
-
-    cancelIcon = Text() 
-
-    deleteMode = FALSE
-
-    if Dictionary(ShortcutInput) is not None:
-        if ShortcutInput['deleteMode'] is not None:
-            deleteMode = TRUE
-
-    file = GetFile("FLS/Presets/vcardCache.txt", errorIfNotFound=False)
-    if file is not None:
-        IFRESULT = Text(file)
-    else:
-        # create the vcard cache
-        Notification(title="Generating Preset Cache...", body='The cache allows the shortcut to be faster in future runs.')
-        folder = GetFile("FLS/Presets/Foods")
-        files = GetContentsOfFolder(folder)
-        files = filter(files, sortBy='Last Modified Date', order='Latest First')
-        for item in files:
-            food = Dictionary(file)
-            # some weird bug is limiting me to have to pull ID separately
-            dixVal = food['id']
-            text = f'''
-                BEGIN:VCARD
-                VERSION:3.0
-                N;CHARSET=UTF-8:{food['Name']}
-                ORG;CHARSET=UTF-8:{food['Serving Size']}
-                NOTE;CHARSET=UTF-8:{dixVal}
-                END:VCARD
-
-            '''
-            REPEATRESULTS.append(text)
-
-        SaveFile(Text(REPEATRESULTS), f"FLS/Presets/vcardCache.txt", overwrite=True)
-
-        IFRESULT = Text(REPEATRESULTS)
-
-    vcardCache = IFRESULT
-
-
-    text = f'''
-        BEGIN:VCARD
-        VERSION:3.0
-        N;CHARSET=UTF-8:No Selection
-        ORG;CHARSET=UTF-8:No foods will be selected
-        NOTE;CHARSET=UTF-8:Cancel
-        {cancelIcon}
-        END:VCARD
-    '''
-
-    renamedItem = SetName(text, 'vcard.vcf')
-    contact = GetContacts(renamedItem)
-    choices.append(contact)
-
-    SetName(vcardCache, 'vcard.vcf')
-    contacts = GetContacts(renamedItem)
-    files = filter(contacts, sortBy='Name')
-    choices.append(files)
-
-
-    if deleteMode == TRUE:
-        IFRESULT = "Select Preset(s) to Delete"
-    else:
-        IFRESULT = "Select Preset(s)"
-
-    selectedItems = ChooseFrom(choices, prompt=IFRESULT, selectMultiple=True)
-    for chosen in selectedItems:
-        if chosen.Notes == 'Cancel':
-            return None
-
-        foodId = chosen.Notes
-
-        # make this the most used one
-        file = GetFile("FLS/Presets/Foods/food_{foodId}.json")
-        food = Dictionary(file)
-
-        if deleteMode == TRUE:
-            # delete the file
-            DeleteFile(file, deleteImmediately=True)
-            Notification(f'Preset {food['Name']} has been deleted!')
-        else:
-            # save the file to update last modified after
-            SaveFile(file, f"FLS/Presets/Foods/food_{foodId}.json", overwrite=True)
-        
-        # add the food
-        selectedFoods.append(food)
-
-    if deleteMode == TRUE:
-        # delete the cache since it is invalid
-        file = GetFile("FLS/Presets/vcardCache.txt")
-        DeleteFile(file, deleteImmediately=True)
-
-    return selectedFoods
-
-#---------------------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------------------MakePreset
 
 def MakePreset(): # Make Preset
     # < whatever method we use to make the preset >
@@ -692,7 +747,7 @@ def MakePreset(): # Make Preset
     TRUE = 1
     FALSE = 0
 
-    nutrDix = Dictionary(RunShortcut("NutrDix"))
+    nutrDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
     
     if ShortcutInput is not None:
         # if we dont do this, then if result will be the item above the if
@@ -804,20 +859,145 @@ def MakePreset(): # Make Preset
     file = GetFile("FLS/Presets/vcardCache.txt", errorIfNotFound=False)
     DeleteFile(file, deleteImmediately=True)
 
-#---------------------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------------------SelectSavedFoods
 
-def EditPreset(): # Edit Preset
+def SelectSavedFoods():
+    TRUE = 1
+    FALSE = 0
+
+    cancelIcon = Text() 
+
+    deleteMode = FALSE
+
+    savedInfo = {
+        'barcodes': { 'folder': 'FLS/Barcodes', 'prompt': 'Barcoded Food'}
+        'presets': { 'folder': 'FLS/Presets', 'prompt': 'Preset'}
+    }
+
+    params = Dictionary(ShortcutInput)
+
+    if typeDir[ params['type']] is None:
+        Alert('No type specified')
+        return None
+    else:
+        config = params['type']
+        parentFolder = config['folder']
+
+
+    if params['deleteMode'] is not None:
+        deleteMode = TRUE
+
+    file = GetFile(f"{parentFolder}/vcardCache.txt", errorIfNotFound=False)
+    if file is not None:
+        IFRESULT = Text(file)
+    else:
+        # create the vcard cache
+        folder = GetFile(f"{parentFolder}/Foods")
+        files = GetContentsOfFolder(folder)
+        files = filter(files, sortBy='Last Modified Date', order='Latest First')
+        for item in files:
+            food = Dictionary(file)
+            # some weird bug is limiting me to have to pull ID separately
+            dixVal = food['id']
+            text = f'''
+                BEGIN:VCARD
+                VERSION:3.0
+                N;CHARSET=UTF-8:{food['Name']}
+                ORG;CHARSET=UTF-8:{food['Serving Size']}
+                NOTE;CHARSET=UTF-8:{dixVal}
+                END:VCARD
+
+            '''
+            REPEATRESULTS.append(text)
+
+        SaveFile(Text(REPEATRESULTS), f"{parentFolder}/vcardCache.txt", overwrite=True)
+
+        IFRESULT = Text(REPEATRESULTS)
+
+    vcardCache = IFRESULT
+
+
+    text = f'''
+        BEGIN:VCARD
+        VERSION:3.0
+        N;CHARSET=UTF-8:No Selection
+        ORG;CHARSET=UTF-8:No foods will be selected
+        NOTE;CHARSET=UTF-8:Cancel
+        {cancelIcon}
+        END:VCARD
+    '''
+
+    renamedItem = SetName(text, 'vcard.vcf')
+    contact = GetContacts(renamedItem)
+    choices.append(contact)
+
+    SetName(vcardCache, 'vcard.vcf')
+    contacts = GetContacts(renamedItem)
+    files = filter(contacts, sortBy='Name')
+    choices.append(files)
+
+
+    if deleteMode == TRUE:
+        IFRESULT = f"Select {config['prompt']}(s) to Delete"
+    else:
+        IFRESULT = f"Select {config['prompt']}(s)"
+
+    selectedItems = ChooseFrom(choices, prompt=IFRESULT, selectMultiple=True)
+    for chosen in selectedItems:
+        if chosen.Notes == 'Cancel':
+            return None
+
+        foodId = chosen.Notes
+
+        # make this the most used one
+        file = GetFile(f"{parentFolder}/Foods/food_{foodId}.json")
+        food = Dictionary(file)
+
+        if deleteMode == TRUE:
+            # delete the file
+            DeleteFile(file, deleteImmediately=True)
+            Notification(f'{config['prompt']} {food['Name']} has been deleted!')
+        else:
+            # save the file to update last modified after
+            SaveFile(file, f"{parentFolder}/Foods/food_{foodId}.json", overwrite=True)
+        
+        # add the food
+        selectedFoods.append(food)
+
+    if deleteMode == TRUE:
+        # delete the cache since it is invalid
+        file = GetFile(f"{parentFolder}/vcardCache.txt")
+        DeleteFile(file, deleteImmediately=True)
+
+    return selectedFoods
+    
+#---------------------------------------------------------------------------------------------------------------------------------EditSavedFood
+
+def EditSavedFood(): # Edit Saved Food
 
     TRUE = 1
     FALSE = 0
 
-    nutrDix = Dictionary(RunShortcut("NutrDix"))
-    selectedPresets = RunShortcut(nutrDix['Get Preset'])
+    params = Dictionary(ShortcutInput)
+
+    savedInfo = {
+        'barcodes': { 'folder': 'FLS/Barcodes', 'prompt': 'Barcoded Food'}
+        'presets': { 'folder': 'FLS/Presets', 'prompt': 'Preset'}
+    }
+
+
+
+    nutrDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
+    
+    selectedFoods = RunShortcut(nutrDix['Select Saved Foods'], input=params)
+    config = savedInfo [ params['type'] ]
+
+
 
     file = GetFile("FLS/Other/nutriKeys.txt")
     nutriKeys = SplitText(file, '\n')
 
-    for item in selectedPresets:
+    for item in selectedFoods:
         oldFood = Dictionary(item)
         
         foodId = food['id']
@@ -847,16 +1027,20 @@ def EditPreset(): # Edit Preset
             # need to ensure it isnt taken by something else
 
             # check to make sure it doesnt clash with other food names
-            folder = GetFile("FLS/Presets/Foods", errorIfNotFound=False)
+            folder = GetFile(f"{config['folder']}/Foods", errorIfNotFound=False)
             for food in GetContentsOfFolder(folder):
-                presetNames.append(food['Name'])
+                foodNames.append(food['Name'])
 
             breakLoop = FALSE
             for _ in range(10):
                 if breakLoop == FALSE:
-                    res = filter(presetNames, whereAll=['Name' == name, 'Name' != oldFood['Name']])
+                    res = filter(foodNames, whereAll=['Name' == name, 'Name' != oldFood['Name']])
                     if res is not None:
-                        name = AskForInput(Input.Text, prompt=f'"{name}" already exists, please select a new name')
+                        Menu(f'There is already a food named "{name}"'):
+                            case 'Select A Different Name':
+                                name = AskForInput(Input.Text, prompt=f'"{name}" already exists, please select a new name')
+                            case 'Keep both foods with this name':
+                                breakLoop = TRUE
                     else:
                         breakLoop = TRUE
 
@@ -864,232 +1048,14 @@ def EditPreset(): # Edit Preset
 
 
         # save the file
-        SaveFile(newFood, f"FLS/Presets/Foods/food_{foodId}.json", overwrite=True)
+        SaveFile(newFood, f"{config['folder']}/food_{foodId}.json", overwrite=True)
 
     # delete the cache since it is invalid
-    file = GetFile("FLS/Presets/vcardCache.txt", errorIfNotFound=False)
+    file = GetFile(f"{config['folder']}/vcardCache.txt", errorIfNotFound=False)
     DeleteFile(file, deleteImmediately=True)
-    
-#---------------------------------------------------------------------------------------------------------------------------------
-
-def RemovePreset():
-    dix = {
-        'deleteMode' : True
-    }
-    nutrDix = Dictionary(run("NutrDix"))
-    RunShortcut(nutrDix['Get Preset'], input=dix)
-
-#---------------------------------------------------------------------------------------------------------------------------------
-# MISC #---------------------------------------------------------------------------------------------------------------------------------
-# --------------------------------------------------------------------------------------------------------------------------------
-
-def BulkEntry(): # Bulk Entry
-    nutrDix = Dictionary(RunShortcut("NutrDix"))
-    selectedFoods = RunShortcut(nutrDix['Foods List'])
-
-    nextId = 0
-    foodsDix = {}
-    selectedIds = []
 
 
-    for food in selectedFoods:
-        # generate list Id for the item
-        foodsDix[nextId] = food
-        selectedIds.append(nextId)
-        nextId = nextId + 1
-
-    for _ in range(Count(selectedFoods)):
-        if Count(selectedIds) > 0:
-            for listId in selectedIds
-                food = foodsDix[listId]
-                text = f'''
-                BEGIN:VCARD
-                VERSION:3.0
-                N;CHARSET=UTF-8:{food['Name']}
-                ORG;CHARSET=UTF-8:{food['Servings']} servings
-                NOTE;CHARSET=UTF-8:{listId}
-                END:VCARD
-                '''
-                REPEATRESULTS.append(text)
-
-        # max repeat will be at most items
-        contacts = textToContacts(REPEATRESULTS)
-        chosen = ChooseFrom(contacts, prompt="Select foods to apply a date to", selectMultiple=True)
-        
-        date = AskForInput(Input.DateAndTime, "What date should be applied to the foods?")
-
-        for item in chosen:
-            # remove from the list
-            listId = Contact(item).Notes
-            selectedIds = filter(selectedIds, where=['Name' == listId])
-            food = foodsDix[listId]
-            text = {
-                'Date': date.format(date="medium", time="short"),
-                'Food': food
-            }
-            res = RunShortcut('Log Algorithm', input=text)
-            loggedFoods.append(res)
-        
-        Menu('Make Preset?'):
-            case 'Yes':
-                RunShortcut(nutrDix['Make Preset'], input=loggedFoods)
-            case 'No':
-                pass
-
-#---------------------------------------------------------------------------------------------------------------------------------
-
-def FoodsList(): # Foods List
-    TRUE = 1
-    FALSE = 0
-
-    nutrDix = Dictionary(RunShortcut("NutrDix"))
-    cancelIcon = #.. cancelIcon.txt
-    
-    foodsDix = {}
-
-    # list ids
-    selectedIds = []
-
-    nextId = 0
-
-    maxLoops = 30
-    breakLoop = FALSE
-
-    for _ in range(maxLoops):
-        if breakLoop == FALSE:
-            for listId in selectedIds:
-                food = foodsDix[listId]
-                REPEATRESULTS.append(f'{food['Servings']}x {food['Name']}')
-
-            if REPEATRESULTS is not None:
-                IFRESULT = f'''
-                Current Selected Foods:
-                {REPEATRESULTS}
-                '''
-            else:
-                IFRESULT = f'''
-                No foods selected
-                '''
-
-            addMenuResult = TRUE
-
-            Menu(IFRESULT):
-            case 'Search Food':
-                MENURESULT = RunShortcut(nutrDix['Search Algorithm'])
-
-            case 'Get Preset(s)':
-                MENURESULT = RunShortcut(nutrDix['Get Preset'])
-
-            case 'Get Recent Meals':
-                MENURESULT = RunShortcut(nutrDix['Get Recent'])
-
-            case 'Get Barcoded Food':
-                MENURESULT = RunShortcut(nutrDix['Get Barcode'])
-
-            case 'Make Food Manually':
-                # TODO, make manual maker
-                MENURESULT = RunShortcut(nutrDix['Get Barcode'])
-
-            case 'View/Edit Food':
-                addMenuResult = FALSE
-                # Remove selection
-                for listId in selectedIds:
-                    food = foodsDix[listId]
-                    text = f'''
-                        BEGIN:VCARD
-                        VERSION:3.0
-                        N;CHARSET=UTF-8:{food['Name']}
-                        ORG;CHARSET=UTF-8:{food['Servings']} servings
-                        NOTE;CHARSET=UTF-8:{listId}
-                        END:VCARD
-                    '''
-                    REPEATRESULTS.append(text)
-
-                text = f'''
-                    BEGIN:VCARD
-                    VERSION:3.0
-                    N;CHARSET=UTF-8:Cancel
-                    ORG;CHARSET=UTF-8:No foods will be selected
-                    NOTE;CHARSET=UTF-8:Cancel
-                    {cancelIcon}
-                    END:VCARD
-                    {REPEATRESULTS}
-                '''
-                renamedItem = SetName(text, 'vcard.vcf')
-                contacts = GetContacts(renamedItem)
-
-                edit = ChooseFrom(contacts, prompt='Select Food To View')
-
-                listId = Contact(edit.Notes)
-                if listId != 'Cancel':
-                    # get the food at the id
-                    food = foodsDix[listId]
-                    Menu('Select an action'):
-                        case 'Edit Serving Size':
-                            res = AskForInput(Input.Number, f'How many servings? (1 serving = {food['Serving Size']})', allowNegatives=False)
-                            food['Servings'] = res
-                            foodsDix[listId] = food
-
-                        case 'View/Edit Other Fields':
-                            changedFood = RunShortcut(nutrDix['Display Food Item'], input=food)
-                            Menu(f'Save Changes to {changedFood['Name']}?'):
-                                case 'Yes':
-                                    # if we edit a food, it is now different from its source food so generate a new food ID for it
-                                    changedFood['id'] = RunShortcut(nutrDix['GFID'])
-                                    foodsDix[listId] = changedFood
-                                case 'No':
-                                    pass
-
-            case 'Remove Selected Foods':
-                addMenuResult = FALSE
-                # Remove selection
-                for listId in selectedIds:
-                    food = foodsDix[listId]
-                    text = f'''
-                    BEGIN:VCARD
-                    VERSION:3.0
-                    N;CHARSET=UTF-8:{food['Name']}
-                    ORG;CHARSET=UTF-8:{food['Servings']} servings
-                    NOTE;CHARSET=UTF-8:{listId}
-                    END:VCARD
-                    '''
-                    REPEATRESULTS.append(text)
-
-                text = Text(REPEATRESULTS)
-                renamedItem = SetName(text, 'vcard.vcf')
-                contacts = GetContacts(renamedItem)
-
-                deletes = ChooseFrom(contacts, selectMultiple=True, prompt='Select foods to remove')
-
-                for delete in deletes:
-                    listId = Contact(delete).Notes
-                    # remove it from the list
-                    selectedIds = filter(selectedIds, where=['Name' != listId])
-
-            case 'Done Selecting Foods':
-                addMenuResult = FALSE
-                for listId in selectedIds:
-                    food = foodsDix[listId]
-                    RunShortcut(nutrDix['Add Recent'], input=food)
-                    REPEATRESULTS.append(food)
-                
-                return REPEATRESULTS
-
-            if addMenuResult == TRUE:
-                # add the foods to our selected foods
-                for food in MENURESULT:
-                    # Ask for the servings
-                    servings = AskForInput(Input.Number, f'How many servings of {food['Name']}? (1 serving = {food['Serving Size']})', allowDecimals=True, allowNegatives=False)
-                    food['Servings'] = servings
-
-                    # generate list Id for the item
-                    foodsDix[nextId] = food
-                    selectedIds.append(nextId)
-                    nextId = nextId + 1
-
-#---------------------------------------------------------------------------------------------------------------------------------
-# Recents #---------------------------------------------------------------------------------------------------------------------------------
-# --------------------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------------------GetRecent
 
 def GetRecent(): # "Get Recent"
     cancelIcon = # ... 
@@ -1137,15 +1103,17 @@ def GetRecent(): # "Get Recent"
     
     return selectedFoods
 
-#---------------------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------------------AddRecent
 
 def AddRecent():
-    food = Dictionary(ShortcutInput)
+    # Text of shortcut input to unlink from file handler of food file
+    # Without it, overwrites dont really work as it just passes the same file to the system
+    food = Dictionary(Text(ShortcutInput))
 
     if food is None:
         return
 
-    nutrDix = Dictionary(RunShortcut("NutrDix"))
+    nutrDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
     
     maxRecents = 30
 
@@ -1170,9 +1138,117 @@ def AddRecent():
             deletefile = files.getLastItem()
             DeleteFile(foodFile, deleteImmediately=True)
 
-#---------------------------------------------------------------------------------------------------------------------------------
-# SHARED ---------------------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------------------DisplayFoodItem
+
+def DisplayFoodItem():
+    if ShortcutInput is not None:
+        IFRESULT = ShortcutInput
+    else:
+        # the default food dictionary
+        IFRESULT = '''
+        '''
+    foodDix = Dictionary(IFRESULT)
+
+
+    g = '(g)'
+    mg = '(mg)'
+
+    # The goal is to display the dictionary in a way that makes sense to the user
+    # So we have to use special keys for the dictionary
+
+
+    # unit Dix maps the keys of the food dictionary to their user understandable fields
+
+    # displayDix maps the user fields to the appropriate key values
+
+    # displayKeys translate keys in foodDix to the key that will be displayed to user
+    displayKeys = {
+       "Name":            "Name",
+       "Barcode":         "Barcode",
+       "Serving Size":    "Serving Size",
+       "Calories":        "Calories (kCal)",
+       "Carbs":           "Carbs (g)",
+       "Protein":         "Protein (g)",
+       "Fat":             "Fat (g)",
+       "Sugar":           "Sugar (g)",
+       "Fiber":           "Fiber (g)",
+       "Monounsaturated": "Monounsaturated (g)",
+       "Polyunsaturated": "Polyunsaturated (g)",
+       "Saturated":       "Saturated (g)",
+       "Cholesterol":     "Cholesterol (mg)",
+       "Trans":           "Trans (g)",
+       "Sodium":          "Sodium (mg)",
+       "Potassium":       "Potassium (mg)",
+       "VitA":            "VitA (mcg)",
+       "VitC":            "VitC (mg)",
+       "Calcium":         "Calcium (mg)",
+       "Iron":            "Iron (mg)"
+    }
+
+    # display dix is where the user does the actual editing
+    displayDix = {
+        # uses the displayKeys (i.e. for key i, the key field in displayDix is displayKeys[i])
+        # for key in displayKeys:
+        #     dispKey = displayKeys[key]
+        #     displayDix[key] = foodDix[key]
+
+        # Note: Number fields are typed as text because shortcuts dictionary does not support decimal number entering
+        ... # see actual shortcut
+    }
+
+    # Text takes keys in displayDix and maps them back to the food dictionary
+    # in code terms:
+    # for key in displayKeys:
+    #     dispKey = displayKeys[key]
+    #     textDix[key] = displayDix[dispKey]
+    text = ... # see actual shortcut
+
+    dix = Dictionary(text)
+    if dix is not None:
+        newFoodDix = dix
+        # it could be parsed correctly
+        # If the user keeps 0s before values, parsing will fail so we need to check
+        # set the food ID if it is present
+        if foodDix['id'] is not None:
+            newFoodDix['id'] = foodDix['id']
+
+        if foodDix['Servings'] is not None:
+            newFoodDix['id'] = foodDix['id']
+
+        foodDix = newFoodDix
+    else:
+        # parsing failed, build it the normal way
+        file = GetFile('FLS/Other/nutriKeys.txt')
+        nutriKeys = SplitText(file, '\n')
+
+        for key in displayKeys.keys():
+            field = displayKeys[key]
+
+            # get the field from the displayDix and set it in food
+            res = filter(nutriKeys, where=['Name' == key])
+            if res is not None:
+                num = Number(displayDix[field])
+                IFRESULT = RoundNumber(IFRESULT, hundredths)
+            else:
+                IFRESULT = displayDix[field]
+
+            foodDix[key] = IFRESULT
+
+#---------------------------------------------------------------------------------------------------------------------------------GenerateFoodId
+
+def GenerateFoodId():
+    file = GetFile("FLS/Other/nextFoodId.txt")
+    if file is not None:
+        IFRESULT = file
+    else:
+        IFRESULT = "0"
+    
+    _id = Number(IFRESULT)
+    num = _id + 1
+    SaveFile(num, "FLS/Other/nextFoodId.txt")
+    return 
+
+#---------------------------------------------------------------------------------------------------------------------------------LogAlgorithm
 
 def LogAlgorithm(): # Log Algorithm
     '''
@@ -1192,9 +1268,9 @@ def LogAlgorithm(): # Log Algorithm
     TRUE = 1
     FALSE = 0
 
-    nutrDix = Dictionary(run("NutrDix"))
+    nutrDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
 
-    res = Dictionary(ShortcutInput)
+    res = Dictionary(Text(ShortcutInput))
 
     loggingDate = Date(res['Date'])
     foodDix = Dictionary(res['Food'])
@@ -1323,7 +1399,7 @@ def LogAlgorithm(): # Log Algorithm
     # cache is cleared in main nutrition function
 
     dateKey = loggingDate.format(date="short", time=None)
-    timeKey = loggingDate.format(date=None, time="short")
+    timeKey = loggingDate.format(custom="HH:mm")
     cals = RoundNumber(nutrients['Calories'], ones)
 
     # check if cache file exists and make one by default if not available
@@ -1359,123 +1435,13 @@ def LogAlgorithm(): # Log Algorithm
 
     return foodDix
 
-#---------------------------------------------------------------------------------------------------------------------------------
-
-def DisplayFoodItem():
-    if ShortcutInput is not None:
-        IFRESULT = ShortcutInput
-    else:
-        # the default food dictionary
-        IFRESULT = '''
-        '''
-    foodDix = Dictionary(IFRESULT)
-
-
-    g = '(g)'
-    mg = '(mg)'
-
-    # The goal is to display the dictionary in a way that makes sense to the user
-    # So we have to use special keys for the dictionary
-
-
-    # unit Dix maps the keys of the food dictionary to their user understandable fields
-
-    # displayDix maps the user fields to the appropriate key values
-
-    # displayKeys translate keys in foodDix to the key that will be displayed to user
-    displayKeys = {
-       "Name":            "Name",
-       "Barcode":         "Barcode",
-       "Serving Size":    "Serving Size",
-       "Calories":        "Calories (kCal)",
-       "Carbs":           "Carbs (g)",
-       "Protein":         "Protein (g)",
-       "Fat":             "Fat (g)",
-       "Sugar":           "Sugar (g)",
-       "Fiber":           "Fiber (g)",
-       "Monounsaturated": "Monounsaturated (g)",
-       "Polyunsaturated": "Polyunsaturated (g)",
-       "Saturated":       "Saturated (g)",
-       "Cholesterol":     "Cholesterol (mg)",
-       "Trans":           "Trans (g)",
-       "Sodium":          "Sodium (mg)",
-       "Potassium":       "Potassium (mg)",
-       "VitA":            "VitA (mcg)",
-       "VitC":            "VitC (mg)",
-       "Calcium":         "Calcium (mg)",
-       "Iron":            "Iron (mg)"
-    }
-
-    # display dix is where the user does the actual editing
-    displayDix = {
-        # uses the displayKeys (i.e. for key i, the key field in displayDix is displayKeys[i])
-        # for key in displayKeys:
-        #     dispKey = displayKeys[key]
-        #     displayDix[key] = foodDix[key]
-
-        # Note: Number fields are typed as text because shortcuts dictionary does not support decimal number entering
-        ... # see actual shortcut
-    }
-
-    # Text takes keys in displayDix and maps them back to the food dictionary
-    # in code terms:
-    # for key in displayKeys:
-    #     dispKey = displayKeys[key]
-    #     textDix[key] = displayDix[dispKey]
-    text = ... # see actual shortcut
-
-    dix = Dictionary(text)
-    if dix is not None:
-        newFoodDix = dix
-        # it could be parsed correctly
-        # If the user keeps 0s before values, parsing will fail so we need to check
-        # set the food ID if it is present
-        if foodDix['id'] is not None:
-            newFoodDix['id'] = foodDix['id']
-
-        if foodDix['Servings'] is not None:
-            newFoodDix['id'] = foodDix['id']
-
-        foodDix = newFoodDix
-    else:
-        # parsing failed, build it the normal way
-        file = GetFile('FLS/Other/nutriKeys.txt')
-        nutriKeys = SplitText(file, '\n')
-
-        for key in displayKeys.keys():
-            field = displayKeys[key]
-
-            # get the field from the displayDix and set it in food
-            res = filter(nutriKeys, where=['Name' == key])
-            if res is not None:
-                num = Number(displayDix[field])
-                IFRESULT = RoundNumber(IFRESULT, hundredths)
-            else:
-                IFRESULT = displayDix[field]
-
-            foodDix[key] = IFRESULT
-
-#---------------------------------------------------------------------------------------------------------------------------------
-
-def GenerateFoodId():
-    file = GetFile("FLS/Other/nextFoodId.txt")
-    if file is not None:
-        IFRESULT = file
-    else:
-        IFRESULT = "0"
-    
-    _id = Number(IFRESULT)
-    num = _id + 1
-    SaveFile(num, "FLS/Other/nextFoodId.txt")
-    return 
-
-#---------------------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------------------SearchAlgorithm
 
 def SearchAlgorithm():
     TRUE = 1
     FALSE = 0
 
-    NutriDix = Dictionary(RunShorctut( "NutriDix" ))
+    NutriDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
 
     # vcard base64 photo icons
     servingSizeIcon = # ... , see servingSizeIcon.txt
@@ -1514,14 +1480,17 @@ def SearchAlgorithm():
                 servingSize = f"{num} {dix['unit']}"
 
                 if Count(sizes) > 1:
-                    servingSize = f"{servingSize} (and more serving sizes)"
+                    servingSize = f"{servingSize} (and more...)"
 
 
                 if item['brand_name'] is not None:
                     IFRESULT=f"{item['brand_name']} | {servingSize}"
                 else:
                     IFRESULT = f"{servingSize}"
-                subtitle = IFRESULT
+
+                subtitle = f'''
+                    {IFRESULT}\nCals: {item['nutritional_contents.energy.value']} ⸱ Carbs: {item['nutritional_contents.carbohydrates']}g ⸱ Fat: {item['nutritional_contents.fat']}g ⸱ Protein: {item['nutritional_contents.protein']}g
+                '''
                 
                 text = f'''
                 BEGIN:VCARD
@@ -1622,7 +1591,7 @@ def SearchAlgorithm():
                         BEGIN:VCARD
                         VERSION:3.0
                         N;CHARSET=UTF-8:{servingVal} {curSize['unit']}
-                        ORG;CHARSET=UTF-8:{sizeCal}
+                        ORG;CHARSET=UTF-8:{sizeCal} (x{curSize['nutrition_multiplier']})
                         NOTE;CHARSET=UTF-8:{curSize['nutrition_multiplier']}
                         {servingSizeIcon}
                         END:VCARD
@@ -1653,19 +1622,54 @@ def SearchAlgorithm():
                     selectedServingSize = Text(chosenSize.Name)
                     multiplier = Number(chosenSize.Notes)
 
-    # outside of search create the food dictionary
-    # first convert to our food dictionary format using the values
+
+                    outputFood = {
+                        # that special dictionary that has all the values
+                        # set Calories to item['nutritional_contents.energy.value']
+                        # set serving size to selectedServingSize 
+                        # set name to name
+                        # set id to res
+                    }
+
+                    # apply servings multiplier on nutrients
+                    file = GetFile('FLS/Other/nutriKeys.txt')
+                    nutrients = SplitText(file, '\n')
+                    for item in nutrients:
+                        num = Number(outputFood[item])
+                        num = num * multiplier
+                        num = RoundNumber(num, hundredths)
+                        outputFood[item] = num
+
+                    prompt = f'''
+                    Search Result:
+                    {outputFood['Name']} ({outputFood['Serving Size']})
+                    Cals: {outputFood['Calories']} ⸱ Carbs: {outputFood['Carbs']}g ⸱ Fat: {outputFood['Fat']}g ⸱ Protein: {outputFood['Protein']}g
+                    Sugar: {outputFood['Sugar']}g ⸱ Fiber: {outputFood['Fiber']}g ⸱ Saturated Fat: {outputFood['Saturated']}g
+                    Sodium: {outputFood['Sodium']}mg ⸱ Cholesterol: {outputFood['Cholesterol']}mg ⸱ Potassium: {outputFood['Potassium']}mg
+                    VitA: {outputFood['VitA']}% ⸱ VitC: {outputFood['VitC']}% ⸱ Calcium: {outputFood['Calcium']}% ⸱ Iron: {outputFood['Iron']}%
+                    '''
+                    Menu(prompt):
+                        case 'Accept':
+                            searchExit = TRUE
+                        case 'Edit':
+                            res = RunShorctut(NutriDix['Display Food Item'], input=outputFood)
+                            Menu('Save changes?')
+                                case 'Yes':
+                                    searchExit = TRUE
+                                    outputFood = res
+                                case 'No, use previous values':
+                                    searchExit = TRUE
+                                case 'No, back to search':
+                                    pass
+                        case 'Back To Search':
+                            pass
+
+                        case 'Cancel Search':
+                            return None
+
 
     # used to generate id for shortcut
-    res = RunShorctut(NutriDix['GFID'])
-
-    outputFood = {
-        # that special dictionary that has all the values
-        # set Calories to item['nutritional_contents.energy.value']
-        # set serving size to selectedServingSize 
-        # set name to name
-        # set id to res
-    }
+    outputFood['id'] = RunShorctut(NutriDix['GFID'])
 
     # vitamins are inputted as percentages, change them to exact values
     # source https://www.canada.ca/en/health-canada/services/understanding-food-labels/percent-daily-value.html
@@ -1677,92 +1681,541 @@ def SearchAlgorithm():
     }
 
     for item in vitDix.keys():
-        # this gives us the percentage
-        num = outputFood[item] * 2
         # fractional value
-        num = num / 100
+        num = outputFood[item] / 100
         # the actual value
         num = num * vitDix[item]
-
         # write in the dictionary
-        outputFood[item] = num
-
-    # apply servings multiplier on nutrients
-    file = GetFile('FLS/Other/nutriKeys.txt')
-    nutrients = SplitText(file, '\n')
-    for item in nutrients:
-        num = Number(outputFood[item])
-        num = num * multiplier
-        num = RoundNumber(num, hundredths)
-        outputFood[item] = num
+        outputFood[item] = RoundNumber(num, hundredths)
 
     return outputFood
 
-#---------------------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------------------FoodsList
 
-def NutriDix():
-    GetFile('FLS/Other/shortcutDix.txt')
-    return file
+def FoodsList(): # Foods List
+    TRUE = 1
+    FALSE = 0
 
-#---------------------------------------------------------------------------------------------------------------------------------
+    nutrDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
+    cancelIcon = #.. cancelIcon.txt
+    
+    foodsDix = {}
 
-def SaveEnvVars():
-    newVars = Dictionary(ShortcutInput)
+    # list ids
+    selectedIds = []
 
-    # get the environment file
-    # NOT DONE: SAVE TO ENVIRONMENT FILE SO SYSTEM HAS ACCESS TO IT
-    GetFile("FLS/Other/env.json", noError=True)
+    nextId = 0
+
+    maxLoops = 30
+    breakLoop = FALSE
+
+    hasNotes = FALSE
+
+    file = GetFile("FLS/Other/foodNotes.txt", errorIfNotFound=False)
     if file is not None:
-        IFRESULT = Dictionary(file)
-    else:
-        IFRESULT = Dictionary()
+        notes = f'''
+            Food Notes:
+            {file}
 
-    env = IFRESULT
+        '''
+        notes = IFRESULT
+        hasNotes = TRUE
 
-    # overwrite keys
-    for key in newVars.keys:
-        env[key] = newVars[key]
+    for _ in range(maxLoops):
+        if breakLoop == FALSE:
+            for listId in selectedIds:
+                food = foodsDix[listId]
+                REPEATRESULTS.append(f'{food['Servings']}x {food['Name']}')
 
-    # save to file
-    text = f"{env}"
-    SaveFile(text, "FLS/Other/env.json", overwrite=True)
+            if REPEATRESULTS is not None:
+                IFRESULT = f'''
+                Current Selected Foods:
+                {REPEATRESULTS}
+                '''
+            else:
+                IFRESULT = f'''
+                No foods selected
+                '''
+            if hasNotes == TRUE:
+                IFRESULT2 = f'''
+                    {notes}
+                    {IFRESULT}
+                '''
+            else:
+                IFRESULT2 = IFRESULT
 
-#---------------------------------------------------------------------------------------------------------------------------------
+
+            addMenuResult = TRUE
+
+            Menu(IFRESULT2):
+            case 'Done Selecting Foods':
+                addMenuResult = FALSE
+                for listId in selectedIds:
+                    food = foodsDix[listId]
+                    RunShortcut(nutrDix['Add Recent'], input=food)
+                    REPEATRESULTS.append(food)
+                
+                return REPEATRESULTS
+
+            case 'Search Food':
+                MENURESULT = RunShortcut(nutrDix['Search Algorithm'])
+
+            case 'Get Preset(s)':
+                MENURESULT = RunShortcut(nutrDix['Select Saved Foods'], input={'type': 'presets'})
+
+            case 'Get Recent Meals':
+                MENURESULT = RunShortcut(nutrDix['Get Recent'])
+
+            case 'Get Barcoded Food':
+                MENURESULT = RunShortcut(nutrDix['Get Barcode'])
+
+            case 'Make Food Manually':
+                # TODO, make manual maker
+                MENURESULT = RunShortcut(nutrDix['Get Barcode'])
+
+            case 'View/Edit Food':
+                addMenuResult = FALSE
+                # Remove selection
+                for listId in selectedIds:
+                    food = foodsDix[listId]
+                    text = f'''
+                        BEGIN:VCARD
+                        VERSION:3.0
+                        N;CHARSET=UTF-8:{food['Name']}
+                        ORG;CHARSET=UTF-8:{food['Servings']} servings
+                        NOTE;CHARSET=UTF-8:{listId}
+                        END:VCARD
+                    '''
+                    REPEATRESULTS.append(text)
+
+                text = f'''
+                    BEGIN:VCARD
+                    VERSION:3.0
+                    N;CHARSET=UTF-8:Cancel
+                    ORG;CHARSET=UTF-8:No foods will be selected
+                    NOTE;CHARSET=UTF-8:Cancel
+                    {cancelIcon}
+                    END:VCARD
+                    {REPEATRESULTS}
+                '''
+                renamedItem = SetName(text, 'vcard.vcf')
+                contacts = GetContacts(renamedItem)
+
+                edit = ChooseFrom(contacts, prompt='Select Food To View')
+
+                listId = Contact(edit.Notes)
+                if listId != 'Cancel':
+                    # get the food at the id
+                    food = foodsDix[listId]
+                    Menu('Select an action'):
+                        case 'Edit Serving Size':
+                            res = AskForInput(Input.Number, f'How many servings? (1 serving = {food['Serving Size']})', allowNegatives=False)
+                            food['Servings'] = res
+                            foodsDix[listId] = food
+
+                        case 'View/Edit Other Fields':
+                            changedFood = RunShortcut(nutrDix['Display Food Item'], input=food)
+                            Menu(f'Save Changes to {changedFood['Name']}?'):
+                                case 'Yes':
+                                    # if we edit a food, it is now different from its source food so generate a new food ID for it
+                                    changedFood['id'] = RunShortcut(nutrDix['GFID'])
+                                    foodsDix[listId] = changedFood
+                                case 'No':
+                                    pass
+
+            case 'Remove Selected Foods':
+                addMenuResult = FALSE
+                # Remove selection
+                for listId in selectedIds:
+                    food = foodsDix[listId]
+                    text = f'''
+                    BEGIN:VCARD
+                    VERSION:3.0
+                    N;CHARSET=UTF-8:{food['Name']}
+                    ORG;CHARSET=UTF-8:{food['Servings']} servings
+                    NOTE;CHARSET=UTF-8:{listId}
+                    END:VCARD
+                    '''
+                    REPEATRESULTS.append(text)
+
+                text = Text(REPEATRESULTS)
+                renamedItem = SetName(text, 'vcard.vcf')
+                contacts = GetContacts(renamedItem)
+
+                deletes = ChooseFrom(contacts, selectMultiple=True, prompt='Select foods to remove')
+
+                for delete in deletes:
+                    listId = Contact(delete).Notes
+                    # remove it from the list
+                    selectedIds = filter(selectedIds, where=['Name' != listId])
+
+            if addMenuResult == TRUE:
+                # add the foods to our selected foods
+                for food in MENURESULT:
+                    # Ask for the servings
+                    servings = AskForInput(Input.Number, f'How many servings of {food['Name']}? (1 serving = {food['Serving Size']})', allowDecimals=True, allowNegatives=False)
+                    food['Servings'] = servings
+
+                    # generate list Id for the item
+                    foodsDix[nextId] = food
+                    selectedIds.append(nextId)
+                    nextId = nextId + 1
+
+#---------------------------------------------------------------------------------------------------------------------------------clearCacheAndBacklog
+
+def clearCacheAndBacklog():
+    if ShortcutInput is not None:
+        IFRESULT = ShortcutInput
+    else
+        IFRESULT = { 'cache': True, 'backlog': True }
+    params = Dictionary(IFRESULT)
+
+    TRUE = 1
+    FALSE = 0
+
+    res = GetFile("FLS/Other/shortcutNames.json")
+    shortcutNames = Dictionary(res)
+
+    hasHealthApp = FALSE
+    matches = MatchText(GetDeviceDetails("Model"), "(iPhone)")
+    if matches is not None:
+        hasHealthApp = TRUE
+    
+    if params['backlog'] is not None:
+        # clearing the backlog
+        if hasHealthApp == TRUE:
+            file = GetFile("FLS/Other/backlog.json", errorIfNotFound=False)
+            if file is not None:
+                # clear items by logging them
+                dix = Dictionary(file)
+                for item in dix['backlog']:
+                    RunShortcut(shortcutNames["Log Algorithm"], input=item)
+
+                # erase the backlog
+                file = GetFile("FLS/Other/backlog.json")
+                DeleteFile(file, deleteImmediately=True)
+
+            else:
+                if reqBacklogClear == TRUE:
+                    # if user req clear backlog let them no there was nothing to clear
+                    ShowAlert("There are no foods in the backlog")
+
+    if params['cache'] is not None:
+        # clear the cache
+        file = GetFile("FLS/History/foodHistoryCache.json", errorIfNotFound=False)
+        if file is not None:
+            dix = Dictionary(file)
+            histCache = dix['cache']
+            
+            file = OpenFile("FLS/History/foodHistory.json", errorIfNotFound=False)
+            if file is not None:
+                IFRESULT = file
+            else:
+                IFRESULT = {}
+            history = Dictionary( IFRESULT )
+
+            for item in histCache:
+                dayKey = item['date']
+                timeKey = item['time']
+
+                dayDix = history[dayKey]
+                if history[dayKey] is None:
+                    IFRESULT = history[dayKey]
+                else
+                    IFRESULT = {}
+                dayDix = IFRESULT
+
+                timeList = dayDix[timeKey]
+
+                timeList.append({
+                        'food': item['food'],
+                        'servings': item['servings'],
+                        'cals': item['cals']
+                    })
+
+                dayDix[timeKey] = timeList
+                history[dayKey] = dayDix
+
+            # save our history
+            SaveFile(history, "FLS/History/foodHistory.json", overwrite=True)
+
+            # clear our cache by deleting the file
+            file = GetFile("FLS/History/foodHistoryCache.json")
+            DeleteFile(file, deleteImmediately=True)
+
+
+#---------------------------------------------------------------------------------------------------------------------------------SavedAndSearch
+
+def SavedAndSearch():
+    TRUE = 1
+    FALSE = 0
+
+    res = GetFile("FLS/Other/shortcutNames.json")
+    shortcutNames = Dictionary(res)
+    Menu("Saved And Search"):
+        case "Search and View":
+            # run shortcutNames[search algorithm ]and display food with 
+
+            res = RunShortcut(shortcutNames["Display Food Item"], input=RunShortcut(shortcutNames["Search Algorithm"]))
+            for item in res:
+                searchResult = res
+                postSearchMenu = Menu(["Log Entry", "Make Preset", "Exit"])
+
+                if postSearchMenu.opt("Log Entry"):
+                    date = AskForInput("Date:", Input.DateAndTime, default=Date.CurrentDate)
+
+                    dix = {
+                        'Date': str(date)
+                        'Food': dix(searchResult)
+                    }
+                    res = RunShortcut(shortcutNames[
+                        "Log Algorithm"],
+                        input=dix)
+
+                    LoggedFoods2 = res
+
+                    svp = Menu(["Yes", "No"], prompt="Save As Preset?")
+
+                    if svp.opt("Yes"):
+                        RunShorctut("Make Preset", input=LoggedFoods2)
+                    if svp.opt("No"):
+                        pass
+
+                elif postSearchMenu.opt("Make Preset"):
+                    RunShortcut(shortcutNames["Make Preset"], input=searchResult)
+
+                elif postSearchMenu.opt("Exit"):
+                    pass
+
+        case "Presets":
+            prm = Menu(prompt="Presets", options=["View Presets", "Make Preset", "Edit Preset", "Remove Preset(s)"])
+
+            if prm.opt("View Presets"):
+                deletePresetCache = FALSE
+                res = RunShortcut(shortcutNames["Select Saved Foods"], input={'type': 'presets'})
+                for repeatItem in res:
+                    changedFood = Dictionary(RunShortcut(shortcutNames["Display Food Item"], input=repeatItem))
+                    Menu(f'Save Changes to {changedFood['Name']}?'):
+                        case 'Yes':
+                            SaveFile(changedFood, f"FLS/Presets/Foods/food_{changedFood['id']}.json", overwrite=True)
+                            deletePresetCache = TRUE
+                        case 'No':
+                            pass
+
+                    if deletePresetCache == TRUE:
+                        file = GetFile('FLS/Presets/vcardCache.txt', errorIfNotFound=False)
+                        DeleteFile(file, deleteImmediately=True)
+
+
+            elif prm.opt("Make Preset"):
+                # run shortcutNames[foods list ]to get list of foods to be made into a preset
+                RunShortcut(shortcutNames["Make Preset"])
+
+            elif prm.opt("Edit Preset"):
+                RunShortcut(shortcutNames["Edit Saved Food"], input={'type': 'presets'})
+
+            elif prm.opt("Remove Preset(s)"):
+                RunShortcut(shortcutNames["Select Saved Foods"], input={'type': 'presets', 'deleteMode': True})
+
+        case "Barcodes":
+            brm = Menu(prompt="Barcodes", options=[
+                "View Personal Database",
+                "Add to Personal Database",
+                "Edit Items in Personal Database",
+                "Remove From Personal Database"
+                ])
+
+
+            if brm.opt("View Personal Database"):
+                deletePresetCache = FALSE
+                res = RunShortcut(shortcutNames["Select Saved Foods"], input={'type': 'barcodes'})
+                for repeatItem in res:
+                    changedFood = Dictionary(RunShortcut(shortcutNames["Display Food Item"], input=repeatItem))
+                    Menu(f'Save Changes to {changedFood['Name']}?'):
+                        case 'Yes':
+                            SaveFile(changedFood, f"FLS/Barcodes/Foods/food_{changedFood['id']}.json", overwrite=True)
+                            deletePresetCache = TRUE
+                        case 'No':
+                            pass
+
+                    if deletePresetCache == TRUE:
+                        file = GetFile('FLS/Barcodes/vcardCache.txt', errorIfNotFound=False)
+                        DeleteFile(file, deleteImmediately=True)
+            elif brm.opt("Add to Personal Database"):
+                RunShortcut(shortcutNames["Barcode Search"])
+
+            elif brm.opt("Edit Items in Personal Database"):
+                RunShortcut(shortcutNames["Edit Saved Food"], input={'type': 'barcodes'})
+
+            elif brm.opt("Remove From Personal Database"):
+                RunShortcut(shortcutNames["Select Saved Foods"], input={'type': 'barcodes', 'deleteMode': True})
+        
+        case "Recent Meals":
+            res = RunShortcut(shortcutNames["Get Recent"])
+            for item in res:
+                RunShortcut(shortcutNames["Display Food Item"], input=item)
+
+#---------------------------------------------------------------------------------------------------------------------------------LogFoodsAtTime
+
+def LogFoodsAtTime():
+    TRUE = 1
+    FALSE = 0
+    res = GetFile("FLS/Other/shortcutNames.json")
+    shortcutNames = Dictionary(res)
+
+    Dating = AskForInput("What date and time? Click Done for Right Now", Input.DateAndTime)
+
+    for item in RunShortcut(shortcutNames["Foods List"]):
+        CurFood = item
+        dix = {
+            'Date': str(Dating)
+            'Food': dix(CurFood)
+        }
+
+        res = RunShortcut(shortcutNames["Log Algorithm"], input=dix)
+        REPEATRESULTS.append(res)
+
+    loggedFoods = REPEATRESULTS
+
+    file = GetFile("FLS/Other/foodNotes.txt", errorIfNotFound=False)
+    if file is not None:
+        Menu('Clear food notes?'):
+            case 'Yes':
+                DeleteFile(file, deleteImmediately=True)
+            case 'No':
+                pass
+
+    makePreset = TRUE
+
+    if Count(loggedFoods) == 1:
+        file = GetFile(f"FLS/Presets/Foods/food_{loggedFoods['id']}.json")
+        if file is not None:
+            makePreset = FALSE
+
+    if makePreset == TRUE:
+        Menu("Make Preset?")
+            case "Yes":
+                RunShortcut(shortcutNames["Make Preset"], input=REPEATRESULTS)
+            
+            case "No":
+                pass
+
+#---------------------------------------------------------------------------------------------------------------------------------BulkEntry
+
+def BulkEntry(): # Bulk Entry
+    nutrDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
+    selectedFoods = RunShortcut(nutrDix['Foods List'])
+
+    nextId = 0
+    foodsDix = {}
+    selectedIds = []
+
+    hasNotes = FALSE
+
+    file = GetFile("FLS/Other/foodNotes.txt", errorIfNotFound=False)
+    if file is not None:
+        notes = f'''
+            Food Notes:
+            {file}
+
+        '''
+        notes = IFRESULT
+        hasNotes = TRUE
+
+
+    for food in selectedFoods:
+        # generate list Id for the item
+        foodsDix[nextId] = food
+        selectedIds.append(nextId)
+        nextId = nextId + 1
+
+    for _ in range(Count(selectedFoods)):
+        if Count(selectedIds) > 0:
+            for listId in selectedIds
+                food = foodsDix[listId]
+                text = f'''
+                BEGIN:VCARD
+                VERSION:3.0
+                N;CHARSET=UTF-8:{food['Name']}
+                ORG;CHARSET=UTF-8:{food['Servings']} servings
+                NOTE;CHARSET=UTF-8:{listId}
+                END:VCARD
+                '''
+                REPEATRESULTS.append(text)
+
+        # max repeat will be at most items
+        contacts = textToContacts(REPEATRESULTS)
+
+        if hasNotes == TRUE:
+            IFRESULT = f'''
+            {notes}
+
+            Select foods to log for time...
+            '''
+        else:
+            IFRESULT = 'Select foods to log for time...'
+
+        chosen = ChooseFrom(contacts, prompt=IFRESULT, selectMultiple=True)
+        
+        date = AskForInput(Input.DateAndTime, "What time should the selected foods be logged at?")
+
+        for item in chosen:
+            # remove from the list
+            listId = Contact(item).Notes
+            selectedIds = filter(selectedIds, where=['Name' == listId])
+            food = foodsDix[listId]
+            text = {
+                'Date': date.format(date="medium", time="short"),
+                'Food': food
+            }
+            res = RunShortcut('Log Algorithm', input=text)
+            loggedFoods.append(res)
+
+        if hasNotes == TRUE:
+            Menu('Clear food notes?'):
+                case 'Yes':
+                    file = GetFile("FLS/Other/foodNotes.txt")
+                    DeleteFile(file, deleteImmediately=True)
+                case 'No':
+                    pass
+        
+        Menu('Make Preset?'):
+            case 'Yes':
+                RunShortcut(nutrDix['Make Preset'], input=loggedFoods)
+            case 'No':
+                pass
+
+
+# --------------------------------------------------------------------------------------------------------------------------------Nutrition
 
 def Nutrition():
     TRUE = 1
     FALSE = 0
-
     checkForUpdates = FALSE
     exitAfterQuickLog = TRUE
-    
-    # user manually wants to clear backlog 
-    reqBacklogClear = FALSE
-    # Run food history after clearing the cache
-    runHistAfterClear = FALSE
 
     # load names of the shortcuts
-    res = GetFile("FLS/Other/shortcutDix.txt")
+    res = GetFile("FLS/Other/shortcutNames.json")
     shortcutNames = Dictionary(res)
 
     text = '''
-      Protein
-      Trans
-      Cholesterol
-      Sugar
-      Monounsaturated
-      Polyunsaturated
-      Fat
-      Fiber
-      VitC
       Calories
-      Iron
-      VitA
-      Potassium
-      Saturated
-      Sodium
-      Calcium
-      Carbs
+        Carbs
+        Fat
+        Protein
+        Sugar
+        Fiber
+        Monounsaturated
+        Polyunsaturated
+        Saturated
+        Trans
+        Sodium
+        Cholesterol
+        Potassium
+        VitA
+        VitC
+        Calcium
+        Iron
     '''
     SaveFile(text, "FLS/Other/nutriKeys.txt")
 
@@ -1774,17 +2227,20 @@ def Nutrition():
         hasHealthApp = TRUE
 
     # save the state of the health app to environment
-    dix = { 'HasHealthApp': hasHealthApp }
-    RunShortcut(shortcutNames["Save Env Vars"], input=dix)
+    file = GetFile("FLS/Other/env.json", errorIfNotFound=False)
+    dix = Dictionary(file)
+    dix['hasHealthAapp'] = hasHealthApp
+    SaveFile(dix, "FLS/Other/env.json", overwrite=True)
 
-    itemsInHistCache = FALSE
-    file = GetFile("FLS/History/foodHistoryCache.json", errorIfNotFound=False)
-    if file is not None:
-        itemsInHistCache = TRUE
-        dix = Dictionary(file)
-        if Count(dix['cache']) >= 15:
-            # we need to eventually clear the history cache so that it does not bloat in size
-            exitAfterQuickLog = FALSE
+
+    # itemsInHistCache = FALSE
+    # file = GetFile("FLS/History/foodHistoryCache.json", errorIfNotFound=False)
+    # if file is not None:
+    #     itemsInHistCache = TRUE
+    #     dix = Dictionary(file)
+    #     if Count(dix['cache']) >= 15:
+    #         # we need to eventually clear the history cache so that it does not bloat in size
+    #         exitAfterQuickLog = FALSE
 
 
     # determine if we are checking for updates
@@ -1803,8 +2259,6 @@ def Nutrition():
 
     else:
         calsToday = 0
-
-
         healthSamples = HealthApp.Find(
                 AllHealthSamples,
                 whereAllAreTrue=[
@@ -1816,252 +2270,84 @@ def Nutrition():
         _sum = CalculateStatistics(healthSamples, "Sum")
         calsToday = Round (_sum, "hundredths")
 
-        IFRESULT = f"You've eaten {Ks} Calories Today."
+        file = GetFile("FLS/Other/backlog.json", errorIfNotFound=False)
+        if file is not None:
+            IFRESULT = f"You've eaten {calsToday} calories today.\nThere are foods in your backlog."
+        else:
+            IFRESULT = f"You've eaten {calsToday} calories today."
 
-    Prompt = IFRESULT
+        IFRESULT = IFRESULT
 
-    mainMenu = Menu(prompt=prompt, options=[
-            "Quick Log",
-            "Log Foods",
-            "Log Foods In Bulk",
-            "Search and View",
-            "Presets",
-            "Barcodes",
-            "Recent Meals",
-            "Weekly Summary",
-            "Food History",
-            "Clear Backlog",
-        ])
+    prompt = IFRESULT
 
-    if mainMenu.opt("Quick Log"):
-        # InRecents does not exist!
+    file = GetFile('FLS/Other/foodNotes.txt', errorIfNotFound=False)
+    if file is not None:
+        prompt = f'''
+        {prompt}
+        Food Notes:
+        {file}
+        '''
 
-        Menu('From Where?'):
-            case 'Preset(s)':
-                MENURESULT = RunShortcut(shortcutNames['Get Preset'])
-            case 'Recent(s)':
-                MENURESULT = RunShortcut(shortcutNames['Get Recent'])
+    Menu(prompt):
+        case "Quick Log":
+            # InRecents does not exist!
 
-        for item in MENURESULT:
-            CurFood = item
+            for item in  RunShortcut(shortcutNames['Get Recent']):
+                CurFood = item
 
-            RunShortcut(shortcutNames["Add Recents"], input=dix)
+                RunShortcut(shortcutNames["Add Recent"], input=dix)
 
-            text = f"How many servings of {CurFood['Name']}\n(1 serving = {CurFood['Serving Size']})"
-            
-            # translates to set dictionary value in CurFood and then set dictionary
-            CurFood['Servings'] = AskForInput(text, Input.Number, default=1, allowDecimalNumbers=True, allowNegativeNumbers=False)
+                text = f"How many servings of {CurFood['Name']}\n(1 serving = {CurFood['Serving Size']})"
+                
+                # translates to set dictionary value in CurFood and then set dictionary
+                CurFood['Servings'] = AskForInput(text, Input.Number, default=1, allowDecimalNumbers=True, allowNegativeNumbers=False)
 
-            dix = {
-                'Date': str(Date.CurrentDate)
-                'Food': dix(CurFood)
-            }
-            RunShortcut(shortcutNames["Log Algorithm"], input=dix)
+                dix = {
+                    'Date': str(Date.CurrentDate)
+                    'Food': dix(CurFood)
+                }
+                RunShortcut(shortcutNames["Log Algorithm"], input=dix)
 
-        if exitAfterQuickLog == TRUE:
+            if exitAfterQuickLog == TRUE:
+                return
+
+        case "Log Foods At Time...":
+            RunShortcut(shortcutNames["Log Foods At Time"])
+        case "Log Foods At Different Times":
+            RunShortcut(shortcutNames["Bulk Entry"])
+
+        case "Make Food Note":
+            res = AskForInput(Input.Text, "What is the name of the food you would like to note down?", allowMultipleLines=False)
+            text = f'{res} @ {CurrentDate.format(date="medium", time="short")}'
+            AppendToFile(text, "FLS/Other/foodNotes.txt", makeNewLine=True)
             return
 
-    elif mainMenu.opt("Log Foods"):
+        case 'Saved Foods and Search':
+            RunShortcut(shortcutNames["Saved And Search"])
 
-        Dating = AskForInput("What date and time? Click Done for Right Now", Input.DateAndTime)
+        case 'History and Stats':
+            case "Weekly Summary":
+                RunShortcut(shortcutNames["Week Summary"])
 
-        for item in RunShortcut(shortcutNames["Foods List"]):
-            CurFood = item
-            dix = {
-                'Date': str(Dating)
-                'Food': dix(CurFood)
-            }
+            case "Food History":
+                RunShortcut(shortcutNames["Clear Cache And Backlog"])
 
-            res = RunShortcut(shortcutNames["Log Algorithm"], input=dix)
-            REPEATRESULTS.append(res)
-
-        makePresetMenu = Menu(prompt="Make Preset?", options=["Yes", "No"])
-
-        if makePresetMenu.opt("Yes"):
-            RunShortcut(shortcutNames["Make Preset"], input=REPEATRESULTS)
-        
-        elif makePresetMenu.opt("No"):
-            pass
-
-    elif mainMenu.opt("Log Foods In Bulk"):
-        RunShortcut(shortcutNames["Bulk Entry"])
-
-    elif mainMenu.opt("Search and View"):
-        # run shortcutNames[search algorithm ]and display food with 
-
-        searchResult = RunShortcut(shortcutNames["Display Food Item"], input=RunShortcut(shortcutNames["Search Algorithm"]))
-
-        postSearchMenu = Menu(["Log Entry", "Make Preset", "Exit"])
-
-        if postSearchMenu.opt("Log Entry"):
-            date = AskForInput("Date:", Input.DateAndTime, default=Date.CurrentDate)
-
-            dix = {
-                'Date': str(date)
-                'Food': dix(searchResult)
-            }
-            res = RunShortcut(shortcutNames[
-                "Log Algorithm"],
-                input=dix)
-
-            LoggedFoods2 = res
-
-            svp = Menu(["Yes", "No"], prompt="Save As Preset?")
-
-            if svp.opt("Yes"):
-                RunShorctut("Make Preset", input=LoggedFoods2)
-            if svp.opt("No"):
-                pass
-
-        elif postSearchMenu.opt("Make Preset"):
-            RunShortcut(shortcutNames["Make Preset"], input=searchResult)
-
-        elif postSearchMenu.opt("Exit"):
-            pass
-
-    elif mainMenu.opt("Presets"):
-
-        prm = Menu(prompt="Presets", options=["View Presets", "Make Preset", "Edit Preset", "Remove Preset(s)"])
-
-        if prm.opt("View Presets"):
-            deletePresetCache = FALSE
-            res = RunShortcut(shortcutNames["Get Preset"])
-            for repeatItem in res:
-                changedFood = Dictionary(RunShortcut(shortcutNames["Display Food Item"], input=repeatItem))
-                Menu(f'Save Changes to {changedFood['Name']}?'):
-                    case 'Yes':
-                        SaveFile(changedFood, f"FLS/Presets/Foods/food_{changedFood['id']}.json", overwrite=True)
-                        deletePresetCache = TRUE
-                    case 'No':
-                        pass
-
-                if deletePresetCache == TRUE:
-                    file = GetFile('FLS/Presets/vcardCache.txt', errorIfNotFound=False)
-                    DeleteFile(file, deleteImmediately=True)
-
-
-        elif prm.opt("Make Preset"):
-            # run shortcutNames[foods list ]to get list of foods to be made into a preset
-            RunShortcut(shortcutNames["Make Preset"])
-
-        elif prm.opt("Edit Preset"):
-            RunShortcut(shortcutNames["Edit Preset"])
-
-        elif prm.opt("Remove Preset(s)"):
-            RunShortcut(shortcutNames["Remove Preset"])
-
-    elif mainMenu.opt("Barcodes"):
-        brm = Menu(prompt="Barcodes", options=[
-            "View Personal Database",
-            "Add to Personal Database",
-            "Edit Items in Personal Database",
-            "Remove From Personal Database"
-            ])
-
-
-        if brm.opt("View Personal Database"):
-            res = RunShortcut(shortcutNames["Get Barcode"])
-            for item in res:
-                RunShortcut(shortcutNames["Display Food Item"], input=item)
-
-        elif brm.opt("Add to Personal Database"):
-            RunShortcut(shortcutNames["Barcode Search"])
-
-        elif brm.opt("Edit Items in Personal Database"):
-            RunShortcut(shortcutNames["Edit Barcode"])
-
-        elif brm.opt("Remove From Personal Database"):
-            res = RunShortcut(shortcutNames["Get Barcode"])
-            RunShortcut(shortcutNames["Remove Barcode"], input=res)
-        
-
-    elif mainMenu.opt("Recent Meals"):
-        res = RunShortcut(shortcutNames["Get Recent"])
-        for item in res:
-            RunShortcut(shortcutNames["Display Food Item"], input=item)
-
-
-    elif mainMenu.opt("Weekly Summary"):
-        RunShortcut(shortcutNames["Week Summary"])
-
-
-    elif mainMenu.opt("Food History"):
-        file = GetFile("FLS/Other/backlog.json", errorIfNotFound=False)
-        if file is not None
-            ShowAlert("There are items in the backlog, food history will not be accurate until backlog is cleared", showCancel=True)
-        
-        if itemsInHistCache == TRUE:
-                runHistAfterClear = TRUE
-            else:
+                file = GetFile("FLS/Other/backlog.json", errorIfNotFound=False)
+                if file is not None
+                    ShowAlert("There are items in the backlog, food history will not be accurate until backlog is cleared", showCancel=True)
+                
                 RunShortcut(shortcutNames["Food History"])
 
-    elif mainMenu.opt("Clear Backlog"):
-        reqBacklogClear = TRUE
+        case 'Clear... and more':
+            case "Clear Backlog":
+                Notification('Clearing backlog....')
+                RunShortcut(shortcutNames["Clear Cache And Backlog"])
 
+            case "Clear Food Notes":
+                file = GetFile("FLS/Other/foodNotes.txt", errorIfNotFound=False)
+                DeleteFile(file, deleteImmediately=True)
 
-    # clearing the backlog
-    if hasHealthApp == TRUE:
-        file = GetFile("FLS/Other/backlog.json", errorIfNotFound=False)
-        if file is not None:
-            # clear items by logging them
-            dix = Dictionary(file)
-            for item in dix['backlog']:
-                RunShortcut(shortcutNames["Log Algorithm"], input=item)
-
-            # erase the backlog
-            file = GetFile("FLS/Other/backlog.json")
-            DeleteFile(file, deleteImmediately=True)
-
-        else:
-            if reqBacklogClear == TRUE:
-                # if user req clear backlog let them no there was nothing to clear
-                ShowAlert("There are no foods in the backlog")
-
-
-    # clear the cache
-    file = GetFile("FLS/History/foodHistoryCache.json", errorIfNotFound=False)
-    if file is not None:
-        dix = Dictionary(file)
-        histCache = dix['cache']
-        
-        file = OpenFile("FLS/History/foodHistory.json", errorIfNotFound=False)
-        if file is not None:
-            IFRESULT = file
-        else:
-            IFRESULT = {}
-        history = Dictionary( IFRESULT )
-
-        for item in histCache:
-            dayKey = item['date']
-            timeKey = item['time']
-
-            dayDix = history[dayKey]
-            if history[dayKey] is None:
-                IFRESULT = history[dayKey]
-            else
-                IFRESULT = {}
-            dayDix = IFRESULT
-
-            timeList = dayDix[timeKey]
-
-            timeList.append({
-                    'food': item['food'],
-                    'servings': item['servings'],
-                    'cals': item['cals']
-                })
-
-            dayDix[timeKey] = timeList
-            history[dayKey] = dayDix
-
-        # save our history
-        SaveFile(history, "FLS/History/foodHistory.json", overwrite=True)
-
-        # clear our cache by deleting the file
-        file = GetFile("FLS/History/foodHistoryCache.json")
-        DeleteFile(file, deleteImmediately=True)
-
-        if runHistAfterClear == TRUE:
-            RunShortcut(shortcutNames["Food History"])
+    RunShortcut(shortcutNames['Clear Cache and Backlog'])
 
     if checkForUpdates == TRUE:
         RunShortcut(shortcutNames["NutriDix Updater"])
@@ -2069,4 +2355,139 @@ def Nutrition():
 
 #---------------------------------------------------------------------------------------------------------------------------------
 
-def testing1():
+def LogAlgorithmTestBench():
+
+    TRUE = 1
+    FALSE = 0
+
+    nutrDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
+
+    # clear cache before test
+    RunShortcut(nutrDix['Clear Cache and Backlog'])
+
+    startDate = AskForInput(Input.DateAndTime, prompt="Start Date")
+    emptyFood = { ... } # default food dictionary
+
+    nutrUnits = Dictionary({
+        "Calories": "kcal",
+        "Carbs": "g",
+        "Fat": "g",
+        "Protein": "g",
+        "Sugar": "g",
+        "Fiber": "g",
+        "Monounsaturated": "g",
+        "Polyunsaturated": "g",
+        "Saturated": "g",
+        "Sodium": "mg",
+        "Cholesterol": "mg",
+        "Potassium": "mg",
+        "VitA": "mcg",
+        "VitC": "mg",
+        "Calcium": "mg",
+        "Iron": "mg"
+    })
+
+    nutrSample = Dictionary({
+        "Calories": "Dietary Energy",
+        "Carbs": "carbohydrates",
+        "Fat": "Total Fat",
+        "Protein": "Protein",
+        "Sugar": "Dietary Sugar",
+        "Fiber": "Fiber",
+        "Monounsaturated": "Monounsaturated Fat",
+        "Polyunsaturated": "Polyunsaturated Fat",
+        "Saturated": "Saturated Fat",
+        "Sodium": "Sodium",
+        "Cholesterol": "Dietary Cholesterol",
+        "Potassium": "Potassium",
+        "VitA": "Vitamin A",
+        "VitC": "Vitamin C",
+        "Calcium": "Calcium",
+        "Iron": "Iron"
+    })
+
+    # test that each nutrient is logged correctly
+    file = GetFile('FLS/Other/nutriKeys.txt')
+    nutrients = SplitText(file, '\n')
+    for i in (1,2):
+        servings = i;
+        for item in nutrients:
+            nutr = item
+            # create food where that nutrient value is set to 0.1, with 1 serving
+            logValue = 0.1
+            servings = 1
+            checkValue = logValue * servings
+            
+            testFood = emptyFood
+            testFood['Name'] = f'{nutr} Food Test' 
+            testFood['Servings'] = servings
+            testFood[nutr] = logValue
+
+            # pass through log algorithm with the given date
+            outputFood = RunShortcut(nutrDix["Log Algorithm"], input={'Date': startDate, 'Food': testFood})
+
+            # check the log test
+            # get health samples from that day in the appropriate unit and compare them
+            logTestPassed = FALSE
+            sampleType = nutrSample[nutr]
+            sampleUnits = nutrUnits[nutr]
+            sample = FindHealthSamples(    type=sampleType, 
+                                            startDateIsOn=startDate,
+                                            unit=sampleUnits,
+                                            sortby="Start Date",
+                                            order="Latest First",
+                                            limit=1
+                                        )
+            if sample is not None:
+                if GetHealthSampleDetails(sample, "Start Date") == startDate:
+                    if GetHealthSampleDetails(sample, "Value") == checkValue:
+                        logTestPassed = TRUE
+
+
+            # check to make sure the output food is correct
+            outputPassed = TRUE
+            for item in nutrients:
+                op = RoundNumber(outputFood[item], hundredths)
+                ref = RoundNumber(testFood[item], hundredths)
+                if op != ref:
+                    outputPassed = FALSE
+
+            # check to make sure output food is logged to cache as expected
+            cacheTestPassed = FALSE
+            dix = Dictionary( Text( GetFile("FLS/History/foodHistoryCache.json") ))
+            cache = dix['cache']
+            if cache is not None:
+                cacheTestPassed = TRUE
+                entry = Dictionary(cache.getLastItem())
+                refEntry = {
+                    'date' : startDate.format(date="short", time=None),
+                    'time' :  startDate.format(custom="HH:mm"),
+                    'food' : f'{nutr} Food Test' ,
+                    'servings': servings,
+                }
+                for item in ref.keys:
+                    if entry[item] != refEntry[item]:
+                        cacheTestPassed = FALSE
+
+            # log our results
+
+            if logTestPassed == TRUE:
+                IFRESULT = f'Health Sample Log Test - {servings}x - {nutr} - PASS'
+            else:
+                IFRESULT = f'Health Sample Log Test - {servings}x - {nutr} - FAIL'
+            results.append(IFRESULT)
+
+            if outputPassed == TRUE:
+                IFRESULT = f'Output Food Test - {servings}x - {nutr} - PASS'
+            else:
+                IFRESULT = f'Output Food Test - {servings}x - {nutr} - FAIL'
+            results.append(IFRESULT)
+
+            if cacheTestPassed == TRUE:
+                IFRESULT = f'Cache Test - {servings}x - {nutr} - PASS'
+            else:
+                IFRESULT = f'Cache Test - {servings}x - {nutr} - FAIL'
+            results.append(IFRESULT)
+
+    # at the end of the test, delete cache and save results
+
