@@ -44,15 +44,17 @@ def main():
 			# always has url
 			foundLink = item['url']
 		else:
-			# body may contain a url
-			urls = GetURLs(item['body'])
-
-			if urls is not None:
-				if urls.contains(item['body']):
-					# URLS are evaluated to full length
-					# if its just standard body then there will be other stuff that dont get evaluated to it
-					foundLink = item['body']
-					bodyIsLink = TRUE
+			size = GetFileDetails('File Size', item['body'])
+			if toBytes(size) <= 1024:
+				# only consider when body is less than 1024 characters
+				# body may contain a url
+				urls = GetURLs(item['body'])
+				if urls is not None:
+					if urls.contains(item['body']):
+						# URLS are evaluated to full length
+						# if its just standard body then there will be other stuff that dont get evaluated to it
+						foundLink = item['body']
+						bodyIsLink = TRUE
 
 		if foundLink is not None:
 			if bodyIsLink == TRUE:
