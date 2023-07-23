@@ -530,37 +530,72 @@ def FoodHistory()
 def BarcodeSearch():
     TRUE = 1
     FALSE = 0
+
     nutrDix = Dictionary(GetFile('FLS/Other/shortcutNames.json'))
-    Menu("Get Food"):
-        case 'Select from Personal Database':
-            return RunShortcut(nutrDix['Get Saved Food'], input=)
 
-        case 'Scan Barcode':
-            barcode = Text(ScanBarcode())
+    params = Dictionary(ShortcutInput)
 
-            #
-            file = GetFile('FLS/Barcodes/barcodeCache.json', errorIfNotFound=False)
-            if file is not None:
-                IFRESULT = file
-            else:
-                barcodeCache = {}
-                folder = GetFile('FLS/Barcodes/Foods')
-                for item in GetContentsOfFolder(folder):
-                    barcodeCache[ item['Barcode'] ] = item['id']
-                IFRESULT = barcodeCache
-            barcodeCache = IFRESULT
+    showMenu = FALSE
 
-            if barcodeCache[barcode] is not None:
-                return Dictionary(file)
+
+    if params['getFood'] is not None:
+        # we are getting a food from the database
+        Menu("Get Food"):
+            case 'Select from Personal Database':
+                return RunShortcut(nutrDix['Get Saved Food'], input={'type': 'barcodes'})
+
+            case 'Scan Barcode':
+                pass
+
+            case 'Cancel':
+                return None
+
+    # we are adding to the database so scan immediately
+    barcode = Text(ScanBarcode())
+
+    file = GetFile('FLS/Barcodes/barcodeCache.json', errorIfNotFound=False)
+    if file is not None:
+        IFRESULT = file
+    else:
+        barcodeCache = {}
+        folder = GetFile('FLS/Barcodes/Foods', errorIfNotFound=False)
+        for item in GetContentsOfFolder(folder):
+            barcodeCache[ item['Barcode'] ] = item['id']
+        SaveFile(barcodeCache, 'FLS/Barcodes/barcodeCache.json', overwrite=True)
+        IFRESULT = barcodeCache
+    barcodeCache = IFRESULT
+
+    if barcodeCache[barcode] is not None:
+        file = GetFile(f'FLS/Barcodes/Foods/food_{barcodeCache[barcode]}.json')
+        if params['getFood'] is not None:
+            return file
+        else:
+            # the barcode has a match in the personal database, either edit it, cancel or remke it
+            Menu(f'There is a food in your database with the barcode "{barcode}"'):
+                case 'Edit Food':
+                    RunShortcut(nutrDix['Edit Saved Food'], input={'type': 'barcodes', 'args': file})
+                    return None
+                case 'Remake Food':
+                    DeleteFile(file, deleteImmediately=True)
+                case 'Cancel'
+                    return None
 
 
     # if we get here that means we are creating a new food item
     foodResolved = FALSE
     doSearch = FALSE
+    testing = FALSE
 
     # Search online database
-    url = URL(f'https://world.openfoodfacts.org/api/v0/product/{barcode}.json')
-    res = GetContentsOfURL(url)
+
+    if testing == TRUE:
+        IFRESULT = ... # text of some barcode result
+    else:
+        url = URL(f'https://world.openfoodfacts.org/api/v0/product/{barcode}.json')
+        IFRESULT = GetContentsOfURL(url)
+
+    res = Dictionary(IFRESULT)
+
     if res['status'] == 1:
         # we found the product, now we just map the dictionary values
         nutrInfo = res['product.nutriments']
@@ -578,8 +613,8 @@ def BarcodeSearch():
             'Protein': nutrInfo['proteins_value'],
             'Sugar': nutrInfo['sugars_value'],
             'Fiber': nutrInfo['fiber_value'],
-            'Monounsaturated': nutrInfo[''],
-            'Polyunsaturated': nutrInfo[''],
+            'Monounsaturated': 0
+            'Polyunsaturated': 0
             'Saturated': nutrInfo['saturated-fat_value'],
             'Trans': nutrInfo['trans-fat_value'],
             'Sodium': nutrInfo['sodium_value'],
@@ -592,7 +627,7 @@ def BarcodeSearch():
         }
 
         # vitamin a is in IU, convert to mcg
-        num = nutrInfo['vitamin-a_value'] * 0.3
+        num = Number(nutrInfo['vitamin-a_value']) * 0.3
         outputFood['VitA'] = num
 
         prompt = f'''
@@ -618,6 +653,8 @@ def BarcodeSearch():
                         pass
             case 'Search for food or make food manually':
                 pass
+            case 'Cancel':
+                return None
 
     if foodResolved == FALSE:
         # no match in database or in search so we continue
@@ -626,6 +663,8 @@ def BarcodeSearch():
                 doSearch = TRUE
             case 'Make Food Manually':
                 pass
+            case 'Cancel':
+                return None
 
     if doSearch == TRUE:
         # perform search
@@ -642,11 +681,16 @@ def BarcodeSearch():
 
     if foodResolved == FALSE:
         # otherwise we fall through to make food manually
-        outputFood = RunShortcut(nutrDix['Manual Log'])
+        outputFood = RunShortcut(nutrDix['Make Food Manually'])
 
     # save the new output food to database and then continue
+    outputFood['Barcode'] = barcode
+
+    barcodeCache[barcode] = outputFood['id']
+    SaveFile(barcodeCache, 'FLS/Barcodes/barcodeCache.json', overwrite=True)
+
     SaveFile(outputFood, f'FLS/Barcodes/Foods/food_{outputFood['id']}.json', overwrite=True)
-    DeleteFile(GetFile('FLS/Barcodes/barcodeCache.json', errorIfNotFound=False), deleteImmediately=True)
+
     return outputFood
 
 #---------------------------------------------------------------------------------------------------------------------------------GetBarcode
@@ -682,9 +726,9 @@ def RemoveBarcode():
     RunShortcut(nutrDix['Select Saved Foods'], input=dix)
     pass
 
-#---------------------------------------------------------------------------------------------------------------------------------ManualLog
+#---------------------------------------------------------------------------------------------------------------------------------MakeFoodManually
 
-def ManualLog(): # Manual Log
+def MakeFoodManually(): # Make Food Manually
     nutrDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
     exactValDix = {
         'VitA': 1000,
@@ -696,9 +740,7 @@ def ManualLog(): # Manual Log
     foodDix = RunShortcut(nutrDix['Display Food Item'])
 
     # we need to check if there are any vitamin values before
-    num = foodDix['VitA'] + foodDix['VitC']
-    num = num + foodDix['Calcium']
-    num = num + foodDix['Iron']
+    num = foodDix['VitA'] + foodDix['VitC'] + foodDix['Calcium'] + foodDix['Iron']
 
     if num > 0:
         Menu('Vitamins and Minerals are in'):
@@ -870,8 +912,9 @@ def SelectSavedFoods():
     deleteMode = FALSE
 
     savedInfo = {
-        'barcodes': { 'folder': 'FLS/Barcodes', 'prompt': 'Barcoded Food'}
-        'presets': { 'folder': 'FLS/Presets', 'prompt': 'Preset'}
+        'barcodes': { 'folder': 'FLS/Barcodes', 'prompt': 'Barcoded Foods'}
+        'presets': { 'folder': 'FLS/Presets', 'prompt': 'Presets'}
+        'both': { 'prompt' : 'Preset(s) and Barcoded Food(s)'}
     }
 
     params = Dictionary(ShortcutInput)
@@ -880,41 +923,57 @@ def SelectSavedFoods():
         Alert('No type specified')
         return None
     else:
-        config = params['type']
+        config = savedInfo [ params['type'] ]
         parentFolder = config['folder']
 
 
     if params['deleteMode'] is not None:
         deleteMode = TRUE
 
-    file = GetFile(f"{parentFolder}/vcardCache.txt", errorIfNotFound=False)
-    if file is not None:
-        IFRESULT = Text(file)
+
+    if params['type'] == 'all':
+        IFRESULT = [ 'presets', 'barcodes' ]
     else:
-        # create the vcard cache
-        folder = GetFile(f"{parentFolder}/Foods")
-        files = GetContentsOfFolder(folder)
-        files = filter(files, sortBy='Last Modified Date', order='Latest First')
-        for item in files:
-            food = Dictionary(file)
-            # some weird bug is limiting me to have to pull ID separately
-            dixVal = food['id']
-            text = f'''
-                BEGIN:VCARD
-                VERSION:3.0
-                N;CHARSET=UTF-8:{food['Name']}
-                ORG;CHARSET=UTF-8:{food['Serving Size']}
-                NOTE;CHARSET=UTF-8:{dixVal}
-                END:VCARD
+        IFRESULT = params['type']
+    searchTypes = IFRESULT
 
-            '''
-            REPEATRESULTS.append(text)
+    for curType in searchTypes:
+        dixVal = savedInfo[curType]
+        parentFolder = dixVal['folder']
+        prompt = dixVal['prompt']
 
-        SaveFile(Text(REPEATRESULTS), f"{parentFolder}/vcardCache.txt", overwrite=True)
+        file = GetFile(f"{parentFolder}/vcardCache.txt", errorIfNotFound=False)
+        if file is not None:
+            IFRESULT = Text(file)
+        else:
+            # create the vcard cache
+            folder = GetFile(f"{parentFolder}/Foods")
+            files = GetContentsOfFolder(folder)
+            files = filter(files, sortBy='Last Modified Date', order='Latest First')
+            for item in files:
+                food = Dictionary(file)
+                # some weird bug is limiting me to have to pull ID separately
+                dixVal = food['id']
+                dix = {
+                    'folder': parentFolder,
+                    'id': dixVal
+                }
+                text = f'''
+                    BEGIN:VCARD
+                    VERSION:3.0
+                    N;CHARSET=UTF-8:{food['Name']}
+                    ORG;CHARSET=UTF-8:{prompt} ⸱ {food['Serving Size']}
+                    NOTE;CHARSET=UTF-8:{dix}
+                    END:VCARD
 
-        IFRESULT = Text(REPEATRESULTS)
+                '''
+                REPEATRESULTS.append(text)
 
-    vcardCache = IFRESULT
+            SaveFile(Text(REPEATRESULTS), f"{parentFolder}/vcardCache.txt", overwrite=True)
+
+            IFRESULT = Text(REPEATRESULTS)
+
+    vcardCache = Text(REPEATRESULTS)
 
 
     text = f'''
@@ -938,16 +997,19 @@ def SelectSavedFoods():
 
 
     if deleteMode == TRUE:
-        IFRESULT = f"Select {config['prompt']}(s) to Delete"
+        IFRESULT = f"Select {config['prompt']} to Delete"
     else:
-        IFRESULT = f"Select {config['prompt']}(s)"
+        IFRESULT = f"Select {config['prompt']}"
 
     selectedItems = ChooseFrom(choices, prompt=IFRESULT, selectMultiple=True)
     for chosen in selectedItems:
         if chosen.Notes == 'Cancel':
             return None
 
-        foodId = chosen.Notes
+        dix = Dictionary(chosen.Notes)
+
+        foodId = dix['id']
+        parentFolder = dix['folder']
 
         # make this the most used one
         file = GetFile(f"{parentFolder}/Foods/food_{foodId}.json")
@@ -966,8 +1028,12 @@ def SelectSavedFoods():
 
     if deleteMode == TRUE:
         # delete the cache since it is invalid
-        file = GetFile(f"{parentFolder}/vcardCache.txt")
+        file = GetFile(f"{parentFolder}/vcardCache.txt", errorIfNotFound=False)
         DeleteFile(file, deleteImmediately=True)
+
+        if params['type'] == 'barcodes':
+            file = GetFile(f"{parentFolder}/barcodeCache.json", errorIfNotFound=False)
+            DeleteFile(file, deleteImmediately=True)
 
     return selectedFoods
     
@@ -989,10 +1055,13 @@ def EditSavedFood(): # Edit Saved Food
 
     nutrDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
     
-    selectedFoods = RunShortcut(nutrDix['Select Saved Foods'], input=params)
+    if params['args'] is not None:
+        IFRESULT = params['args']
+    else:
+        IFRESULT = RunShortcut(nutrDix['Select Saved Foods'], input=params)
+    selectedFoods = IFRESULT
+
     config = savedInfo [ params['type'] ]
-
-
 
     file = GetFile("FLS/Other/nutriKeys.txt")
     nutriKeys = SplitText(file, '\n')
@@ -1045,7 +1114,6 @@ def EditSavedFood(): # Edit Saved Food
                         breakLoop = TRUE
 
         newFood['Name'] = name
-
 
         # save the file
         SaveFile(newFood, f"{config['folder']}/food_{foodId}.json", overwrite=True)
@@ -1141,13 +1209,51 @@ def AddRecent():
 #---------------------------------------------------------------------------------------------------------------------------------DisplayFoodItem
 
 def DisplayFoodItem():
+    # params = Dictionary(ShortcutInput)
+    # foodDix = params['food']
+
+    # action = params['action']
+    
     if ShortcutInput is not None:
-        IFRESULT = ShortcutInput
+        IFRESULT = foodDix
     else:
         # the default food dictionary
-        IFRESULT = '''
-        '''
+        IFRESULT = ... # the default food dictionary
     foodDix = Dictionary(IFRESULT)
+
+    # if action == 'view':
+    #     # Use menu prompt first
+    #     outputFood = foodDix
+    #     prompt = f'''
+    #     {outputFood['Name']}
+    #     Serving Size: ({outputFood['Serving Size']}) ⸱ Cals: {outputFood['Calories']}
+    #     Carbs: {outputFood['Carbs']}g ⸱ Fat: {outputFood['Fat']}g ⸱ Protein: {outputFood['Protein']}g
+    #     Sugar: {outputFood['Sugar']}g ⸱ Fiber: {outputFood['Fiber']}g 
+    #     Monosaturated Fat: {outputFood['Monosaturated']}g ⸱ Polyunsaturated Fat: {outputFood['Polyunsaturated']}g
+    #     Saturated Fat: {outputFood['Saturated']}g ⸱ Sodium: {outputFood['Sodium']}mg ⸱ Cholesterol: {outputFood['Cholesterol']}mg
+    #     Potassium: {outputFood['Potassium']}mg ⸱ Calcium: {outputFood['Calcium']}mg ⸱ Iron: {outputFood['Iron']}mg
+    #     VitA: {outputFood['VitA']}mcg ⸱ VitC: {outputFood['VitC']}mg
+    #     '''
+    #     Menu(prompt):
+    #         case 'Done':
+    #             searchExit = TRUE
+    #             return outputFood
+    #         case 'Edit Food':
+    #             res = RunShorctut(NutriDix['Display Food Item'], input=outputFood)
+    #             Menu('Save changes?')
+    #                 case 'Yes':
+    #                     searchExit = TRUE
+    #                     outputFood = res
+    #                 case 'No, use previous values':
+    #                     searchExit = TRUE
+    #                 case 'No, back to search':
+    #                     pass
+    #         case 'Back To Search':
+    #             pass
+
+    #         case 'Cancel Search':
+    #             return None
+
 
 
     g = '(g)'
@@ -1682,10 +1788,7 @@ def SearchAlgorithm():
 
     for item in vitDix.keys():
         # fractional value
-        num = outputFood[item] / 100
-        # the actual value
-        num = num * vitDix[item]
-        # write in the dictionary
+        num = (outputFood[item] / 100) * vitDix[item]
         outputFood[item] = RoundNumber(num, hundredths)
 
     return outputFood
@@ -1760,18 +1863,18 @@ def FoodsList(): # Foods List
             case 'Search Food':
                 MENURESULT = RunShortcut(nutrDix['Search Algorithm'])
 
-            case 'Get Preset(s)':
-                MENURESULT = RunShortcut(nutrDix['Select Saved Foods'], input={'type': 'presets'})
+            case 'Get Preset(s) Or Barcoded Food(s)':
+                MENURESULT = RunShortcut(nutrDix['Select Saved Foods'], input={'type': 'all'})
 
             case 'Get Recent Meals':
                 MENURESULT = RunShortcut(nutrDix['Get Recent'])
 
-            case 'Get Barcoded Food':
-                MENURESULT = RunShortcut(nutrDix['Get Barcode'])
+            case 'Scan Barcode':
+                MENURESULT = RunShortcut(nutrDix['Barcode Search'], input={'getFood': True})
 
             case 'Make Food Manually':
                 # TODO, make manual maker
-                MENURESULT = RunShortcut(nutrDix['Get Barcode'])
+                MENURESULT = RunShortcut(nutrDix['Make Food Manually'])
 
             case 'View/Edit Food':
                 addMenuResult = FALSE
@@ -2100,9 +2203,9 @@ def LogFoodsAtTime():
             case "No":
                 pass
 
-#---------------------------------------------------------------------------------------------------------------------------------BulkEntry
+#---------------------------------------------------------------------------------------------------------------------------------LogFoodsAtDifferentTimes
 
-def BulkEntry(): # Bulk Entry
+def LogFoodsAtDifferentTimes(): # Log Foods At Different Times
     nutrDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
     selectedFoods = RunShortcut(nutrDix['Foods List'])
 
@@ -2314,7 +2417,7 @@ def Nutrition():
         case "Log Foods At Time...":
             RunShortcut(shortcutNames["Log Foods At Time"])
         case "Log Foods At Different Times":
-            RunShortcut(shortcutNames["Bulk Entry"])
+            RunShortcut(shortcutNames["Log Foods At Different Times"])
 
         case "Make Food Note":
             res = AskForInput(Input.Text, "What is the name of the food you would like to note down?", allowMultipleLines=False)
