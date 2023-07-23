@@ -407,7 +407,243 @@ def NutriDixUpdater():
 #---------------------------------------------------------------------------------------------------------------------------------WeekSummary
 
 def WeekSummary():
-    pass
+
+    TRUE = 1
+    FALSE = 0
+
+    nutrDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
+
+    getDateRange = TRUE
+    makeCaloriePlot = FALSE
+    averageBreakdown = FALSE
+    plotNutrients = TRUE
+
+
+    Menu("Statistics"):
+        case 'Nutrient Breakdown For Date...':
+            getDateRange = FALSE
+
+        case 'Nutrient Breakdown For Dates...':
+            pass
+        
+        case 'Average Nutrient Breakdown Between Dates...':
+            # where we just plot an average breakdown
+            averageBreakdown = TRUE
+
+        case 'Calories Breakdown For Dates...': 
+            makeCaloriePlot = TRUE
+            plotNutrients = FALSE
+
+    start = AskForInput(Input.Date, prompt="Select Start Date")
+    
+    if getDateRange == TRUE:
+        IFRESULT = AskForInput(Input.Date, prompt="Select End Date", default=start)
+    else:
+        IFRESULT = start
+
+    end = IFRESULT
+    termEnd = AddToDate(end, days=1)
+
+    repeats = TimeBetweenDates(start, termEnd, inDays=True)
+    if repeats > 1:
+        makeCaloriePlot = TRUE
+
+    dix = {
+        'averageBreakdown': averageBreakdown,
+        'plotNutrients': plotNutrients,
+        'start': start,
+        'end': end,
+        'repeats' : repeats
+    }
+
+    stats = RunShortcut(nutrDix['Calculate Stats'], input=dix)
+
+    if plotNutrients == TRUE:
+        for plot in stats['chartyPiePlots']:
+            chartId = Charty.NewChart(plot['title'])
+            seriesLabel = Charty.AddSeries('Nutrient Breakdown', chartId, 'Pie', values=plot['values'], labels=plot['labels'])
+            Charty.StylePieSeries(seriesLabel, chartId, colors=plot['labelColors'], labels=plot['labels'])
+
+
+    if makeCaloriePlot == TRUE:
+        averageCals = CalculateStatistics("Average", stats['calorieValues'])
+        for _ in range(repeats):
+            averageCalValues.append(averageCals)
+
+        # create the chart
+        chartId = Charty.NewChart(f"{start.format(custom="MMM dd")} - {end.format(custom="MMM dd")} Energy")
+        Charty.AddSeries("Daily Energy", chartId, 'Line', xValues=stats['calorieLabels'], yValues=stats['calorieValues'])
+        Charty.AddSeries("Average Energy", chartId, 'Line', xValues=stats['calorieLabels'], yValues=averageCalValues)
+        Charty.StyleAxis("X Axis", chartId, title="Dates", formatValuesAsDate={'custom'="MMM dd"})
+
+    OpenApp("Charty")
+
+#---------------------------------------------------------------------------------------------------------------------------------CalculateStats
+
+def CalculateStats():
+
+    TRUE = 1
+    FALSE = 0
+
+    emptyList = []
+
+    # averageBreakdown = FALSE
+    # plotNutrients = TRUE
+
+    params = Dictionary(ShortcutInput)
+
+    averageBreakdown = params['averageBreakdown']
+    plotNutrients = params['plotNutrients']
+    start = Date(params['start'])
+    end = Date(params['end'])
+    repeats = Number(params['repeats'])
+
+    # we have the base code to create a pie chart for a given day
+
+    keyToSample = {
+            "Calories": "Dietary Calories",
+            "Carbs": "Carbohydrates",
+            "Fat": "Total Fat",
+            "Protein": "Protein",
+            "Sugar": "Sugar",
+            "Fiber": "Fiber",
+            "Monounsaturated": "Monounsaturated Fat",
+            "Polyunsaturated": "Polyunsaturated Fat",
+            "Saturated": "Saturated Fat",
+            "Sodium": "Sodium",
+            "Cholesterol": "Dietary Cholesterol",
+            "Potassium": "Potassium",
+            "VitA": "Vitamin A",
+            "VitC": "Vitamin C",
+            "Calcium": "Calcium",
+            "Iron": "Iron"
+        }
+
+    nutrUnits = {
+        "Calories": "kcal",
+        "Carbs": "g",
+        "Fat": "g",
+        "Protein": "g",
+        "Sugar": "g",
+        "Fiber": "g",
+        "Monounsaturated": "g",
+        "Polyunsaturated": "g",
+        "Saturated": "g",
+        "Trans": "g",
+        "Sodium": "g",
+        "Cholesterol": "g",
+        "Potassium": "g",
+        "VitA": "g",
+        "VitC": "g",
+        "Calcium": "g",
+        "Iron": "g"
+    }
+
+    labelColorMap = {
+        "Carbs": "ffff375f",
+        "Fat": "ffffd60a",
+        "Protein": "ff30d158",
+        "Sugar": "ff64d2fe",
+        "Fiber": "633D01",
+        "Monounsaturated": "AD9700",
+        "Polyunsaturated": "AD7200",
+        "Saturated": "F4B4EF",
+        "Sodium": "FFFFFF",
+        "Cholesterol": "F2EE89",
+        "Potassium": "ff64d2fe",
+        "VitA": "97001e",
+        "VitC": "F98B06",
+        "Calcium": "B9B6B2",
+        "Iron": "484746"
+    }
+
+    res = SplitText(GetFile("FLS/Other/nutriKeys.txt"), '\n')
+    nutriKeys = filter(res, whereAll=['Name' != 'Trans'])
+
+    if plotNutrients == FALSE:
+        nutriKeys = 'Calories'
+
+    # stores the total values for the nutrients on that day
+    totalNutrDix = {}
+
+    for repeatIndex in range(repeats):
+
+        curDate = AddToDate(start, days=repeatIndex-1)
+        labels = emptyList
+        values = emptyList
+        labelColors = emptyList
+
+        for curNutrKey in nutriKeys:
+            sampleType = keyToSample[curNutrKey]
+            unit = nutrUnits[curNutrKey]
+            results = FindHealthSamples(type=sampleType, startDateIsOn=curDate, unit=unit)
+            
+            num = Number( CalculateStatistics("Sum", results.Value))
+            daySum = RoundNumber(num, hundredths)
+
+            if curNutrKey == 'Calories':
+                # add it to the calorie plots
+                calorieLabels.append(curDate)
+                calorieValues.append(daySum)
+            else:
+                values.append(daySum)
+
+                # add to total values for this lenght
+                totalNutrDix[curNutrKey] = Number(totalNutrDix[curNutrKey]) + daySum
+
+
+        dayTotal = CalculateStatistics("Sum", values)
+
+        for repeatItem2, repeatIndex2 in filter(nutriKeys, where='Name' != 'Calories'):
+            item = values.getItemAtIndex(repeatIndex2)
+            num = (item / dayTotal) * 100
+            num = RoundNumber(num, hundredths)
+            labels.append(f'{repeatItem2} ({num}%)')
+            labelColors.append(labelColorMap[repeatItem2])
+
+
+        nutrPlots.append({
+            'title': f'{curDate.format(date="medium")} Breakdown',
+            'labels': labels,
+            'values': values,
+            'labelColors': labelColors
+            })
+
+    if averageBreakdown == TRUE:
+        nutrTotal = CalculateStatistics("Sum", totalNutrDix.values())
+        
+        for curNutrKey in nutriKeys:
+            # divide each nutrient total by the number of dates we samples 
+
+            # calculates the percentage of the current nutrient in the sample range
+            # it will be the same as when average since average divides by constant factor
+            curPercent = RoundNumber((totalNutrDix[curNutrKey] / nutrTotal) * 100, hundredths)
+
+            # Calculate the average nutrient value for the plot
+            averageNutr = totalNutrDix[curNutrKey] / repeats
+
+            averageValues.append(averageNutr)
+            averageLabels.append(f'{curNutrKey} ({curPercent}%)')
+
+        IFRESULT = {
+            'title': f'{start.format(custom="MMM dd")} - {end.format(custom="MMM dd")} Average',
+            'labels': averageLabels,
+            'values': averageValues
+        }
+
+    else:
+        IFRESULT = nutrPlots
+    
+    chartyPiePlots = IFRESULT
+
+    res = {}
+    res['calorieLabels'] = calorieLabels
+    res['calorieValues'] = calorieValues
+    if plotNutrients == TRUE:
+        res['chartyPiePlots'] = chartyPiePlots
+
+    return res
+
 
 #---------------------------------------------------------------------------------------------------------------------------------FoodHistory
 
@@ -848,7 +1084,11 @@ def MakePreset(): # Make Preset
                     if breakLoop == FALSE:
                         res = filter(presetNames, where['Name' == name])
                         if res is not None:
-                            name = AskForInput(Input.Text, prompt=f'"{name}" already exists, please select a new name', default=name)
+                            Menu(f'Preset "{name}" already exists'):
+                                case 'Select a different name':
+                                    name = AskForInput(Input.Text, prompt=f'"{name}" already exists, please select a new name', default=name)
+                                case 'Keep both with same name':
+                                    breakLoop = TRUE
                         else:
                             presetNames.append(name)
                             breakLoop = TRUE
@@ -2396,8 +2636,8 @@ def Nutrition():
             RunShortcut(shortcutNames["Saved And Search"])
 
         case 'History and Stats':
-            case "Weekly Summary":
-                RunShortcut(shortcutNames["Week Summary"])
+            case "Statistics with Charty":
+                RunShortcut(shortcutNames["Health Statistics"])
 
             case "Food History":
                 RunShortcut(shortcutNames["Clear Cache And Backlog"])
