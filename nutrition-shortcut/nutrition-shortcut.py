@@ -693,39 +693,6 @@ def BarcodeSearch():
 
     return outputFood
 
-#---------------------------------------------------------------------------------------------------------------------------------GetBarcode
-
-def GetBarcode():
-    # allows user to select a barcode and retrieve it
-    # can be based on get preset
-    file = GetFile('FLS/Other/shortcutNames.json')
-    dix = {
-        'type': 'barcode'
-    }
-    RunShortcut(nutrDix['Select Saved Foods'], input=dix)
-    pass
-
-#---------------------------------------------------------------------------------------------------------------------------------EditBarcode
-
-def EditBarcode():
-    file = GetFile('FLS/Other/shortcutNames.json')
-    dix = {
-        'type': 'barcode'
-    }
-    RunShortcut(nutrDix['Edit Saved Food'], input=dix)
-    pass
-
-#---------------------------------------------------------------------------------------------------------------------------------RemoveBarcode
-
-def RemoveBarcode():
-    file = GetFile('FLS/Other/shortcutNames.json')
-    dix = {
-        'type': 'barcode',
-        'deleteMode': True
-    }
-    RunShortcut(nutrDix['Select Saved Foods'], input=dix)
-    pass
-
 #---------------------------------------------------------------------------------------------------------------------------------MakeFoodManually
 
 def MakeFoodManually(): # Make Food Manually
