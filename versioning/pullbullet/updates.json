@@ -7,6 +7,6 @@
 
 	"version": 1.1,
 	"link": "https://www.icloud.com/shortcuts/e66c679e364440aa9448744838205657",
-	"releaseNotes": "- Improved pushing text larger than 1 MB\\n-Improved type inferencing\\n-Added Update Menu",
+	"releaseNotes": "- Supports pushing text larger than 1 MB\\n- Improved push type inferencing\\n- Added user choice menu for shortcut updates",
 	"releaseTime": "2023-07-23"
 }
