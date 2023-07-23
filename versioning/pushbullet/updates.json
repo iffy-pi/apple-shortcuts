@@ -5,8 +5,8 @@
 	"rhub": "https://routinehub.co/shortcut/15515",
 	"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/updates.json",
 
-	"version": 1.5,
-	"link": "https://www.icloud.com/shortcuts/5cf833af3f1a4319986328b64561316a",
-	"releaseNotes": "- Updated to improve push type identification for text and files\\n- Option for user to specify push type when type cannot be identified\\n- MIME file types is now pulled and updated remotely.\\n- Update checks now happen at the end of shortcut action rather than beginnning",
-	"releaseTime": "2023-06-09"
+	"version": 1.51,
+	"link": "https://www.icloud.com/shortcuts/b85571d94cc140b98b3e780f345ee3ad",
+	"releaseNotes": "- Improved options for user selected types",
+	"releaseTime": "2023-07-23"
 }
