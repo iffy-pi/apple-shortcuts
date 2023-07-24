@@ -3,7 +3,7 @@ A repository for handling the updates and versioning of my apple shortcuts, and 
 
 **NEXT SHORTCUT ID:**
 ```
-4
+25
 ```
 
 ## Creating a Versioned Shortcut
@@ -173,7 +173,7 @@ if Number(UpdateRes['version']) > updateInfo['version']:
 		{updateInfo['version']} ➡️ {updateRes['version']}
 
 		🕦 Released:
-		{date}
+		{date.format(date="long", time=None)}
 
 		✅ Install:
 		{updateRes['link']}
@@ -208,14 +208,14 @@ updateInfo = {
 	'version' : 1.02
 }
 
-updateRes = GetContentsOfURL(updateInfo['updateLink'])
-
 # also now includes information about the children
 childVers = {
 	# just map ids to their versions
 	'41': 1.8,
 	'42': 2.6,
 }
+
+updateRes = GetContentsOfURL(updateInfo['updateLink'])
 
 if Number(UpdateRes['version']) > updateInfo['version']:
 	# collate information about the changed children
@@ -243,7 +243,7 @@ if Number(UpdateRes['version']) > updateInfo['version']:
 		{updateText}
 
 		🕦 Released:
-		{date}
+		{date.format(date="long", time=None)}
 
 		✅ Install:
 		{updateLinks}
