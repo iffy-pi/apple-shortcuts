@@ -676,18 +676,18 @@ def CalculateStats():
     }
 
     labelColorMap = {
-        "Carbs": "ffff375f",
-        "Fat": "ffffd60a",
-        "Protein": "ff30d158",
-        "Sugar": "ff64d2fe",
+        "Carbs": "FF375F",
+        "Fat": "FFD60A",
+        "Protein": "32C457",
+        "Sugar": "64D2FE",
         "Fiber": "633D01",
-        "Monounsaturated": "AD9700",
-        "Polyunsaturated": "AD7200",
-        "Saturated": "F4B4EF",
+        "Monounsaturated": "EC7063",
+        "Polyunsaturated": "B8584D",
+        "Saturated": "F5B7B1",
         "Sodium": "FFFFFF",
         "Cholesterol": "F2EE89",
-        "Potassium": "ff64d2fe",
-        "VitA": "97001e",
+        "Potassium": "DB64FE",
+        "VitA": "FF0000",
         "VitC": "F98B06",
         "Calcium": "B9B6B2",
         "Iron": "484746"
@@ -739,7 +739,7 @@ def CalculateStats():
 
 
         nutrPlots.append({
-            'title': f'{curDate.format(date="medium")} Breakdown',
+            'title': f'{curDate.format(date="long")} Breakdown',
             'labels': labels,
             'values': values,
             'labelColors': labelColors
