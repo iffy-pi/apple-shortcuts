@@ -84,11 +84,7 @@ UDPATES AND CHANGES:
         - Shortcut Port Over Presets converts files to new format
 
 - Shortcut Changes
-    - Added Shortcuts
-        - Save Env Vars
-            - Saves environment variables for a given shortcut run so that other shortcuts can access it easily
-            - See environment variables above.
-        
+    - Conversion Shortcuts
         - Port Over Food History
             - Converts old foodHistoryDix.txt format to foodHistory.json
 
@@ -102,8 +98,19 @@ UDPATES AND CHANGES:
         - Port Over Recents and Presets
             - Converting to new format for recents and presets
 
+    - Added Shortcuts
+        - Generate Food ID
+            - Generates a unique id for each food object
+
     - Removed Shortcuts
         - Get History On
+        - Plot Day Summary
+        - Plot Week Summary
+        - Day Summary
+        - Week Summary
+        - Add Preset
+        - Correct Dictionary
+        - 
 
     - Updated Shortcuts
         - Nutrition
@@ -189,97 +196,22 @@ def convertTextFileToJSON():
     GetFile(f"{folder}/{filename}.txt")
     RenameFile(f"{filename}.json")
 
-#---------------------------------------------------------------------------------------------------------------------------------PortOverFoods
+#---------------------------------------------------------------------------------------------------------------------------------PortOverSavedFoodsToV4
 
-def PortOverFoods():
-    file = GetFile("FLS/Other/nextFoodId.txt")
-    if file is not None:
-        IFRESULT = file
-    else:
-        IFRESULT = "0"
-    nextId = Number(IFRESULT)
-
-    foodLocs = [
-        "FLS/Recents/Foods",
-        "FLS/Presets/Foods"
-        "FLS/Barcodes/Foods"
-    ]
-
-    for loc in foodLocs:
-        dirr = GetFile(f"{loc}", errorIfNotFound=False)
-        for item in GetContentsOfFolder(dirr):
-            food = Dictionary(item)
-            food['id'] = nextId
-            nextId  = nextId + 1
-
-            # save the new food file
-            SaveFile(food, f"{loc}/{food['Name']}.json")
-
-            file = GetFile(f"{loc}/{food['Name']}.txt", errorIfNotFound=False)
-            if file is not None:
-                DeleteFile(file, deleteImmediately=True)
-
-    SaveFile(nextId, "FLS/Other/nextFoodId.txt", overwrite=True)
-
-#---------------------------------------------------------------------------------------------------------------------------------PortOverRecentsAndPresets
-
-def PortOverRecentsAndPresets():
+def PortOverSavedFoodsToV4():
     nameFiles = [
         "FLS/Presets/presetNames.txt",
         "FLS/Recents/recentNames.txt"
+        "FLS/Barcodes/barcodeDix.txt"
     ]
 
     foodDirs = [
         "FLS/Presets/Foods",
-        "FLS/Recents/Foods"
+        "FLS/Recents/Foods",
+        "FLS/Barcodes/Foods"
     ]
 
     # note files are originally text files without food ids
-
-    for REPEATITEM in nameFiles:
-        foodsDir = foodDirs.getItemAtIndex(REPEATINDEX)
-        file = GetFile(REPEATITEM, errorIfNotFound=False)
-        names = SplitText(file, '\n')
-        for name in names:
-            # Add the name to list
-            file = GetFile(f"{foodsDir}/{name}.json")
-            if file is not None:
-                food = Dictionary(file)
-
-                if food['id'] is None:
-                    res = RunShortcut(nutrDix['GFID'])
-                    food['id'] = res
-                    SaveFile(food, f'{foodsDir}/food_{foodId}.json', overwrite=True)
-                    IFRESULT = Number(res)
-                else:
-                    RenameFile(file, f"food_{IFARG}.json")
-                    IFRESULT = Number(IFARG)
-
-                foodId = IFRESULT
-
-                if name == 'FLS/Presets/presetNames.txt':
-                    text = f'''
-                        BEGIN:VCARD
-                        VERSION:3.0
-                        N;CHARSET=UTF-8:{food['Name']}
-                        ORG;CHARSET=UTF-8:{food['Serving Size']}
-                        NOTE;CHARSET=UTF-8:{foodId}
-                        END:VCARD
-
-                    '''
-                    vcardCache.append(text)
-
-    if vcardCache is not None:
-        SaveFile(Text(vcardCache), 'FLS/Presets/vcardCache.txt', overwrite=True)
-
-#---------------------------------------------------------------------------------------------------------------------------------PortOverRecentsAndPresets
-
-def PortOverBarcodes():
-    # note files are originally text files without food ids
-
-    barcodesFile = GetFile('FLS/Barcodes/barcodeDix.txt', errorIfNotFound=False)
-    barcodes = Dictionary(barcodesFile)
-
     file = GetFile("FLS/Other/nextFoodId.txt", errorIfNotFound=False)
     if file is not None:
         IFRESULT = Number(file)
@@ -287,35 +219,38 @@ def PortOverBarcodes():
         IFRESULT = 0
     nextId = IFRESULT
 
-    for item in barcodes.keys():
-        barcode = Text(item)
-        foodName = barcodes[item]
-        file = GetFile(f'FLS/Barcodes/Foods/{foodName}.json', errorIfNotFound=False)
-        if file is not None:
-            food = Dictionary(file)
-            if food['id'] is None:
-                num = nextId
-                nextId = nextId+1
-                IFRESULT = num
-            else:
-                IFRESULT = food['id']
-            foodId = IFRESULT
 
-            food['id'] = foodId
-            food['Barcode'] = barcode
-            SaveFile(f'FLS/Barcodes/Foods/food_{nextId}.json', overwrite=True)
+    for REPEATITEM in nameFiles:
+        foodsDir = foodDirs.getItemAtIndex(REPEATINDEX)
+        for foodFile in GetContentsOfFolder(foodsDir):
 
-            nextId = nextId+1
+            filename = GetFileDetails("Name", foodFile)
 
-            DeleteFile(file)
+            # only convert for those that are applicable, so that the shortcut supports failure
+            if MatchText(filename, "food_[0-9][0-9]*") is not None:
+                # Add the name to list
+                food = Dictionary(foodFile)
+                if food['Name'] is not None:
+                    if food['id'] is None:
+                        num = Number(nextId)
+                        nextId = nextId+1
+                        SaveFile(nextId, "FLS/Other/nextFoodId.txt", overwrite=True)
+                        IFRESULT = num
+                    else:
+                        IFRESULT = Number(food['id'])
+                    
+                    foodId = IFRESULT
+                    SaveFile(food, f'{foodsDir}/food_{foodId}.json', overwrite=True)
 
-    DeleteFile(barcodesFile, deleteImmediately=True)
+                DeleteFile(foodFile)
+        namesFile = GetFile(REPEATITEM, errorIfNotFound=False)
+        DeleteFile(namesFile, deleteImmediately=True)
+
     SaveFile(nextId, "FLS/Other/nextFoodId.txt", overwrite=True)
 
-#---------------------------------------------------------------------------------------------------------------------------------PortOverFoodHistory
+#---------------------------------------------------------------------------------------------------------------------------------PortOverFoodHistoryToV4
 
-def PortOverFoodHistory():
-
+def PortOverFoodHistoryToV4():
     '''
     New Food history format:
     {
@@ -397,12 +332,213 @@ def PortOverFoodHistory():
         # save it to the file
         SaveFile(newHistory, "FLS/History/foodHistory.json", overwrite=True)
 
+#---------------------------------------------------------------------------------------------------------------------------------PortOverToV4
 
+def PortOverToV4():
 
-#---------------------------------------------------------------------------------------------------------------------------------NutriDixUpdater
+    shortcuts = {
+        'PFS': 'Port Over Saved Foods To v4',
+        'PFH': 'Port Over Food History To v4'
+    }
 
-def NutriDixUpdater():
-    pass
+    Menu("You'll need to install the helper shortcuts"):
+        case 'Get Install Links':
+            text = f'''
+                ...
+            '''# installation links
+            note = CreateNote(note)
+            OpenNote(note)
+            return
+        case "I've installed the shortcuts":
+            pass
+
+    Menu("The conversion process is automated...")
+        case "Open Settings":
+            OpenApp("Settings")
+            return
+        case "I've set the settings":
+            pass
+
+    Alert("Conversion progress is not automated...")
+
+    Notification("0/5 Steps Completed")
+
+    RunShortcut(shortcuts['PFS'])
+
+    Notification("3/5 Steps Completed")
+
+    RunShortcut(shortcuts['PFH'])
+
+    Notification("4/5 Steps Completed")
+
+    dix = Dictionary(Text(...)) # shortcutNames.json
+    SaveFile(dix, "FLS/Other/shortcutNames.json", overwrite=True)
+
+    delete = [
+        "Other/shortcutDix.txt",
+        "Other/backlog.txt",
+        "Other/backtag.txt",
+        "Other/Backlog.txt",
+        "Other/shortcutLinksDix.txt",
+        "History/foodHistoryDix.txt",
+        "History/foodHistory.txt",
+        "History/HistoryIDs.txt"
+    ]
+
+    for d in delete:
+        file = GetFile(f"FLS/{d}", errorIfNotFound=False)
+        DeleteFile(file)
+
+    Notification("5/5 Steps Completed")
+
+#---------------------------------------------------------------------------------------------------------------------------------NutritionInstaller
+
+def NutritionInstaller():
+    # Put in updater
+
+    TRUE = 1
+    FALSE = 0
+
+    newInstall = TRUE
+    proceedWithUpdates = FALSE
+
+    updateInfo = {
+        'updateLink' : 'https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json',
+        'version' : 4.0
+    }
+
+    # also now includes information about the children
+    childVers = {
+       "5":1.0,
+       "6":1.0,
+       "7":1.0,
+       "8":1.0,
+       "9":1.0,
+       "10":1.0,
+       "11":1.0,
+       "12":1.0,
+       "13":1.0,
+       "14":1.0,
+       "15":1.0,
+       "16":1.0,
+       "17":1.0,
+       "18":1.0,
+       "19":1.0,
+       "20":1.0,
+       "21":1.0,
+       "22":1.0,
+       "23":1.0,
+       "24":1.0,
+       "25":1.0
+    }
+
+    params = Dictionary(ShortcutInput)
+
+    if params['updateCheck'] is not None:
+        newInstall = FALSE
+
+    if newInstall == TRUE:
+        dix = Dictionary(...) # shortcutNames.json
+        SaveFile(dix, "FLS/Other/shortcutNames.json") # save shortcut names file
+
+        proceedWithUpdates = TRUE
+
+        # reset updateInfo version to 0.0 to force check
+        updateInfo['version'] = 0.0
+
+        # reset child vers to 0
+        childVers = childVers = {
+           "5":0.0,
+           "6":0.0,
+           "7":0.0,
+           "8":0.0,
+           "9":0.0,
+           "10":0.0,
+           "11":0.0,
+           "12":0.0,
+           "13":0.0,
+           "14":0.0,
+           "15":0.0,
+           "16":0.0,
+           "17":0.0,
+           "18":0.0,
+           "19":0.0,
+           "20":0.0,
+           "21":0.0,
+           "22":0.0,
+           "23":0.0,
+           "24":0.0,
+           "25":0.0
+        }
+
+    updateRes = Dictionary(GetContentsOfURL(updateInfo['updateLink']))
+
+    if Number(updateRes['version']) > updateInfo['version']:
+        if proceedWithUpdates == FALSE:
+            # ask the user
+            Menu(f'There is a new version ({updateRes['version']}) available for this shortcut'):
+                case 'Update':
+                    proceedWithUpdates = TRUE
+                case 'Exit':
+                    pass
+
+        if proceedWithUpdates == TRUE:
+            updateText = []
+            updateLinks = []
+
+            # updater shorcut needs to be updated
+            if newInstall == FALSE:
+                updateText.append(f"Updater Shortcut: {updateInfo['version']} ➡️ {updateRes['version']}")
+                updateLinks.append(f"Updater Shortcut: {updateRes['link']}\n")
+
+            for child in updateRes['children']:
+                curVer = childVers[ child['id'] ]
+                if Number(child['version']) > curVer:
+                    updateText.append(f"{child['name']}: {curVer} ➡️ {child['version']}")
+                    updateLinks.append(f"{child['name']}: {child['link']}\n")
+
+            date = Date(updateRes['releaseTime'])
+            splitText = SplitText(updateRes['releaseNotes'], '\\n')
+
+            if newInstall == TRUE:
+                IFRESULT = f"""
+                    Installing {updateRes['name']}  Shortcut
+
+                    The Nutrition Shortcut is made up of several helper shortcuts for its extensive functionality. Please install the shortcuts listed below.
+                    Note: If you wish to use Nutrition Statistics, you must install Charty: (https://apps.apple.com/ca/app/charty-for-shortcuts/id1494386093)
+
+                    ✅ Install:
+                    {updateLinks}
+
+                    Tutorial:
+                    Not sure where to start? See the tutorial here: ...
+
+                    📬 Developer:
+                    Reddit: iffythegreat
+                """
+            else:
+                IFRESULT = f"""
+                    {updateRes['name']} Shortcut Update
+                    Updates are available for shortcuts:
+                    {updateText}
+
+                    🕦 Released:
+                    {date.format(date="long", time=None)}
+
+                    ✅ Install:
+                    {updateLinks}
+
+                    📝 Release Notes:
+                    {splitText}
+
+                    📬 Developer:
+                    Reddit: iffythegreat
+
+                    📚 Full Update History:
+                    {updateRes['rhub']}/changelog
+                """
+            note = CreateNote(IFRESULT)
+            OpenNote(note)
 
 #---------------------------------------------------------------------------------------------------------------------------------WeekSummary
 
@@ -643,7 +779,6 @@ def CalculateStats():
         res['chartyPiePlots'] = chartyPiePlots
 
     return res
-
 
 #---------------------------------------------------------------------------------------------------------------------------------FoodHistory
 
@@ -2501,7 +2636,7 @@ def LogFoodsAtDifferentTimes(): # Log Foods At Different Times
 def Nutrition():
     TRUE = 1
     FALSE = 0
-    checkForUpdates = FALSE
+    checkForUpdates = TRUE
     exitAfterQuickLog = TRUE
 
     # load names of the shortcuts
@@ -2554,14 +2689,14 @@ def Nutrition():
 
 
     # determine if we are checking for updates
-    file = GetFile("FLS/Other/lastUpdateCheck.txt", errorIfNotFound=False)
-    if file is not None:
-        IFRESULT = file
-    else:
-        IFRESULT = SubFromDate(CurrentDate(), weeks=1)
+    # file = GetFile("FLS/Other/lastUpdateCheck.txt", errorIfNotFound=False)
+    # if file is not None:
+    #     IFRESULT = file
+    # else:
+    #     IFRESULT = SubFromDate(CurrentDate(), weeks=1)
 
-    if TimeBetweenDates(IFRESULT, CurrentDate()) >= 1:
-        checkForUpdates = TRUE
+    # if TimeBetweenDates(IFRESULT, CurrentDate()) >= 1:
+    #     checkForUpdates = TRUE
 
 
     if hasHealthApp == FALSE:
@@ -2637,6 +2772,10 @@ def Nutrition():
 
         case 'History and Stats':
             case "Statistics with Charty":
+                if hasHealthApp == FALSE:
+                    Alert("Statistics require a device with a Health App")
+                    return
+
                 RunShortcut(shortcutNames["Health Statistics"])
 
             case "Food History":
@@ -2660,8 +2799,8 @@ def Nutrition():
     RunShortcut(shortcutNames['Clear Cache and Backlog'])
 
     if checkForUpdates == TRUE:
-        RunShortcut(shortcutNames["NutriDix Updater"])
-        SaveFile(Text(CurrentDate.format(date="short", time=None)), "FLS/Other/lastUpdateCheck.txt", overwrite=True)
+        RunShortcut(shortcutNames["Installer"], input={'updateCheck': True})
+        #SaveFile(Text(CurrentDate.format(date="short", time=None)), "FLS/Other/lastUpdateCheck.txt", overwrite=True)
 
 #---------------------------------------------------------------------------------------------------------------------------------
 
