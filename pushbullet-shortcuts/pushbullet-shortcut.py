@@ -167,7 +167,7 @@ def main(ShortcutInput, type="Any", source="Share Sheet", default="Clipboard"):
 						Name: 
 						{itemFname}.{itemFext}
 
-						Inferred Type:
+						Guessed Type:
 						{itemType}
 
 						Size:
