@@ -1,4 +1,0 @@
-{
-	"2019-11-22":"{\"19:49\":\"1 [Chicken Noodles Super Pack (430 Kcal)]\\n1 [Sunny Side Up (70 Kcal)]\",\"13:45\":\"2 [Ham Sandwich (400 Kcal)]\",\"13:44\":\"1 [Sunny Side Up (70 Kcal)]\",\"13:43\":\"1 [Chicken Noodles Super Pack (430 Kcal)]\",\"17:43\":\"0.5 [Sugar Cookie (230 Kcal)]\"}",
-	"2020-05-07":"{\"00:54\":\"1.5x Vegetable Fried Rice (386.07 Kcal)\\n2x Peanut Butter Sandwich (300 Kcal)\"}"
-}
