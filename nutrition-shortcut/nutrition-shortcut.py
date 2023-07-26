@@ -666,13 +666,13 @@ def CalculateStats():
         "Polyunsaturated": "g",
         "Saturated": "g",
         "Trans": "g",
-        "Sodium": "g",
-        "Cholesterol": "g",
-        "Potassium": "g",
-        "VitA": "g",
-        "VitC": "g",
-        "Calcium": "g",
-        "Iron": "g"
+        "Sodium": "mg",
+        "Cholesterol": "mg",
+        "Potassium": "mg",
+        "VitA": "mg",
+        "VitC": "mg",
+        "Calcium": "mg",
+        "Iron": "mg"
     }
 
     labelColorMap = {
@@ -693,79 +693,152 @@ def CalculateStats():
         "Iron": "484746"
     }
 
-    res = SplitText(GetFile("FLS/Other/nutriKeys.txt"), '\n')
-    nutriKeys = filter(res, whereAll=['Name' != 'Trans'])
+    if plotNutrients == TRUE:
+        text = """
+            {
+                "ds": [
+                    {
+                        "id": 0,
+                        "title": "Breakdown",
+                        "avgTitle": "Average",
+                        "keys": [
+                            "Calories",
+                            "Carbs",
+                            "Fat",
+                            "Protein",
+                            "Sugar",
+                            "Fiber",
+                            "Monounsaturated",
+                            "Polyunsaturated",
+                            "Saturated"
+                        ]
+                    },
 
-    if plotNutrients == FALSE:
-        nutriKeys = 'Calories'
+                    {
+                        "id": 1,
+                        "title": "Minerals Breakdown",
+                        "avgTitle": "Minerals Average",
+                        "keys": [
+                            "Sodium",
+                            "Cholesterol",
+                            "Potassium",
+                            "VitA",
+                            "VitC",
+                            "Calcium",
+                            "Iron"
+                        ]
+                    },
+                ]
+            }
+        """
+    else:
+        text = """
+            {
+                "ds": [
+                    {
+                        "id": 0,
+                        "title": "Breakdown",
+                        "avgTitle": "Average",
+                        "keys": [
+                            "Calories"
+                        ]
+                    },
 
-    # stores the total values for the nutrients on that day
-    totalNutrDix = {}
+                    {
+                        "id": 1,
+                        "title": "Minerals Breakdown",
+                        "avgTitle": "Minerals Average",
+                        "keys": []
+                    },
+                ]
+            }
+        """
+    dix = Dictionary(IFRESULT)
+    datasets = dix['ds']
+
+    # the total nutridixes for each of the datasets
+    totalDixes = {
+        '0': {},
+        '1': {}
+    }
 
     for repeatIndex in range(repeats):
 
         curDate = AddToDate(start, days=repeatIndex-1)
-        labels = emptyList
-        values = emptyList
-        labelColors = emptyList
 
-        for curNutrKey in nutriKeys:
-            sampleType = keyToSample[curNutrKey]
-            unit = nutrUnits[curNutrKey]
-            results = FindHealthSamples(type=sampleType, startDateIsOn=curDate, unit=unit)
-            
-            num = Number( CalculateStatistics("Sum", results.Value))
-            daySum = RoundNumber(num, hundredths)
+        for item in datasets:
+            curSet = Dictionary(item)
+            totalNutrDix = totalDixes[ curSet['id'] ]
+            labels = emptyList
+            values = emptyList
+            labelColors = emptyList
 
-            if curNutrKey == 'Calories':
-                # add it to the calorie plots
-                calorieLabels.append(curDate)
-                calorieValues.append(daySum)
-            else:
-                values.append(daySum)
+            for curNutrKey in filter(curSet['keys'], where='Name' != 'Calories')
+                sampleType = keyToSample[curNutrKey]
+                unit = nutrUnits[curNutrKey]
+                results = FindHealthSamples(type=sampleType, startDateIsOn=curDate, unit=unit)
+                
+                num = Number( CalculateStatistics("Sum", results.Value))
+                daySum = RoundNumber(num, hundredths)
 
-                # add to total values for this lenght
-                totalNutrDix[curNutrKey] = Number(totalNutrDix[curNutrKey]) + daySum
+                if curNutrKey == 'Calories':
+                    # add it to the calorie plots
+                    calorieLabels.append(curDate)
+                    calorieValues.append(daySum)
+                else:
+                    values.append(daySum)
+                    # add to total values for this lenght
+                    totalNutrDix[curNutrKey] = Number(totalNutrDix[curNutrKey]) + daySum
 
+            # save the total nutri dix
+            totalDixes[curSet['id']] = totalNutrDix
 
-        dayTotal = CalculateStatistics("Sum", values)
+            dayTotal = CalculateStatistics("Sum", values)
 
-        for repeatItem2, repeatIndex2 in filter(nutriKeys, where='Name' != 'Calories'):
-            item = values.getItemAtIndex(repeatIndex2)
-            num = (item / dayTotal) * 100
-            num = RoundNumber(num, hundredths)
-            labels.append(f'{repeatItem2} ({num}%)')
-            labelColors.append(labelColorMap[repeatItem2])
+            for curNutrKey, index in curSet['keys']:
+                item = values.getItemAtIndex(index)
+                num = (item / dayTotal) * 100
+                num = RoundNumber(num, hundredths)
+                labels.append(f'{curNutrKey} ({num}%)')
+                labelColors.append(labelColorMap[curNutrKey])
 
-
-        nutrPlots.append({
-            'title': f'{curDate.format(date="long")} Breakdown',
-            'labels': labels,
-            'values': values,
-            'labelColors': labelColors
-            })
+            if plotNutrients == TRUE:
+                nutrPlots.append({
+                    'title': f'{curDate.format(date="long")} {curSet['title']}',
+                    'labels': labels,
+                    'values': values,
+                    'labelColors': labelColors
+                    })
 
     if averageBreakdown == TRUE:
-        nutrTotal = CalculateStatistics("Sum", totalNutrDix.values())
-        
-        for curNutrKey in nutriKeys:
-            # divide each nutrient total by the number of dates we samples 
+        for item in datasets:
+            curSet = Dictionary(item)
+            totalNutrDix = totalDixes[ curSet['id'] ]
+            averageLabels = emptyList
+            averageValues = emptyList
 
-            # calculates the percentage of the current nutrient in the sample range
-            # it will be the same as when average since average divides by constant factor
-            curPercent = RoundNumber((totalNutrDix[curNutrKey] / nutrTotal) * 100, hundredths)
+            nutrTotal = CalculateStatistics("Sum", totalNutrDix.values())
+            
+            for curNutrKey in curSet['keys']:
+                # divide each nutrient total by the number of dates we samples 
 
-            # Calculate the average nutrient value for the plot
-            averageNutr = totalNutrDix[curNutrKey] / repeats
+                # calculates the percentage of the current nutrient in the sample range
+                # it will be the same as when average since average divides by constant factor
+                curPercent = RoundNumber((totalNutrDix[curNutrKey] / nutrTotal) * 100, hundredths)
 
-            averageValues.append(averageNutr)
-            averageLabels.append(f'{curNutrKey} ({curPercent}%)')
+                # Calculate the average nutrient value for the plot
+                averageNutr = totalNutrDix[curNutrKey] / repeats
 
-        IFRESULT = {
-            'title': f'{start.format(custom="MMM dd")} - {end.format(custom="MMM dd")} Average',
-            'labels': averageLabels,
-            'values': averageValues
-        }
+                averageValues.append(averageNutr)
+                averageLabels.append(f'{curNutrKey} ({curPercent}%)')
+
+            REPEATRESULTS.append({
+                'title': f'{start.format(custom="MMM dd")} - {end.format(custom="MMM dd")} {curSet['avgTitle']}',
+                'labels': averageLabels,
+                'values': averageValues
+            })
+
+        IFRESULT = REPEATRESULTS
 
     else:
         IFRESULT = nutrPlots
