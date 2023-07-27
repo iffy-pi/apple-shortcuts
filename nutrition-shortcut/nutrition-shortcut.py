@@ -773,7 +773,7 @@ def CalculateStats():
             values = emptyList
             labelColors = emptyList
 
-            for curNutrKey in filter(curSet['keys'], where='Name' != 'Calories')
+            for curNutrKey in curSet['keys']:
                 sampleType = keyToSample[curNutrKey]
                 unit = nutrUnits[curNutrKey]
                 results = FindHealthSamples(type=sampleType, startDateIsOn=curDate, unit=unit)
@@ -795,7 +795,7 @@ def CalculateStats():
 
             dayTotal = CalculateStatistics("Sum", values)
 
-            for curNutrKey, index in curSet['keys']:
+            for curNutrKey, index in filter(curSet['keys'], where='Name' != 'Calories'):
                 item = values.getItemAtIndex(index)
                 num = (item / dayTotal) * 100
                 num = RoundNumber(num, hundredths)
@@ -816,10 +816,11 @@ def CalculateStats():
             totalNutrDix = totalDixes[ curSet['id'] ]
             averageLabels = emptyList
             averageValues = emptyList
+            averageColors = emptyList
 
             nutrTotal = CalculateStatistics("Sum", totalNutrDix.values())
             
-            for curNutrKey in curSet['keys']:
+            for curNutrKey in filter(curSet['keys'], where='Name' != 'Calories'):
                 # divide each nutrient total by the number of dates we samples 
 
                 # calculates the percentage of the current nutrient in the sample range
@@ -832,10 +833,13 @@ def CalculateStats():
                 averageValues.append(averageNutr)
                 averageLabels.append(f'{curNutrKey} ({curPercent}%)')
 
+                averageColors.append(labelColorMap[curNutrKey])
+
             REPEATRESULTS.append({
                 'title': f'{start.format(custom="MMM dd")} - {end.format(custom="MMM dd")} {curSet['avgTitle']}',
                 'labels': averageLabels,
-                'values': averageValues
+                'values': averageValues,
+                'labelColors': averageColors
             })
 
         IFRESULT = REPEATRESULTS
@@ -1199,10 +1203,12 @@ def MakePreset(): # Make Preset
 
     TRUE = 1
     FALSE = 0
+    confirmServings = FALSE
 
     nutrDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
     
     if ShortcutInput is not None:
+        confirmServings = TRUE
         # if we dont do this, then if result will be the item above the if
         # i.e. nutrDix
         IFRESULT = GetVariable(ShortcutInput)
@@ -1245,7 +1251,13 @@ def MakePreset(): # Make Preset
                 REPEATRESULTS.append(text)
 
             contacts = textToContacts(REPEATRESULTS)
-            chosenIds = ChooseFrom(contacts, selectMultiple=True, selectAll=True, prompt="Select Foods to be made into Preset")
+
+            if confirmServings == TRUE:
+                IFRESULT = f'Select Foods to be made into Preset\nYou can edit the servings of selected foods'
+            else:
+                IFRESULT = "Select Foods to be made into Preset"
+
+            chosenIds = ChooseFrom(contacts, selectMultiple=True, selectAll=True, prompt=IFRESULT)
         
             presetFood = {}
 
@@ -1259,23 +1271,24 @@ def MakePreset(): # Make Preset
                 defaultSize = curFood['Serving Size']
                 defaultName = curFood['Name']
 
+                askForServings = FALSE
+
+                if confirmServings == TRUE:
+                    askForServings = TRUE
+
                 if curFood['Servings'] is None:
+                    askForServings = TRUE
+
+                if askForServings == TRUE:
                     IFRESULT = AskForInput(Input.Number, prompt=f'How many servings of "{defaultName}"? (1 serving = {defaultSize})',
                                 default=1, allowDecimals=True, allowNegatives=False)
-                else:
-                    IFRESULT = Number(curFood['Servings'])
                 servings = IFRESULT
 
                 for nutr in nutriKeys:
-                    num = Number(curFood[nutr])
-                    # multiply nutrients by serving size
-                    num = num * servings
-
-                    # add to total nutrients of preset
-                    num2 = Number(presetFood[nutr])
-                    num = num + num2
+                    curFoodValue = Number(curFood[nutr])
+                    presetValue = Number(presetFood[nutr])
+                    num = (curFoodValue*servings) + presetValue
                     num = RoundNumber(num, hundredths)
-
                     presetFood[nutr] = num
 
 
