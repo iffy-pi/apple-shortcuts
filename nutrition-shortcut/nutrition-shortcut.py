@@ -389,6 +389,8 @@ def PortOverToV4():
         file = GetFile(f"FLS/{d}", errorIfNotFound=False)
         DeleteFile(file)
 
+    SaveFile("FLS", "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
+
     Notification("5/5 Steps Completed")
 
 #---------------------------------------------------------------------------------------------------------------------------------NutritionInstaller
@@ -398,6 +400,14 @@ def NutritionInstaller():
 
     TRUE = 1
     FALSE = 0
+
+    file = GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt", errorIfNotFound=False)
+    if file is not None:
+        IFRESULT = file
+    else:
+        IFRESULT = 'Nutrition'
+
+    storage = IFRESULT
 
     newInstall = TRUE
     proceedWithUpdates = FALSE
@@ -438,8 +448,16 @@ def NutritionInstaller():
         newInstall = FALSE
 
     if newInstall == TRUE:
+        storage = AskForInput(Input.Text, prompt="Enter folder name to store saved foods and configuration files", default=storage)
+        Alert('The folder name is saved in Shortcuts/Nutrition_Shortcut_Storage_Folder_Name.txt. To change the folder name, rename the folder and edit the text file'
+            title=f'Shortcut files will be saved to Shortcuts/{storage}')
+
+        SaveFile(storage, "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
+
+
+
         dix = Dictionary(...) # shortcutNames.json
-        SaveFile(dix, "FLS/Other/shortcutNames.json") # save shortcut names file
+        SaveFile(dix, f"{storage}/Other/shortcutNames.json") # save shortcut names file
 
         proceedWithUpdates = TRUE
 
@@ -547,7 +565,9 @@ def WeekSummary():
     TRUE = 1
     FALSE = 0
 
-    nutrDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
+    storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+
+    nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
 
     getDateRange = TRUE
     makeCaloriePlot = FALSE
@@ -860,7 +880,12 @@ def CalculateStats():
 #---------------------------------------------------------------------------------------------------------------------------------FoodHistory
 
 def FoodHistory()
-    file = GetFile("FLS/History/foodHistory.json")
+    TRUE = 1
+    FALSE = 0
+    
+    storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+
+    file = GetFile(f"{storage}/History/foodHistory.json")
     if file is not None:
         IFRESULT = file
     else:
@@ -979,7 +1004,8 @@ def BarcodeSearch():
     TRUE = 1
     FALSE = 0
 
-    nutrDix = Dictionary(GetFile('FLS/Other/shortcutNames.json'))
+    storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+    nutrDix = Dictionary(GetFile(f'{storage}/Other/shortcutNames.json'))
 
     params = Dictionary(ShortcutInput)
 
@@ -1001,20 +1027,20 @@ def BarcodeSearch():
     # we are adding to the database so scan immediately
     barcode = Text(ScanBarcode())
 
-    file = GetFile('FLS/Barcodes/barcodeCache.json', errorIfNotFound=False)
+    file = GetFile(f'{storage}/Barcodes/barcodeCache.json', errorIfNotFound=False)
     if file is not None:
         IFRESULT = file
     else:
         barcodeCache = {}
-        folder = GetFile('FLS/Barcodes/Foods', errorIfNotFound=False)
+        folder = GetFile(f'{storage}/Barcodes/Foods', errorIfNotFound=False)
         for item in GetContentsOfFolder(folder):
             barcodeCache[ item['Barcode'] ] = item['id']
-        SaveFile(barcodeCache, 'FLS/Barcodes/barcodeCache.json', overwrite=True)
+        SaveFile(barcodeCache, f'{storage}/Barcodes/barcodeCache.json', overwrite=True)
         IFRESULT = barcodeCache
     barcodeCache = IFRESULT
 
     if barcodeCache[barcode] is not None:
-        file = GetFile(f'FLS/Barcodes/Foods/food_{barcodeCache[barcode]}.json')
+        file = GetFile(f'{storage}/Barcodes/Foods/food_{barcodeCache[barcode]}.json')
         if params['getFood'] is not None:
             return file
         else:
@@ -1135,16 +1161,17 @@ def BarcodeSearch():
     outputFood['Barcode'] = barcode
 
     barcodeCache[barcode] = outputFood['id']
-    SaveFile(barcodeCache, 'FLS/Barcodes/barcodeCache.json', overwrite=True)
-
-    SaveFile(outputFood, f'FLS/Barcodes/Foods/food_{outputFood['id']}.json', overwrite=True)
+    SaveFile(barcodeCache, f'{storage}/Barcodes/barcodeCache.json', overwrite=True)
+    SaveFile(outputFood, f'{storage}/Barcodes/Foods/food_{outputFood['id']}.json', overwrite=True)
+    DeleteFile(GetFile(f"{storage}/Barcodes/vcardCache.txt", errorIfNotFound=False), deleteImmediately=True)
 
     return outputFood
 
 #---------------------------------------------------------------------------------------------------------------------------------MakeFoodManually
 
 def MakeFoodManually(): # Make Food Manually
-    nutrDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
+    storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+    nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
     exactValDix = {
         'VitA': 1000,
         'VitC': 60,
@@ -1203,9 +1230,12 @@ def MakePreset(): # Make Preset
 
     TRUE = 1
     FALSE = 0
+
+    storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+
     confirmServings = FALSE
 
-    nutrDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
+    nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
     
     if ShortcutInput is not None:
         confirmServings = TRUE
@@ -1217,7 +1247,7 @@ def MakePreset(): # Make Preset
 
     foods = IFRESULT
 
-    file = GetFile('FLS/Other/nutriKeys.txt')
+    file = GetFile(f'{storage}/Other/nutriKeys.txt')
     nutriKeys = SplitText(file, '\n')
 
     foodsDix = {}
@@ -1232,7 +1262,7 @@ def MakePreset(): # Make Preset
         nextId = nextId+1
 
     # check to make sure it doesnt clash with other food names
-    folder = GetFile("FLS/Presets/Foods", errorIfNotFound=False)
+    folder = GetFile(f"{storage}/Presets/Foods", errorIfNotFound=False)
     for file in GetContentsOfFolder(folder):
         presetNames.append(file['Name'])
 
@@ -1323,10 +1353,10 @@ def MakePreset(): # Make Preset
             presetFood['Name'] = name
 
             # save to file
-            SaveFile(presetFood, f"FLS/Presets/Foods/food_{foodId}.json", overwrite=True)
+            SaveFile(presetFood, f"{storage}/Presets/Foods/food_{foodId}.json", overwrite=True)
 
     # delete the cache since it is invalid
-    file = GetFile("FLS/Presets/vcardCache.txt", errorIfNotFound=False)
+    file = GetFile(f"{storage}/Presets/vcardCache.txt", errorIfNotFound=False)
     DeleteFile(file, deleteImmediately=True)
 
 #---------------------------------------------------------------------------------------------------------------------------------SelectSavedFoods
@@ -1334,15 +1364,16 @@ def MakePreset(): # Make Preset
 def SelectSavedFoods():
     TRUE = 1
     FALSE = 0
+    storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
     cancelIcon = Text() 
 
     deleteMode = FALSE
 
     savedInfo = {
-        'barcodes': { 'folder': 'FLS/Barcodes', 'prompt': 'Barcoded Foods'}
-        'presets': { 'folder': 'FLS/Presets', 'prompt': 'Presets'}
-        'both': { 'prompt' : 'Preset(s) and Barcoded Food(s)'}
+        'barcodes': { 'folder': 'Barcodes', 'prompt': 'Barcoded Foods'}
+        'presets': { 'folder': 'Presets', 'prompt': 'Presets'}
+        'all': { 'prompt' : 'Preset(s) and Barcoded Food(s)'}
     }
 
     params = Dictionary(ShortcutInput)
@@ -1352,7 +1383,6 @@ def SelectSavedFoods():
         return None
     else:
         config = savedInfo [ params['type'] ]
-        parentFolder = config['folder']
 
 
     if params['deleteMode'] is not None:
@@ -1370,12 +1400,12 @@ def SelectSavedFoods():
         parentFolder = dixVal['folder']
         prompt = dixVal['prompt']
 
-        file = GetFile(f"{parentFolder}/vcardCache.txt", errorIfNotFound=False)
+        file = GetFile(f"{storage}/{parentFolder}/vcardCache.txt", errorIfNotFound=False)
         if file is not None:
             IFRESULT = Text(file)
         else:
             # create the vcard cache
-            folder = GetFile(f"{parentFolder}/Foods")
+            folder = GetFile(f"{storage}/{parentFolder}/Foods")
             files = GetContentsOfFolder(folder)
             files = filter(files, sortBy='Last Modified Date', order='Latest First')
             for item in files:
@@ -1397,7 +1427,7 @@ def SelectSavedFoods():
                 '''
                 REPEATRESULTS.append(text)
 
-            SaveFile(Text(REPEATRESULTS), f"{parentFolder}/vcardCache.txt", overwrite=True)
+            SaveFile(Text(REPEATRESULTS), f"{storage}/{parentFolder}/vcardCache.txt", overwrite=True)
 
             IFRESULT = Text(REPEATRESULTS)
 
@@ -1440,27 +1470,25 @@ def SelectSavedFoods():
         parentFolder = dix['folder']
 
         # make this the most used one
-        file = GetFile(f"{parentFolder}/Foods/food_{foodId}.json")
-        food = Dictionary(file)
+        file = GetFile(f"{storage}/{parentFolder}/Foods/food_{foodId}.json")
+        if file is not None:
+            food = Dictionary(file)
 
-        if deleteMode == TRUE:
-            # delete the file
-            DeleteFile(file, deleteImmediately=True)
-            Notification(f'{config['prompt']} {food['Name']} has been deleted!')
-        else:
-            # save the file to update last modified after
-            SaveFile(file, f"{parentFolder}/Foods/food_{foodId}.json", overwrite=True)
+            if deleteMode == TRUE:
+                # delete the file
+                DeleteFile(file, deleteImmediately=True)
+                Notification(f'{config['prompt']} {food['Name']} has been deleted!')
         
-        # add the food
-        selectedFoods.append(food)
+            # add the food
+            selectedFoods.append(food)
 
     if deleteMode == TRUE:
         # delete the cache since it is invalid
-        file = GetFile(f"{parentFolder}/vcardCache.txt", errorIfNotFound=False)
+        file = GetFile(f"{storage}/{parentFolder}/vcardCache.txt", errorIfNotFound=False)
         DeleteFile(file, deleteImmediately=True)
 
         if params['type'] == 'barcodes':
-            file = GetFile(f"{parentFolder}/barcodeCache.json", errorIfNotFound=False)
+            file = GetFile(f"{storage}/{parentFolder}/barcodeCache.json", errorIfNotFound=False)
             DeleteFile(file, deleteImmediately=True)
 
     return selectedFoods
@@ -1471,17 +1499,18 @@ def EditSavedFood(): # Edit Saved Food
 
     TRUE = 1
     FALSE = 0
+    storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
     params = Dictionary(ShortcutInput)
 
     savedInfo = {
-        'barcodes': { 'folder': 'FLS/Barcodes', 'prompt': 'Barcoded Food'}
-        'presets': { 'folder': 'FLS/Presets', 'prompt': 'Preset'}
+        'barcodes': { 'folder': f'{storage}/Barcodes', 'prompt': 'Barcoded Food'}
+        'presets': { 'folder': f'{storage}/Presets', 'prompt': 'Preset'}
     }
 
 
 
-    nutrDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
+    nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
     
     if params['args'] is not None:
         IFRESULT = params['args']
@@ -1491,7 +1520,7 @@ def EditSavedFood(): # Edit Saved Food
 
     config = savedInfo [ params['type'] ]
 
-    file = GetFile("FLS/Other/nutriKeys.txt")
+    file = GetFile(f"{storage}/Other/nutriKeys.txt")
     nutriKeys = SplitText(file, '\n')
 
     for item in selectedFoods:
@@ -1554,9 +1583,11 @@ def EditSavedFood(): # Edit Saved Food
 #---------------------------------------------------------------------------------------------------------------------------------GetRecent
 
 def GetRecent(): # "Get Recent"
+    storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+
     cancelIcon = # ... 
 
-    dir_ = GetFile(f"FLS/Recents/Foods")
+    dir_ = GetFile(f"{storage}/Recents/Foods")
 
     files = GetContentsOfFolder(dir_, errorIfNotFound=False)
     files = filter(files, sortBy='Last Modified Date', order='Latest First')
@@ -1594,7 +1625,7 @@ def GetRecent(): # "Get Recent"
         if chosen.Notes == 'Cancel':
             return None
 
-        file = GetFile(f"FLS/Recents/Foods/food_{chosen.Notes}.json")
+        file = GetFile(f"{storage}/Recents/Foods/food_{chosen.Notes}.json")
         selectedFoods.append(Dictionary(file))
     
     return selectedFoods
@@ -1602,6 +1633,9 @@ def GetRecent(): # "Get Recent"
 #---------------------------------------------------------------------------------------------------------------------------------AddRecent
 
 def AddRecent():
+
+    storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+
     # Text of shortcut input to unlink from file handler of food file
     # Without it, overwrites dont really work as it just passes the same file to the system
     food = Dictionary(Text(ShortcutInput))
@@ -1609,7 +1643,7 @@ def AddRecent():
     if food is None:
         return
 
-    nutrDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
+    nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
     
     maxRecents = 30
 
@@ -1623,9 +1657,9 @@ def AddRecent():
 
     # add food to recent if it doesn't already exist
     # by saving it, it will be at top of list since sorted by modified after
-    SaveFile(food, f"FLS/Recents/Foods/{fileName}.json", overwrite=True)
+    SaveFile(food, f"{storage}/Recents/Foods/{fileName}.json", overwrite=True)
 
-    dir_ = GetFile("FLS/Recents/Foods")
+    dir_ = GetFile(f"{storage}/Recents/Foods")
     files = GetContentsOfFolder(dir_)
     files = filter(files, sortBy='Last Modified Date', order='Latest First')
 
@@ -1637,6 +1671,9 @@ def AddRecent():
 #---------------------------------------------------------------------------------------------------------------------------------DisplayFoodItem
 
 def DisplayFoodItem():
+
+    storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+
     # params = Dictionary(ShortcutInput)
     # foodDix = params['food']
 
@@ -1771,7 +1808,8 @@ def DisplayFoodItem():
 #---------------------------------------------------------------------------------------------------------------------------------GenerateFoodId
 
 def GenerateFoodId():
-    file = GetFile("FLS/Other/nextFoodId.txt")
+    storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+    file = GetFile(f"{storage}/Other/nextFoodId.txt")
     if file is not None:
         IFRESULT = file
     else:
@@ -1779,7 +1817,7 @@ def GenerateFoodId():
     
     _id = Number(IFRESULT)
     num = _id + 1
-    SaveFile(num, "FLS/Other/nextFoodId.txt")
+    SaveFile(num, f"{storage}/Other/nextFoodId.txt")
     return 
 
 #---------------------------------------------------------------------------------------------------------------------------------LogAlgorithm
@@ -1802,7 +1840,9 @@ def LogAlgorithm(): # Log Algorithm
     TRUE = 1
     FALSE = 0
 
-    nutrDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
+    storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+
+    nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
 
     res = Dictionary(Text(ShortcutInput))
 
@@ -1826,7 +1866,7 @@ def LogAlgorithm(): # Log Algorithm
 
 
     # get health app environment var
-    dix = Dictionary(GetFile("FLS/Other/env.json"))
+    dix = Dictionary(GetFile(f"{storage}/Other/env.json"))
     hasHelathApp = dix['HasHealthApp']
 
     # add to backlog and exit if we are not on a device with a health app
@@ -1837,7 +1877,7 @@ def LogAlgorithm(): # Log Algorithm
         )
 
         # get the backlog file 
-        file = GetFile("FLS/Other/backlog.json", noErrors=True)
+        file = GetFile(f"{storage}/Other/backlog.json", noErrors=True)
 
         if file is not None:
             IFRESULT = Dictionary(file)
@@ -1856,7 +1896,7 @@ def LogAlgorithm(): # Log Algorithm
 
         # save file
         dix = { 'backlog': backlog }
-        SaveFile(dix, "FLS/Other/backlog.json", overwrite=True)
+        SaveFile(dix, f"{storage}/Other/backlog.json", overwrite=True)
 
         return foodDix
 
@@ -1937,7 +1977,7 @@ def LogAlgorithm(): # Log Algorithm
     cals = RoundNumber(nutrients['Calories'], ones)
 
     # check if cache file exists and make one by default if not available
-    file = GetFile("FLS/History/foodHistoryCache.json", errorIfNotFound=False)
+    file = GetFile(f"{storage}/History/foodHistoryCache.json", errorIfNotFound=False)
     if file is not None:
         IFRESULT = Text(file)
     else:
@@ -1961,7 +2001,7 @@ def LogAlgorithm(): # Log Algorithm
     }
 
     # save cache away for later
-    SaveFile(dix, "FLS/History/foodHistoryCache.json", overwrite=True)
+    SaveFile(dix, f"{storage}/History/foodHistoryCache.json", overwrite=True)
 
 
     # TODO in Main: Check and empty food history cache
@@ -1975,7 +2015,9 @@ def SearchAlgorithm():
     TRUE = 1
     FALSE = 0
 
-    NutriDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
+    storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+
+    NutriDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
 
     # vcard base64 photo icons
     servingSizeIcon = # ... , see servingSizeIcon.txt
@@ -2227,7 +2269,9 @@ def FoodsList(): # Foods List
     TRUE = 1
     FALSE = 0
 
-    nutrDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
+    storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+
+    nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
     cancelIcon = #.. cancelIcon.txt
     
     foodsDix = {}
@@ -2242,7 +2286,7 @@ def FoodsList(): # Foods List
 
     hasNotes = FALSE
 
-    file = GetFile("FLS/Other/foodNotes.txt", errorIfNotFound=False)
+    file = GetFile(f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
     if file is not None:
         notes = f'''
             Food Notes:
@@ -2395,6 +2439,8 @@ def FoodsList(): # Foods List
 #---------------------------------------------------------------------------------------------------------------------------------clearCacheAndBacklog
 
 def clearCacheAndBacklog():
+
+    storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
     if ShortcutInput is not None:
         IFRESULT = ShortcutInput
     else
@@ -2404,7 +2450,7 @@ def clearCacheAndBacklog():
     TRUE = 1
     FALSE = 0
 
-    res = GetFile("FLS/Other/shortcutNames.json")
+    res = GetFile(f"{storage}/Other/shortcutNames.json")
     shortcutNames = Dictionary(res)
 
     hasHealthApp = FALSE
@@ -2415,7 +2461,7 @@ def clearCacheAndBacklog():
     if params['backlog'] is not None:
         # clearing the backlog
         if hasHealthApp == TRUE:
-            file = GetFile("FLS/Other/backlog.json", errorIfNotFound=False)
+            file = GetFile(f"{storage}/Other/backlog.json", errorIfNotFound=False)
             if file is not None:
                 # clear items by logging them
                 dix = Dictionary(file)
@@ -2423,7 +2469,7 @@ def clearCacheAndBacklog():
                     RunShortcut(shortcutNames["Log Algorithm"], input=item)
 
                 # erase the backlog
-                file = GetFile("FLS/Other/backlog.json")
+                file = GetFile(f"{storage}/Other/backlog.json")
                 DeleteFile(file, deleteImmediately=True)
 
             else:
@@ -2433,7 +2479,7 @@ def clearCacheAndBacklog():
 
     if params['cache'] is not None:
         # clear the cache
-        file = GetFile("FLS/History/foodHistoryCache.json", errorIfNotFound=False)
+        file = GetFile(f"{storage}/History/foodHistoryCache.json", errorIfNotFound=False)
         if file is not None:
             dix = Dictionary(file)
             histCache = dix['cache']
@@ -2468,10 +2514,10 @@ def clearCacheAndBacklog():
                 history[dayKey] = dayDix
 
             # save our history
-            SaveFile(history, "FLS/History/foodHistory.json", overwrite=True)
+            SaveFile(history, f"{storage}/History/foodHistory.json", overwrite=True)
 
             # clear our cache by deleting the file
-            file = GetFile("FLS/History/foodHistoryCache.json")
+            file = GetFile(f"{storage}/History/foodHistoryCache.json")
             DeleteFile(file, deleteImmediately=True)
 
 
@@ -2481,7 +2527,9 @@ def SavedAndSearch():
     TRUE = 1
     FALSE = 0
 
-    res = GetFile("FLS/Other/shortcutNames.json")
+    storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+
+    res = GetFile(f"{storage}/Other/shortcutNames.json")
     shortcutNames = Dictionary(res)
     Menu("Saved And Search"):
         case "Search and View":
@@ -2528,7 +2576,7 @@ def SavedAndSearch():
                     changedFood = Dictionary(RunShortcut(shortcutNames["Display Food Item"], input=repeatItem))
                     Menu(f'Save Changes to {changedFood['Name']}?'):
                         case 'Yes':
-                            SaveFile(changedFood, f"FLS/Presets/Foods/food_{changedFood['id']}.json", overwrite=True)
+                            SaveFile(changedFood, f"{storage}/Presets/Foods/food_{changedFood['id']}.json", overwrite=True)
                             deletePresetCache = TRUE
                         case 'No':
                             pass
@@ -2564,7 +2612,7 @@ def SavedAndSearch():
                     changedFood = Dictionary(RunShortcut(shortcutNames["Display Food Item"], input=repeatItem))
                     Menu(f'Save Changes to {changedFood['Name']}?'):
                         case 'Yes':
-                            SaveFile(changedFood, f"FLS/Barcodes/Foods/food_{changedFood['id']}.json", overwrite=True)
+                            SaveFile(changedFood, f"{storage}/Barcodes/Foods/food_{changedFood['id']}.json", overwrite=True)
                             deletePresetCache = TRUE
                         case 'No':
                             pass
@@ -2591,7 +2639,10 @@ def SavedAndSearch():
 def LogFoodsAtTime():
     TRUE = 1
     FALSE = 0
-    res = GetFile("FLS/Other/shortcutNames.json")
+
+    storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+
+    res = GetFile(f"{storage}/Other/shortcutNames.json")
     shortcutNames = Dictionary(res)
 
     Dating = AskForInput("What date and time? Click Done for Right Now", Input.DateAndTime)
@@ -2608,7 +2659,7 @@ def LogFoodsAtTime():
 
     loggedFoods = REPEATRESULTS
 
-    file = GetFile("FLS/Other/foodNotes.txt", errorIfNotFound=False)
+    file = GetFile(f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
     if file is not None:
         Menu('Clear food notes?'):
             case 'Yes':
@@ -2619,7 +2670,7 @@ def LogFoodsAtTime():
     makePreset = TRUE
 
     if Count(loggedFoods) == 1:
-        file = GetFile(f"FLS/Presets/Foods/food_{loggedFoods['id']}.json")
+        file = GetFile(f"{storage}/Presets/Foods/food_{loggedFoods['id']}.json")
         if file is not None:
             makePreset = FALSE
 
@@ -2634,7 +2685,12 @@ def LogFoodsAtTime():
 #---------------------------------------------------------------------------------------------------------------------------------LogFoodsAtDifferentTimes
 
 def LogFoodsAtDifferentTimes(): # Log Foods At Different Times
-    nutrDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
+    TRUE = 1
+    FALSE = 0
+
+    storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+
+    nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
     selectedFoods = RunShortcut(nutrDix['Foods List'])
 
     nextId = 0
@@ -2643,7 +2699,7 @@ def LogFoodsAtDifferentTimes(): # Log Foods At Different Times
 
     hasNotes = FALSE
 
-    file = GetFile("FLS/Other/foodNotes.txt", errorIfNotFound=False)
+    file = GetFile(f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
     if file is not None:
         notes = f'''
             Food Notes:
@@ -2705,7 +2761,7 @@ def LogFoodsAtDifferentTimes(): # Log Foods At Different Times
         if hasNotes == TRUE:
             Menu('Clear food notes?'):
                 case 'Yes':
-                    file = GetFile("FLS/Other/foodNotes.txt")
+                    file = GetFile(f"{storage}/Other/foodNotes.txt")
                     DeleteFile(file, deleteImmediately=True)
                 case 'No':
                     pass
@@ -2722,11 +2778,14 @@ def LogFoodsAtDifferentTimes(): # Log Foods At Different Times
 def Nutrition():
     TRUE = 1
     FALSE = 0
+
+    storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+
     checkForUpdates = TRUE
     exitAfterQuickLog = TRUE
 
     # load names of the shortcuts
-    res = GetFile("FLS/Other/shortcutNames.json")
+    res = GetFile(f"{storage}/Other/shortcutNames.json")
     shortcutNames = Dictionary(res)
 
     text = '''
@@ -2748,7 +2807,7 @@ def Nutrition():
         Calcium
         Iron
     '''
-    SaveFile(text, "FLS/Other/nutriKeys.txt")
+    SaveFile(text, f"{storage}/Other/nutriKeys.txt")
 
     # if device does not have health app then we will be adding to backlog
     # using regex matching
@@ -2758,14 +2817,14 @@ def Nutrition():
         hasHealthApp = TRUE
 
     # save the state of the health app to environment
-    file = GetFile("FLS/Other/env.json", errorIfNotFound=False)
+    file = GetFile(f"{storage}/Other/env.json", errorIfNotFound=False)
     dix = Dictionary(file)
     dix['hasHealthAapp'] = hasHealthApp
-    SaveFile(dix, "FLS/Other/env.json", overwrite=True)
+    SaveFile(dix, f"{storage}/Other/env.json", overwrite=True)
 
 
     # itemsInHistCache = FALSE
-    # file = GetFile("FLS/History/foodHistoryCache.json", errorIfNotFound=False)
+    # file = GetFile(f"{storage}/History/foodHistoryCache.json", errorIfNotFound=False)
     # if file is not None:
     #     itemsInHistCache = TRUE
     #     dix = Dictionary(file)
@@ -2775,7 +2834,7 @@ def Nutrition():
 
 
     # determine if we are checking for updates
-    # file = GetFile("FLS/Other/lastUpdateCheck.txt", errorIfNotFound=False)
+    # file = GetFile(f"{storage}/Other/lastUpdateCheck.txt", errorIfNotFound=False)
     # if file is not None:
     #     IFRESULT = file
     # else:
@@ -2801,7 +2860,7 @@ def Nutrition():
         _sum = CalculateStatistics(healthSamples, "Sum")
         calsToday = Round (_sum, "hundredths")
 
-        file = GetFile("FLS/Other/backlog.json", errorIfNotFound=False)
+        file = GetFile(f"{storage}/Other/backlog.json", errorIfNotFound=False)
         if file is not None:
             IFRESULT = f"You've eaten {calsToday} calories today.\nThere are foods in your backlog."
         else:
@@ -2867,26 +2926,47 @@ def Nutrition():
             case "Food History":
                 RunShortcut(shortcutNames["Clear Cache And Backlog"])
 
-                file = GetFile("FLS/Other/backlog.json", errorIfNotFound=False)
+                file = GetFile(f"{storage}/Other/backlog.json", errorIfNotFound=False)
                 if file is not None
                     ShowAlert("There are items in the backlog, food history will not be accurate until backlog is cleared", showCancel=True)
                 
                 RunShortcut(shortcutNames["Food History"])
 
-        case 'Clear... and more':
+        case 'Clear... and Other Settings':
             case "Clear Backlog":
                 Notification('Clearing backlog....')
                 RunShortcut(shortcutNames["Clear Cache And Backlog"])
 
             case "Clear Food Notes":
-                file = GetFile("FLS/Other/foodNotes.txt", errorIfNotFound=False)
+                file = GetFile(f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
                 DeleteFile(file, deleteImmediately=True)
+
+            case "View Storage Folder":
+                folder = GetFile(storage)
+                OpenFile(folder)
+
+            case "Rename Storage Folder":
+                newStorage = AskForInput(Input.Text, "New folder name", default=storage)
+                if newStorage != storage:
+                    breakLoop = FALSE
+                    for _ in range(10):
+                        if breakLoop == FALSE:
+                            if GetFile(newStorage, errorIfNotFound=False) is not None:
+                                newStorage = AskForInput(Input.Text, f'Folder "{newStorage}" already exists, please select a different name')
+                            else
+                                breakLoop = TRUE
+
+                    folder = GetFile(storage)
+                    RenameFile(folder, newStorage)
+                    storage = newStorage
+                    SaveFile(storage, "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
+
 
     RunShortcut(shortcutNames['Clear Cache and Backlog'])
 
     if checkForUpdates == TRUE:
         RunShortcut(shortcutNames["Installer"], input={'updateCheck': True})
-        #SaveFile(Text(CurrentDate.format(date="short", time=None)), "FLS/Other/lastUpdateCheck.txt", overwrite=True)
+        #SaveFile(Text(CurrentDate.format(date="short", time=None)), f"{storage}/Other/lastUpdateCheck.txt", overwrite=True)
 
 #---------------------------------------------------------------------------------------------------------------------------------
 
@@ -2895,7 +2975,7 @@ def LogAlgorithmTestBench():
     TRUE = 1
     FALSE = 0
 
-    nutrDix = Dictionary(GetFile("FLS/Other/shortcutNames.json"))
+    nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
 
     # clear cache before test
     RunShortcut(nutrDix['Clear Cache and Backlog'])
@@ -2989,7 +3069,7 @@ def LogAlgorithmTestBench():
 
             # check to make sure output food is logged to cache as expected
             cacheTestPassed = FALSE
-            dix = Dictionary( Text( GetFile("FLS/History/foodHistoryCache.json") ))
+            dix = Dictionary( Text( GetFile(f"{storage}/History/foodHistoryCache.json") ))
             cache = dix['cache']
             if cache is not None:
                 cacheTestPassed = TRUE
