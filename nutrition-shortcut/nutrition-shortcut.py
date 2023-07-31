@@ -275,7 +275,7 @@ def PortOverFoodHistoryToV4():
     ([0-9][0-9]*[\.]*[0-9]*) \[(.*) \(([0-9][0-9]*[\.]*[0-9]*) Kcal\)\]
     '''
 
-    newHistory = Dictionary();
+    newHistory = Dictionary()
     history = Dictionary(GetFile("FLS/History/foodHistoryDix.txt"))
 
     regex1 = text("([0-9][0-9]*[\.]*[0-9]*)x (.*) \(([0-9][0-9]*[\.]*[0-9]*) [kK][cC]al\)")
@@ -327,7 +327,7 @@ def PortOverFoodHistoryToV4():
             newDayDix[timeKey] = newTimeList
 
         # set the new day key
-        newHistory[dayKey] = newDayDix;
+        newHistory[dayKey] = newDayDix
 
         # save it to the file
         SaveFile(newHistory, "FLS/History/foodHistory.json", overwrite=True)
