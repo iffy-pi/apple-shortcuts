@@ -896,7 +896,7 @@ def FoodHistory()
     # show foods today in main menu
     today = CurrentDate()
 
-    dayDix = history[ today.format(date="short", time=None) ]
+    dayDix = history[ today.format(custom="yyyy-MM-dd") ]
     if dayDix is not None:
         keys = FilterFiles(dayDix[keys], sortBy="Name", AtoZ=True)
         for timeKey in keys:
@@ -967,7 +967,7 @@ def FoodHistory()
                 # doing it so we get latest date first
                 res = repeats - repeatndex
                 res = AddToDate(start, res)
-                IFRESULT = text(res.format(date="short", time=None))
+                IFRESULT = Text(res.format(custom="yyyy-MM-dd"))
 
             dayKey = IFRESULT
             dayDix = history[dayKey] 
@@ -1971,9 +1971,6 @@ def LogAlgorithm(): # Log Algorithm
 
     # make logging experience fast by logging to cache instead of bigger dictionary
     # cache is cleared in main nutrition function
-
-    dateKey = loggingDate.format(date="short", time=None)
-    timeKey = loggingDate.format(custom="HH:mm")
     cals = RoundNumber(nutrients['Calories'], ones)
 
     # check if cache file exists and make one by default if not available
@@ -1988,8 +1985,8 @@ def LogAlgorithm(): # Log Algorithm
 
     # put the item in the cache
     dix = {
-        'date' : dateKey,
-        'time' :  timeKey,
+        'date' : loggingDate.format(custom="yyyy-MM-dd"),
+        'time' :  loggingDate.format(custom="HH:mm"),
         'food' : foodName,
         'servings': servings,
         'cals': cals
@@ -2002,10 +1999,6 @@ def LogAlgorithm(): # Log Algorithm
 
     # save cache away for later
     SaveFile(dix, f"{storage}/History/foodHistoryCache.json", overwrite=True)
-
-
-    # TODO in Main: Check and empty food history cache
-
 
     return foodDix
 
