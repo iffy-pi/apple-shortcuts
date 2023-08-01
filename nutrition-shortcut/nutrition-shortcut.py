@@ -1,13 +1,5 @@
 # pylint: skip-file
 '''
-ON THE TODO:
-    - Shortcut Review
-        - Search Algorithm next! performance is not giving
-        - Do the rest
-
-    - Refactor NutriDix updater for the new update process
-    - # Regex for illegal characters, use when saving to file [\*\/\\><\.":\?\|]
-
 UDPATES AND CHANGES:
 - File/Strucutral Changes:
     - JSON Everything
@@ -48,6 +40,7 @@ UDPATES AND CHANGES:
                     cals: ...,
                     date: ...,
                     time: ...,
+                    id: ...
                 ]
             }
 
@@ -182,11 +175,9 @@ CURRENT STATE:
                 }
 
             - shortcutLinksDix.txt : ? Maps shortcuts to their icloud links
+
+Tutorial: https://github.com/iffy-pi/apple-shortcuts/blob/main/nutrition-shortcut/Tutorial/Tutorial.md
 '''
-
-# GLOBAL VARS
-FLS = "Shortcuts/FLS"
-
 def textToContacts(var):
     text = Text(var)
     renamedItem = SetName(var, 'vcard.vcf')
@@ -1989,6 +1980,7 @@ def LogAlgorithm(): # Log Algorithm
         'time' :  loggingDate.format(custom="HH:mm"),
         'food' : foodName,
         'servings': servings,
+        'id': foodDix['id'],
         'cals': cals
     }
     cache.append(dix)
@@ -2500,7 +2492,8 @@ def clearCacheAndBacklog():
                 timeList.append({
                         'food': item['food'],
                         'servings': item['servings'],
-                        'cals': item['cals']
+                        'cals': item['cals'],
+                        'id': item['id']
                     })
 
                 dayDix[timeKey] = timeList
