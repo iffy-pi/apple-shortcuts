@@ -392,14 +392,6 @@ def NutritionInstaller():
     TRUE = 1
     FALSE = 0
 
-    file = GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt", errorIfNotFound=False)
-    if file is not None:
-        IFRESULT = file
-    else:
-        IFRESULT = 'Nutrition'
-
-    storage = IFRESULT
-
     newInstall = TRUE
     proceedWithUpdates = FALSE
 
@@ -439,13 +431,30 @@ def NutritionInstaller():
         newInstall = FALSE
 
     if newInstall == TRUE:
-        storage = AskForInput(Input.Text, prompt="Enter folder name to store saved foods and configuration files", default=storage)
-        Alert('The folder name is saved in Shortcuts/Nutrition_Shortcut_Storage_Folder_Name.txt. To change the folder name, rename the folder and edit the text file'
-            title=f'Shortcut files will be saved to Shortcuts/{storage}')
 
-        SaveFile(storage, "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
+        file = GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt", errorIfNotFound=False)
+        if file is not None:
+            IFRESULT = file
+        
+        else:
+            newStorage = AskForInput(Input.Text, prompt="Enter folder name to store saved foods and configuration files", default='Nutrition')
 
+            breakLoop = FALSE
+            for _ in range(10):
+                if breakLoop == FALSE:
+                    if GetFile(newStorage, errorIfNotFound=False) is not None:
+                        newStorage = AskForInput(Input.Text, prompt=f'Folder "{newStorage}" already exists, please select a different name', default=text)
+                    else:
+                        breakLoop = TRUE
 
+            Alert('The folder name is saved in Shortcuts/Nutrition_Shortcut_Storage_Folder_Name.txt. To change the folder name, rename the folder and edit the text file'
+                title=f'Shortcut files will be saved to Shortcuts/{newStorage}')
+
+            SaveFile(newStorage, "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
+
+            IFRESULT = newStorage
+
+        storage = IFRESULT
 
         dix = Dictionary(...) # shortcutNames.json
         SaveFile(dix, f"{storage}/Other/shortcutNames.json") # save shortcut names file
