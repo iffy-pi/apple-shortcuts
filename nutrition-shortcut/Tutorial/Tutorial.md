@@ -120,12 +120,12 @@ All data used by the shortcut is saved under the storage folder you selected dur
 ## Presets
 Presets allow you to combine one or more foods into a single food that will be added to your personal foods. This allows you to save meals you continuously eat. After logging food (with the exception of [Quick Log](#quick-log)), you will have the option to select one or more of the logged foods for making a preset.
 
-Presets are saved in the Presets folder in storage. You can make, view, edit or remove presets with the options provided at *Saved and Search > Presets*:
+Presets are saved in the Presets folder in storage. You can make, view, edit or remove presets with the options provided at *Saved Foods and Search > Presets*:
 
 ![Presets Options](./images/presets_menu.png?raw=true)
 
 ## Barcoded Foods
-Barcoded foods are similar to presets but also include a barcode, which can be used to retrieve the food immediately. You can add, view, edit or remove barcoded foods with the options provided at *Saved and Search > Barcoded Foods*.
+Barcoded foods are similar to presets but also include a barcode, which can be used to retrieve the food immediately. You can add, view, edit or remove barcoded foods with the options provided at *Saved Foods and Search > Barcoded Foods*.
 
 ![Barcoded Foods Options](./images/barcodes_menu.png?raw=true)
 
