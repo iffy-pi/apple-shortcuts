@@ -1,4 +1,6 @@
 # Using Nutrition
+*You can access this tutorial in the future from Clear and Other Settings > Tutorial*
+
 ## The Main Menu
 The main shortcut is **Nutrition**. Once started, you are provided with a main menu for all relevant actions:
 
