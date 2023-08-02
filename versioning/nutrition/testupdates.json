@@ -6,7 +6,7 @@
     "updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json",
 
     "version": 4.01,
-    "link": "https://www.icloud.com/shortcuts/7c680f476b0c40f6bfc8eaad7c91f8a6",
+    "link": "https://www.icloud.com/shortcuts/20be079a41df4b109e124e614e4207ba",
     "releaseNotes": "- Complete refactor for new version",
     "releaseTime": "2023-07-23",
     "children": [
@@ -50,7 +50,7 @@
             "name":"Display Food Item",
             "type":"child",
             "version":1.01,
-            "link": "https://www.icloud.com/shortcuts/42a4c7b5d19f477ab6be21bd4475d086"
+            "link": "https://www.icloud.com/shortcuts/3d3af21bff184501b56c58d4e332b320"
         },
         {
             "id":11,
