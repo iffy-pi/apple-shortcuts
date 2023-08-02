@@ -1673,11 +1673,6 @@ def AddRecent():
 def DisplayFoodItem():
 
     storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
-
-    # params = Dictionary(ShortcutInput)
-    # foodDix = params['food']
-
-    # action = params['action']
     
     if ShortcutInput is not None:
         IFRESULT = foodDix
@@ -1685,40 +1680,6 @@ def DisplayFoodItem():
         # the default food dictionary
         IFRESULT = ... # the default food dictionary
     foodDix = Dictionary(IFRESULT)
-
-    # if action == 'view':
-    #     # Use menu prompt first
-    #     outputFood = foodDix
-    #     prompt = f'''
-    #     {outputFood['Name']}
-    #     Serving Size: ({outputFood['Serving Size']}) ⸱ Cals: {outputFood['Calories']}
-    #     Carbs: {outputFood['Carbs']}g ⸱ Fat: {outputFood['Fat']}g ⸱ Protein: {outputFood['Protein']}g
-    #     Sugar: {outputFood['Sugar']}g ⸱ Fiber: {outputFood['Fiber']}g 
-    #     Monosaturated Fat: {outputFood['Monosaturated']}g ⸱ Polyunsaturated Fat: {outputFood['Polyunsaturated']}g
-    #     Saturated Fat: {outputFood['Saturated']}g ⸱ Sodium: {outputFood['Sodium']}mg ⸱ Cholesterol: {outputFood['Cholesterol']}mg
-    #     Potassium: {outputFood['Potassium']}mg ⸱ Calcium: {outputFood['Calcium']}mg ⸱ Iron: {outputFood['Iron']}mg
-    #     VitA: {outputFood['VitA']}mcg ⸱ VitC: {outputFood['VitC']}mg
-    #     '''
-    #     Menu(prompt):
-    #         case 'Done':
-    #             searchExit = TRUE
-    #             return outputFood
-    #         case 'Edit Food':
-    #             res = RunShorctut(NutriDix['Display Food Item'], input=outputFood)
-    #             Menu('Save changes?')
-    #                 case 'Yes':
-    #                     searchExit = TRUE
-    #                     outputFood = res
-    #                 case 'No, use previous values':
-    #                     searchExit = TRUE
-    #                 case 'No, back to search':
-    #                     pass
-    #         case 'Back To Search':
-    #             pass
-
-    #         case 'Cancel Search':
-    #             return None
-
 
 
     g = '(g)'
@@ -1798,7 +1759,9 @@ def DisplayFoodItem():
             # get the field from the displayDix and set it in food
             res = filter(nutriKeys, where=['Name' == key])
             if res is not None:
-                num = Number(displayDix[field])
+                # replacing comma with dot to convert european decimals to standard decimals
+                text = displayDix[field].replace(',', '.')
+                num = Number(text)
                 IFRESULT = RoundNumber(IFRESULT, hundredths)
             else:
                 IFRESULT = displayDix[field]
