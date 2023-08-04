@@ -1,123 +1,122 @@
-def main():
-	# v1.1 https://www.icloud.com/shortcuts/5d150871e03c4d30a217ca92fe8096dd
-	@SETUP("Paste access token here")
-	accessToken = '...'
+# v1.1 https://www.icloud.com/shortcuts/5d150871e03c4d30a217ca92fe8096dd
+@SETUP("Paste access token here")
+accessToken = '...'
 
-	TRUE = 1
-	FALSE = 0
+TRUE = 1
+FALSE = 0
 
-	updateInfo = {
-		'updateLink': '...',
-		'version': 1.1
-	}
+updateInfo = {
+	'updateLink': '...',
+	'version': 1.1
+}
 
-	params = {
-		'limit': 1,
-		'active': True
-	}
+params = {
+	'limit': 1,
+	'active': True
+}
 
-	url = f"https://api.pushbullet.com/v2/pushes?active={active}&limit={limit}"
+url = f"https://api.pushbullet.com/v2/pushes?active={active}&limit={limit}"
 
-	dixOut = GetContentsOfURL(
-			url,
-			headers = { 'Access-Token': accessToken }
-		)
+dixOut = GetContentsOfURL(
+		url,
+		headers = { 'Access-Token': accessToken }
+	)
 
-	item = dixOut['pushes'][0]
+item = dixOut['pushes'][0]
 
-	dixValue = item['type']
-	filterContents = filter(
-			dixValue,
-			whereAny=[
-				"Name" is "note",
-				"Name" is "link"
-			]
-		)
+dixValue = item['type']
+filterContents = filter(
+		dixValue,
+		whereAny=[
+			"Name" is "note",
+			"Name" is "link"
+		]
+	)
 
-	if filterContents is not None:
-		# note or link, but could contain a URL in the body
-		foundLink = None
-		bodyIsLink = FALSE
-		text = filterContents
+if filterContents is not None:
+	# note or link, but could contain a URL in the body
+	foundLink = None
+	bodyIsLink = FALSE
+	text = filterContents
 
-		if item['url'] is not None:
-			# always has url
-			foundLink = item['url']
-		else:
-			size = GetFileDetails('File Size', item['body'])
-			if toBytes(size) <= 1024:
-				# only consider when body is less than 1024 characters
-				# body may contain a url
-				urls = GetURLs(item['body'])
-				if urls is not None:
-					if urls.contains(item['body']):
-						# URLS are evaluated to full length
-						# if its just standard body then there will be other stuff that dont get evaluated to it
-						foundLink = item['body']
-						bodyIsLink = TRUE
+	if item['url'] is not None:
+		# always has url
+		foundLink = item['url']
+	else:
+		size = GetFileDetails('File Size', item['body'])
+		if toBytes(size) <= 1024:
+			# only consider when body is less than 1024 characters
+			# body may contain a url
+			urls = GetURLs(item['body'])
+			if urls is not None:
+				if urls.contains(item['body']):
+					# URLS are evaluated to full length
+					# if its just standard body then there will be other stuff that dont get evaluated to it
+					foundLink = item['body']
+					bodyIsLink = TRUE
 
-		if foundLink is not None:
-			if bodyIsLink == TRUE:
-				item['body'] = ''
-			menu = Menu(prompt=f"Link:\n{foundLink}", options=["Open Link", "Copy Link", f"Copy Title ({item['title']})", f"Copy Message ({item['body']})"])
+	if foundLink is not None:
+		if bodyIsLink == TRUE:
+			item['body'] = ''
+		menu = Menu(prompt=f"Link:\n{foundLink}", options=["Open Link", "Copy Link", f"Copy Title ({item['title']})", f"Copy Message ({item['body']})"])
 
-			copyContent = None
-
-
-			if menu.opt("Open Link"):
-				OpenURL(foundLink)
-
-			elif menu.opt("Copy Link"):
-				copyContent = foundLink
-
-			elif menu.opt("Copy Title"):
-				copyContent = item['title']
-
-			elif menu.opt("Copy Message"):
-				copyContent = item['body']
+		copyContent = None
 
 
-			if copyContent is not None:
-				CopyToClipboard(copyContent)
-				Notification(fullURL, title="Most recent push has been copied to your clipboard")
+		if menu.opt("Open Link"):
+			OpenURL(foundLink)
 
-		else:
-			if item['title'] is not None:
-				IFRESULT = f"{item['title']}\n{item['body']}"
-			else:
-				IFRESULT = f"{item['body']}"
+		elif menu.opt("Copy Link"):
+			copyContent = foundLink
 
-			CopyToClipboard(IFRESULT)
-			Notification(IFRESULT, title="Most recent push has been copied to your clipboard")
+		elif menu.opt("Copy Title"):
+			copyContent = item['title']
+
+		elif menu.opt("Copy Message"):
+			copyContent = item['body']
+
+
+		if copyContent is not None:
+			CopyToClipboard(copyContent)
+			Notification(fullURL, title="Most recent push has been copied to your clipboard")
 
 	else:
-		# it is a file
-		urlContents = GetContentsOfURL(Item['file_url'])
-		renamedItem = SetName(urlContents, item['file_name'], dontIncludeFileExtension=True)
-
-		if item['file_name'] == 'Pushed Text.txt':
-			# was text that overflowed
-			CopyToClipboard(urlContents)
-			Notification(urlContents, title="Most recent push has been copied to your clipboard")
+		if item['title'] is not None:
+			IFRESULT = f"{item['title']}\n{item['body']}"
 		else:
-			# _type = GetType(renamedItem)
-			# files = filter(_type, whereAny=['Name' == 'Image', 'Name' == 'Media'])
-			# if files has any va
-			Share(renamedItem)
+			IFRESULT = f"{item['body']}"
 
-	# Check for updates
-	UpdateRes = GetContentsOfURL(UpdateInfo['updateLink'])
-	if Number(UpdateRes['version']) > UpdateInfo['version']:
-		split = SplitText(UpdateRes['releaseNotes'], SplitText.By.NewLines)
-		dt = Date(UpdateRes['releaseTime'])
+		CopyToClipboard(IFRESULT)
+		Notification(IFRESULT, title="Most recent push has been copied to your clipboard")
 
-		text = f'''
-			Pushbullet Shortcut Update
-			An update is available for this shortcut
-			...
-		'''
-		note = CreateNote(Text)
-		OpenNote(note)
+else:
+	# it is a file
+	urlContents = GetContentsOfURL(Item['file_url'])
+	renamedItem = SetName(urlContents, item['file_name'], dontIncludeFileExtension=True)
 
-		return
+	if item['file_name'] == 'Pushed Text.txt':
+		# was text that overflowed
+		CopyToClipboard(urlContents)
+		Notification(urlContents, title="Most recent push has been copied to your clipboard")
+	else:
+		# _type = GetType(renamedItem)
+		# files = filter(_type, whereAny=['Name' == 'Image', 'Name' == 'Media'])
+		# if files has any va
+		Share(renamedItem)
+
+# Check for updates
+UpdateRes = GetContentsOfURL(UpdateInfo['updateLink'])
+if Number(UpdateRes['version']) > UpdateInfo['version']:
+	split = SplitText(UpdateRes['releaseNotes'], SplitText.By.NewLines)
+	dt = Date(UpdateRes['releaseTime'])
+
+	text = f'''
+		Pushbullet Shortcut Update
+		An update is available for this shortcut
+		...
+	'''
+	note = CreateNote(Text)
+	OpenNote(note)
+
+	StopShortcut()
 

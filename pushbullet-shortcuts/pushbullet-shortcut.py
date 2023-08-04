@@ -53,7 +53,7 @@ def main(ShortcutInput, type="Any", source="Share Sheet", default="Clipboard"):
 
 	if ShortcutInput is None:
 		ShowNotification("Nothing to Push!")
-		return
+		StopShortcut()
 
 
 	Contents = ShortcutInput
@@ -343,7 +343,7 @@ def main(ShortcutInput, type="Any", source="Share Sheet", default="Clipboard"):
 		note = CreateNote(Text)
 		OpenNote(note)
 
-		return
+		StopShortcut()
 
 
 
