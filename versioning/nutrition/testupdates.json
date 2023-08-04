@@ -6,8 +6,8 @@
     "updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json",
 
     "version": 4.01,
-    "link": "https://www.icloud.com/shortcuts/20be079a41df4b109e124e614e4207ba",
-    "releaseNotes": "- Complete refactor for new version",
+    "link": "TOFILL",
+    "releaseNotes": "- Fixed issue when logging decimals that use comma instead of period",
     "releaseTime": "2023-07-23",
     "children": [
         {
@@ -50,7 +50,7 @@
             "name":"Display Food Item",
             "type":"child",
             "version":1.01,
-            "link": "https://www.icloud.com/shortcuts/3d3af21bff184501b56c58d4e332b320"
+            "link": "TOFILL"
         },
         {
             "id":11,
