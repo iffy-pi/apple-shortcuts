@@ -4,11 +4,11 @@ FALSE = 0
 storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
 nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
-selectedFoods = RunShortcut(nutrDix['Foods List'])
 
-nextId = 0
-foodsDix = {}
-selectedIds = []
+foodsInfo = RunShortcut(nutrDix['Foods List'], input={ 'passToBulkEntry': True})
+
+foodsDix = Dictionary(foodsInfo['foodsDix'])
+selectedIds = foodsInfo['selectedIds']
 
 hasNotes = FALSE
 
@@ -22,14 +22,7 @@ if file is not None:
     notes = IFRESULT
     hasNotes = TRUE
 
-
-for food in selectedFoods:
-    # generate list Id for the item
-    foodsDix[nextId] = food
-    selectedIds.append(nextId)
-    nextId = nextId + 1
-
-for _ in range(Count(selectedFoods)):
+for _ in range(Count(selectedIds)):
     if Count(selectedIds) > 0:
         for listId in selectedIds
             food = foodsDix[listId]
