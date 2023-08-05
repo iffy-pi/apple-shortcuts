@@ -1,43 +1,40 @@
+storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
+
 TRUE = 1
 FALSE = 0
 
-storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
-
 confirmServings = FALSE
-
-nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
-
-if ShortcutInput is not None:
-    confirmServings = TRUE
-    # if we dont do this, then if result will be the item above the if
-    # i.e. nutrDix
-    IFRESULT = GetVariable(ShortcutInput)
-else:
-    IFRESULT = RunShortcut(nutrDix['Foods List'])
-
-foods = IFRESULT
-
-file = GetFile(f'{storage}/Other/nutriKeys.txt')
-nutriKeys = SplitText(file, '\n')
 
 foodsDix = {}
 selectedIds = []
 nextId = 0
 
-breakLoop = FALSE
+if ShortcutInput is not None:
+    confirmServings = TRUE
+    # if we dont do this, then if result will be the item above the if
+    # i.e. nutrDix
+    foods = ShortcutInput
+    for item in foods:
+        foodsDix[nextId] = item
+        selectedIds.append(nextId)
+        nextId = nextId+1
+else:
+    foodsInfo = RunShortcut(nutrDix['Foods List'], input={ 'passToBulkEntry': True})
+    selectedIds = foodsInfo['selectedIds']
+    foodsDix = Dictionary(foodsInfo['foodsDix'])
 
-# create selection system
-for item in foods:
-    foodsDix[nextId] = item
-    selectedIds.append(nextId)
-    nextId = nextId+1
+file = GetFile(f'{storage}/Other/nutriKeys.txt')
+nutriKeys = SplitText(file, '\n')
+
+breakLoop = FALSE
 
 # check to make sure it doesnt clash with other food names
 folder = GetFile(f"{storage}/Presets/Foods", errorIfNotFound=False)
 for file in GetContentsOfFolder(folder):
     presetNames.append(file['Name'])
 
-for _ in Count(foods):
+for _ in Count(selectedIds):
     if breakLoop == FALSE:
         for listId in selectedIds
             food = foodsDix[listId]
@@ -60,7 +57,7 @@ for _ in Count(foods):
 
         text = f'{IFRESULT}\nSelect no items if you wish to exit'
 
-        chosenIds = ChooseFrom(contacts, selectMultiple=True, selectAll=True, prompt=IFRESULT)
+        chosenIds = ChooseFrom(contacts, selectMultiple=True, selectAll=True, prompt=text)
 
         if Count(chosenIds) > 0:
             presetFood = {}
