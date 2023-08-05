@@ -24,6 +24,7 @@ foodsDix = {}
 selectedIds = []
 nextId = 0
 
+breakLoop = FALSE
 
 # create selection system
 for item in foods:
@@ -37,7 +38,7 @@ for file in GetContentsOfFolder(folder):
     presetNames.append(file['Name'])
 
 for _ in Count(foods):
-    if Count(selectedIds) > 0:
+    if breakLoop == FALSE:
         for listId in selectedIds
             food = foodsDix[listId]
             text = f'''
@@ -57,75 +58,80 @@ for _ in Count(foods):
         else:
             IFRESULT = "Select Foods to be made into Preset"
 
+        text = f'{IFRESULT}\nSelect no items if you wish to exit'
+
         chosenIds = ChooseFrom(contacts, selectMultiple=True, selectAll=True, prompt=IFRESULT)
-    
-        presetFood = {}
 
-        for contact in chosenIds:
-            # remove from selectedIds
-            selectedIds = filter(selectedIds, where='Name' != contact.Notes)
+        if Count(chosenIds) > 0:
+            presetFood = {}
 
-            item = foodsDix[contact.Notes]
-            curFood = Dictionary(item)
+            for contact in chosenIds:
+                # remove from selectedIds
+                selectedIds = filter(selectedIds, where='Name' != contact.Notes)
 
-            defaultSize = curFood['Serving Size']
-            defaultName = curFood['Name']
+                item = foodsDix[contact.Notes]
+                curFood = Dictionary(item)
 
-            askForServings = FALSE
+                defaultSize = curFood['Serving Size']
+                defaultName = curFood['Name']
 
-            if confirmServings == TRUE:
-                askForServings = TRUE
+                askForServings = FALSE
 
-            if curFood['Servings'] is None:
-                askForServings = TRUE
+                if confirmServings == TRUE:
+                    askForServings = TRUE
 
-            if askForServings == TRUE:
-                IFRESULT = AskForInput(Input.Number, prompt=f'How many servings of "{defaultName}"? (1 serving = {defaultSize})',
-                            default=1, allowDecimals=True, allowNegatives=False)
-            servings = IFRESULT
+                if curFood['Servings'] is None:
+                    askForServings = TRUE
 
-            for nutr in nutriKeys:
-                curFoodValue = Number(curFood[nutr])
-                presetValue = Number(presetFood[nutr])
-                num = (curFoodValue*servings) + presetValue
-                num = RoundNumber(num, hundredths)
-                presetFood[nutr] = num
+                if askForServings == TRUE:
+                    IFRESULT = AskForInput(Input.Number, prompt=f'How many servings of "{defaultName}"? (1 serving = {defaultSize})',
+                                default=1, allowDecimals=True, allowNegatives=False)
+                servings = IFRESULT
+
+                for nutr in nutriKeys:
+                    curFoodValue = Number(curFood[nutr])
+                    presetValue = Number(presetFood[nutr])
+                    num = (curFoodValue*servings) + presetValue
+                    num = RoundNumber(num, hundredths)
+                    presetFood[nutr] = num
 
 
-        # now presetFood will have all the items
-        if Count(chosenIds) > 1:
-            defaultSize = ''
-            defaultName = ''
+            # now presetFood will have all the items
+            if Count(chosenIds) > 1:
+                defaultSize = ''
+                defaultName = ''
 
-        name = AskForInput(Input.Text, prompt="What is the name of this preset?", default=defaultName)
+            name = AskForInput(Input.Text, prompt="What is the name of this preset?", default=defaultName)
 
-        if Count(presetNames) > 0:
-            breakLoop = FALSE
-            for _ in range(10):
-                if breakLoop == FALSE:
-                    res = filter(presetNames, where['Name' == name])
-                    if res is not None:
-                        Menu(f'Preset "{name}" already exists'):
-                            case 'Select a different name':
-                                name = AskForInput(Input.Text, prompt=f'"{name}" already exists, please select a new name', default=name)
-                            case 'Keep both with same name':
-                                breakLoop = TRUE
-                    else:
-                        presetNames.append(name)
-                        breakLoop = TRUE
+            if Count(presetNames) > 0:
+                breakLoop = FALSE
+                for _ in range(10):
+                    if breakLoop == FALSE:
+                        res = filter(presetNames, where['Name' == name])
+                        if res is not None:
+                            Menu(f'Preset "{name}" already exists'):
+                                case 'Select a different name':
+                                    name = AskForInput(Input.Text, prompt=f'"{name}" already exists, please select a new name', default=name)
+                                case 'Keep both with same name':
+                                    breakLoop = TRUE
+                        else:
+                            presetNames.append(name)
+                            breakLoop = TRUE
 
-        servingSize = AskForInput(Input.Text, prompt="What is the serving size of this preset?", default=defaultSize)
+            servingSize = AskForInput(Input.Text, prompt="What is the serving size of this preset?", default=defaultSize)
 
-        # then set in the food
-        foodId = RunShortcut(nutrDix["GFID"])
-        presetFood['id'] = foodId
-        presetFood['Serving Size'] = servingSize
-        presetFood['Name'] = name
+            # then set in the food
+            foodId = RunShortcut(nutrDix["GFID"])
+            presetFood['id'] = foodId
+            presetFood['Serving Size'] = servingSize
+            presetFood['Name'] = name
 
-        # save to file
-        SaveFile(presetFood, f"{storage}/Presets/Foods/food_{foodId}.json", overwrite=True)
+            # save to file
+            SaveFile(presetFood, f"{storage}/Presets/Foods/food_{foodId}.json", overwrite=True)
+
+        else:
+            breakLoop = TRUE
 
 # delete the cache since it is invalid
 file = GetFile(f"{storage}/Presets/vcardCache.txt", errorIfNotFound=False)
 DeleteFile(file, deleteImmediately=True)
-
