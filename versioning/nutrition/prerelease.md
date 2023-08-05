@@ -6,3 +6,5 @@ Prerelease notes are used to keep track of changes we are doing to the shortcuts
 	- [Issue #1](https://github.com/iffy-pi/apple-shortcuts/issues/1)
 	- Trying to fix issue that occurs when logging 	decimal values with comma instead of period
 	- Brought to my attention by redditor
+- Search Algorithm v1.01
+	- Search query no longer allows multiple lines
