@@ -18,6 +18,10 @@ breakLoop = FALSE
 
 hasNotes = FALSE
 
+# used to see if we are passing to bulk entry as a result
+params = Dictionary(ShortcutInput)
+
+
 file = GetFile(f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
 if file is not None:
     notes = f'''
@@ -57,12 +61,22 @@ for _ in range(maxLoops):
         Menu(IFRESULT2):
         case 'Done Selecting Foods':
             addMenuResult = FALSE
-            for listId in selectedIds:
-                food = foodsDix[listId]
-                RunShortcut(nutrDix['Add Recent'], input=food)
-                REPEATRESULTS.append(food)
-            
-            StopShortcut(output = REPEATRESULTS)
+
+            if params['passToBulkEntry'] is not None:
+                # bulk entry uses the id to dictionary format for multiple selection
+                # so we can just pass that immediately
+                dix = {}
+                dix['selectedIds'] = selectedIds
+                dix['foodsDix'] = foodsDix
+                return dix
+            else: 
+                # return the list of foods
+                for listId in selectedIds:
+                    food = foodsDix[listId]
+                    RunShortcut(nutrDix['Add Recent'], input=food)
+                    REPEATRESULTS.append(food)
+                
+                return REPEATRESULTS
 
         case 'Search Food':
             MENURESULT = RunShortcut(nutrDix['Search Algorithm'])
@@ -167,4 +181,3 @@ for _ in range(maxLoops):
                 foodsDix[nextId] = food
                 selectedIds.append(nextId)
                 nextId = nextId + 1
-
