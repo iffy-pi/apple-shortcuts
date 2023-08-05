@@ -68,7 +68,7 @@ for _ in range(maxLoops):
                 dix = {}
                 dix['selectedIds'] = selectedIds
                 dix['foodsDix'] = foodsDix
-                return dix
+                StopShortcut(output = dix)
             else: 
                 # return the list of foods
                 for listId in selectedIds:
@@ -76,7 +76,7 @@ for _ in range(maxLoops):
                     RunShortcut(nutrDix['Add Recent'], input=food)
                     REPEATRESULTS.append(food)
                 
-                return REPEATRESULTS
+                StopShortcut(output = REPEATRESULTS)
 
         case 'Search Food':
             MENURESULT = RunShortcut(nutrDix['Search Algorithm'])
