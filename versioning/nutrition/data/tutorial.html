@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap');
+    
+    /* New CSS Begins here ------------------------------------------------------------------ */
+    /* Used to horizontally centre a div's components, usually used to centre buttons */
+    .center-div {
+    text-align: center;
+    }
+
+    /* App JS Main Flexbox ---------------------------------------------------------------------- */
+    /* Pokadot background used in App.js */
+    html {
+    /* width: 240px; */
+    /* height: 240px; */
+    background-color: white;
+    background-image: radial-gradient(#385723 1px, transparent 0%), radial-gradient(#385723 1px, transparent 0%);
+    background-size: 20px 20px;
+    background-position: 0 0, 30px 30px;
+    background-repeat: repeat;
+    display: block;
+    }
+
+    /* Configure box and font */
+    * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    }
+
+    body {
+    font-family: 'Poppins', sans-serif;
+    }
+
+    /* Style for the topmost component in the application, i.e. application window itself */
+    /* Set to flex so that components can fall under each other with changing window size */
+    .app-container {
+        /* border: 6px solid black; */
+        justify-content: space-around;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .control-board {
+        background-color: white;
+        width: 480px;
+        padding: 10px;
+        border: 2px solid black;
+    }
+
+  </style>
+  <body>
+    <div class="app-container center-div">
+        <div class="control-board">
+            <h1>Click the GitHub URL below to access the tutorial</h1>
+            <b><a href="https://github.com/iffy-pi/apple-shortcuts/blob/main/nutrition-framework/Tutorial/Tutorial.md">https://github.com/iffy-pi/apple-shortcuts/blob/main/nutrition-framework/Tutorial/Tutorial.md</a></b>
+        </div>
+    </div>
+  </body>
+</html>
