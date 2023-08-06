@@ -11,7 +11,7 @@ proceedWithUpdates = FALSE
 
 updateInfo = {
     'updateLink' : 'https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json',
-    'version' : 4.01
+    'version' : 4.02
 }
 
 # also now includes information about the children
@@ -149,7 +149,7 @@ if Number(updateRes['version']) > updateInfo['version']:
                 {updateLinks}
 
                 Tutorial:
-                Not sure where to start? See the tutorial here: ...
+                Not sure where to start? See the tutorial here: https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/data/tutorial.html
 
                 📬 Developer:
                 Reddit: iffythegreat
