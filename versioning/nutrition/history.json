@@ -1,157 +1,312 @@
 [
-	{
-	    "id": 4,
-	    "name": "Nutrition",
-	    "type": "framework",
-	    "rhub": "https://routinehub.co/shortcut/5177",
-	    "updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json",
+    {
+        "id": 4,
+        "name": "Nutrition",
+        "type": "framework",
+        "rhub": "https://routinehub.co/shortcut/5177",
+        "updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json",
 
-	    "version": 4.0,
-	    "link": "https://www.icloud.com/shortcuts/7c680f476b0c40f6bfc8eaad7c91f8a6",
-	    "releaseNotes": "- Complete refactor for new version",
-	    "releaseTime": "2023-07-23",
-	    "children": [
-	        {
-	            "id":5,
-	            "name":"Nutrition",
-	            "type":"child",
-	            "version":1.0,
-	            "link": "https://www.icloud.com/shortcuts/3db089d930c04f13b8fe3f4596332387"
-	        },
-	        {
-	            "id":6,
-	            "name":"Foods List",
-	            "type":"child",
-	            "version":1.0,
-	            "link": "https://www.icloud.com/shortcuts/00c6c86765274e8289b7d04c68e60d76"
-	        },
-	        {
-	            "id":7,
-	            "name":"Log Algorithm",
-	            "type":"child",
-	            "version":1.0,
-	            "link": "https://www.icloud.com/shortcuts/794825e25987431f872a9fc36cb53d81"
-	        },
-	        {
-	            "id":8,
-	            "name":"Search Algorithm",
-	            "type":"child",
-	            "version":1.0,
-	            "link": "https://www.icloud.com/shortcuts/2a544721f22042b29914c72304ee9a89"
-	        },
-	        {
-	            "id":9,
-	            "name":"Generate Food ID",
-	            "type":"child",
-	            "version":1.0,
-	            "link": "https://www.icloud.com/shortcuts/f91b4e6228114de68c674113b480780c"
-	        },
-	        {
-	            "id":10,
-	            "name":"Display Food Item",
-	            "type":"child",
-	            "version":1.0,
-	            "link": "https://www.icloud.com/shortcuts/42a4c7b5d19f477ab6be21bd4475d086"
-	        },
-	        {
-	            "id":11,
-	            "name":"Log Foods At Time",
-	            "type":"child",
-	            "version":1.0,
-	            "link": "https://www.icloud.com/shortcuts/c6f49fcae08c40e8855326e7c440fe3a"
-	        },
-	        {
-	            "id":12,
-	            "name":"Log Foods At Different Times",
-	            "type":"child",
-	            "version":1.0,
-	            "link": "https://www.icloud.com/shortcuts/b7f6d0a2436a4cd8bf4f8090dfb9f972"
-	        },
-	        {
-	            "id":13,
-	            "name":"Saved And Search",
-	            "type":"child",
-	            "version":1.0,
-	            "link": "https://www.icloud.com/shortcuts/095905e0e20b45c093dc9d9fdf444f27"
-	        },
-	        {
-	            "id":14,
-	            "name":"Clear Cache And Backlog",
-	            "type":"child",
-	            "version":1.0,
-	            "link": "https://www.icloud.com/shortcuts/5dfebd65cf0c47ea8fdb8831c93b1176"
-	        },
-	        {
-	            "id":15,
-	            "name":"Edit Saved Food",
-	            "type":"child",
-	            "version":1.0,
-	            "link": "https://www.icloud.com/shortcuts/068c7e58e2774e5b9943a0beb23dc2fe"
-	        },
-	        {
-	            "id":16,
-	            "name":"Select Saved Foods",
-	            "type":"child",
-	            "version":1.0,
-	            "link": "https://www.icloud.com/shortcuts/d75f91a36c8e42d285eb09bdf413057b"
-	        },
-	        {
-	            "id":17,
-	            "name":"Make Preset",
-	            "type":"child",
-	            "version":1.0,
-	            "link": "https://www.icloud.com/shortcuts/ae3149e966fe4d6cb5549404de4fa378"
-	        },
-	        {
-	            "id":18,
-	            "name":"Get Recent",
-	            "type":"child",
-	            "version":1.0,
-	            "link": "https://www.icloud.com/shortcuts/01d81b56a845494a8155568094c14ad0"
-	        },
-	        {
-	            "id":19,
-	            "name":"Add Recent",
-	            "type":"child",
-	            "version":1.0,
-	            "link": "https://www.icloud.com/shortcuts/3d10a650d47e43f78d9066088002e4cf"
-	        },
-	        {
-	            "id":20,
-	            "name":"Barcode Search",
-	            "type":"child",
-	            "version":1.0,
-	            "link": "https://www.icloud.com/shortcuts/c8ae5bb20bc949dba3a096843440e46e"
-	        },
-	        {
-	            "id":21,
-	            "name":"Make Food Manually",
-	            "type":"child",
-	            "version":1.0,
-	            "link": "https://www.icloud.com/shortcuts/759ba0b91dd04743a92456d23e8ae11a"
-	        },
-	        {
-	            "id":22,
-	            "name":"Food History",
-	            "type":"child",
-	            "version":1.0,
-	            "link": "https://www.icloud.com/shortcuts/22e92e68ccbb40e6846e7a099f9b6246"
-	        },
-	        {
-	            "id":23,
-	            "name":"Nutrition Statistics",
-	            "type":"child",
-	            "version":1.0,
-	            "link": "https://www.icloud.com/shortcuts/1f37e710e49a4c8c833f9418e98c7e23"
-	        },
-	        {
-	            "id":24,
-	            "name":"Calculate Stats",
-	            "type":"child",
-	            "version":1.0,
-	            "link": "https://www.icloud.com/shortcuts/de206221a5cb4864bb9be9d56510f580"
-	        }
-	    ]
+        "version": 4.0,
+        "link": "https://www.icloud.com/shortcuts/7c680f476b0c40f6bfc8eaad7c91f8a6",
+        "releaseNotes": "- Complete refactor for new version",
+        "releaseTime": "2023-07-23",
+        "children": [
+            {
+                "id":5,
+                "name":"Nutrition",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/3db089d930c04f13b8fe3f4596332387"
+            },
+            {
+                "id":6,
+                "name":"Foods List",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/00c6c86765274e8289b7d04c68e60d76"
+            },
+            {
+                "id":7,
+                "name":"Log Algorithm",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/794825e25987431f872a9fc36cb53d81"
+            },
+            {
+                "id":8,
+                "name":"Search Algorithm",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/2a544721f22042b29914c72304ee9a89"
+            },
+            {
+                "id":9,
+                "name":"Generate Food ID",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/f91b4e6228114de68c674113b480780c"
+            },
+            {
+                "id":10,
+                "name":"Display Food Item",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/42a4c7b5d19f477ab6be21bd4475d086"
+            },
+            {
+                "id":11,
+                "name":"Log Foods At Time",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/c6f49fcae08c40e8855326e7c440fe3a"
+            },
+            {
+                "id":12,
+                "name":"Log Foods At Different Times",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/b7f6d0a2436a4cd8bf4f8090dfb9f972"
+            },
+            {
+                "id":13,
+                "name":"Saved And Search",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/095905e0e20b45c093dc9d9fdf444f27"
+            },
+            {
+                "id":14,
+                "name":"Clear Cache And Backlog",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/5dfebd65cf0c47ea8fdb8831c93b1176"
+            },
+            {
+                "id":15,
+                "name":"Edit Saved Food",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/068c7e58e2774e5b9943a0beb23dc2fe"
+            },
+            {
+                "id":16,
+                "name":"Select Saved Foods",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/d75f91a36c8e42d285eb09bdf413057b"
+            },
+            {
+                "id":17,
+                "name":"Make Preset",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/ae3149e966fe4d6cb5549404de4fa378"
+            },
+            {
+                "id":18,
+                "name":"Get Recent",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/01d81b56a845494a8155568094c14ad0"
+            },
+            {
+                "id":19,
+                "name":"Add Recent",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/3d10a650d47e43f78d9066088002e4cf"
+            },
+            {
+                "id":20,
+                "name":"Barcode Search",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/c8ae5bb20bc949dba3a096843440e46e"
+            },
+            {
+                "id":21,
+                "name":"Make Food Manually",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/759ba0b91dd04743a92456d23e8ae11a"
+            },
+            {
+                "id":22,
+                "name":"Food History",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/22e92e68ccbb40e6846e7a099f9b6246"
+            },
+            {
+                "id":23,
+                "name":"Nutrition Statistics",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/1f37e710e49a4c8c833f9418e98c7e23"
+            },
+            {
+                "id":24,
+                "name":"Calculate Stats",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/de206221a5cb4864bb9be9d56510f580"
+            }
+        ]
 
-	}
+    },
+    {
+        "id": 4,
+        "name": "Nutrition",
+        "type": "framework",
+        "rhub": "https://routinehub.co/shortcut/5177",
+        "updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json",
+
+        "version": 4.0,
+        "link": "https://www.icloud.com/shortcuts/7c680f476b0c40f6bfc8eaad7c91f8a6",
+        "releaseNotes": "- Complete refactor for new version",
+        "releaseTime": "2023-07-23",
+        "children": [
+            {
+                "id":5,
+                "name":"Nutrition",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/3db089d930c04f13b8fe3f4596332387"
+            },
+            {
+                "id":6,
+                "name":"Foods List",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/00c6c86765274e8289b7d04c68e60d76"
+            },
+            {
+                "id":7,
+                "name":"Log Algorithm",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/794825e25987431f872a9fc36cb53d81"
+            },
+            {
+                "id":8,
+                "name":"Search Algorithm",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/2a544721f22042b29914c72304ee9a89"
+            },
+            {
+                "id":9,
+                "name":"Generate Food ID",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/f91b4e6228114de68c674113b480780c"
+            },
+            {
+                "id":10,
+                "name":"Display Food Item",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/42a4c7b5d19f477ab6be21bd4475d086"
+            },
+            {
+                "id":11,
+                "name":"Log Foods At Time",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/c6f49fcae08c40e8855326e7c440fe3a"
+            },
+            {
+                "id":12,
+                "name":"Log Foods At Different Times",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/b7f6d0a2436a4cd8bf4f8090dfb9f972"
+            },
+            {
+                "id":13,
+                "name":"Saved And Search",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/095905e0e20b45c093dc9d9fdf444f27"
+            },
+            {
+                "id":14,
+                "name":"Clear Cache And Backlog",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/5dfebd65cf0c47ea8fdb8831c93b1176"
+            },
+            {
+                "id":15,
+                "name":"Edit Saved Food",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/068c7e58e2774e5b9943a0beb23dc2fe"
+            },
+            {
+                "id":16,
+                "name":"Select Saved Foods",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/d75f91a36c8e42d285eb09bdf413057b"
+            },
+            {
+                "id":17,
+                "name":"Make Preset",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/ae3149e966fe4d6cb5549404de4fa378"
+            },
+            {
+                "id":18,
+                "name":"Get Recent",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/01d81b56a845494a8155568094c14ad0"
+            },
+            {
+                "id":19,
+                "name":"Add Recent",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/3d10a650d47e43f78d9066088002e4cf"
+            },
+            {
+                "id":20,
+                "name":"Barcode Search",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/c8ae5bb20bc949dba3a096843440e46e"
+            },
+            {
+                "id":21,
+                "name":"Make Food Manually",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/759ba0b91dd04743a92456d23e8ae11a"
+            },
+            {
+                "id":22,
+                "name":"Food History",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/22e92e68ccbb40e6846e7a099f9b6246"
+            },
+            {
+                "id":23,
+                "name":"Nutrition Statistics",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/1f37e710e49a4c8c833f9418e98c7e23"
+            },
+            {
+                "id":24,
+                "name":"Calculate Stats",
+                "type":"child",
+                "version":1.0,
+                "link": "https://www.icloud.com/shortcuts/de206221a5cb4864bb9be9d56510f580"
+            }
+        ]
+
+    }
 ]
