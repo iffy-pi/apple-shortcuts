@@ -16,9 +16,7 @@ for item in RunShortcut(shortcutNames["Foods List"]):
     }
 
     res = RunShortcut(shortcutNames["Log Algorithm"], input=dix)
-    REPEATRESULTS.append(res)
-
-loggedFoods = REPEATRESULTS
+    loggedFoods.append(res)
 
 file = GetFile(f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
 if file is not None:
@@ -36,10 +34,9 @@ if Count(loggedFoods) == 1:
         makePreset = FALSE
 
 if makePreset == TRUE:
-    Menu("Make Preset?")
+    Menu("Make Preset?"):
         case "Yes":
-            RunShortcut(shortcutNames["Make Preset"], input=REPEATRESULTS)
-        
+            RunShortcut(shortcutNames["Make Preset"], input=loggedFoods)
         case "No":
             pass
 
