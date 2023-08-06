@@ -1,3 +1,9 @@
+'''
+Framework: Nutrition (id = 4)
+ID:  21
+Ver: 1.0
+'''
+
 storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
 nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
 exactValDix = {

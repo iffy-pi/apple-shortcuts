@@ -1,3 +1,9 @@
+'''
+Framework: Nutrition (id = 4)
+ID:  15
+Ver: 1.0
+'''
+
 TRUE = 1
 FALSE = 0
 storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))

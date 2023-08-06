@@ -1,3 +1,9 @@
+'''
+Framework: Nutrition (id = 4)
+ID:  19 
+Ver: 1.0
+'''
+
 storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
 # Text of shortcut input to unlink from file handler of food file
