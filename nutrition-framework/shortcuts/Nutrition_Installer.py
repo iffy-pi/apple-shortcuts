@@ -42,6 +42,14 @@ params = Dictionary(ShortcutInput)
 
 if params['updateCheck'] is not None:
     newInstall = FALSE
+else:
+    Menu('What are you doing?'):
+        case "Installing the Shortcut":
+        case "Checking For Updates":
+            newInstall = FALSE
+
+if params['useTest'] is not None:
+    updateInfo['updateLink'] = 'https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/testupdates.json'
 
 if newInstall == TRUE:
 
