@@ -8,3 +8,6 @@ Prerelease notes are used to keep track of changes we are doing to the shortcuts
 	- Brought to my attention by redditor
 - Search Algorithm v1.01
 	- Search query no longer allows multiple lines
+- Log Foods At Time v1.01
+	- [Issue #3](https://github.com/iffy-pi/apple-shortcuts/issues/3)
+	- Fixed bug that suppressed Make Preset option even when more than one food was logged
