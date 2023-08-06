@@ -1,7 +1,7 @@
 '''
 Framework: Nutrition (id = 4)
 Is installer shortcut
-v4.0
+v4.01
 '''
 TRUE = 1
 FALSE = 0
@@ -11,7 +11,7 @@ proceedWithUpdates = FALSE
 
 updateInfo = {
     'updateLink' : 'https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json',
-    'version' : 4.0
+    'version' : 4.01
 }
 
 # also now includes information about the children
