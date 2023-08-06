@@ -7,7 +7,7 @@
 
     "version": 4.02,
     "link": "https://www.icloud.com/shortcuts/58d49efad43a4fbeae6f4954acf011e1",
-    "releaseNotes": "Nutrition Installer v1.02\\n    - Fixed dead tutorial link",
+    "releaseNotes": "Nutrition Installer\\n    - Fixed dead tutorial link\\n    - Added option when running shortcut between installing the shortcut or checking for updates\\n\\nDisplay Food Item v1.01\\n    - [Issue #1](https://github.com/iffy-pi/apple-shortcuts/issues/1)\\n    - Trying to fix issue that occurs when logging  decimal values with comma instead of period\\n    - Brought to my attention by redditor\\n\\nSearch Algorithm v1.01\\n    - Search query no longer allows multiple lines\\n\\nLog Foods At Time v1.01\\n    - [Issue #3](https://github.com/iffy-pi/apple-shortcuts/issues/3)\\n    - Fixed bug that suppressed Make Preset option even when more than one food was logged\\n\\nFoods List v1.01\\n    - [PR #2](https://github.com/iffy-pi/apple-shortcuts/pull/2)\\n    - Updated to increase speed when sending foods to Log Foods At Different Times and Make Preset\\n\\nLog Foods At Different Times v1.01\\n    - [PR #2](https://github.com/iffy-pi/apple-shortcuts/pull/2)\\n    - Updated to increase speed when receiving foods from Foods List\\n\\nMake Preset v1.01\\n    - [PR #2](https://github.com/iffy-pi/apple-shortcuts/pull/2)\\n    - Updated to increase speed when receiving foods from Foods List\\n    - Fixed bug that allows users to create an empty preset",
     "releaseTime": "2023-08-06",
     "children": [
         {
