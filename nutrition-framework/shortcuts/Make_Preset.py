@@ -1,7 +1,7 @@
 '''
 Framework: Nutrition (id = 4)
 ID:  17
-Ver: 1.0
+Ver: 1.01
 '''
 
 storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
