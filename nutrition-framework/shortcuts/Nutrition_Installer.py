@@ -17,18 +17,18 @@ updateInfo = {
 # also now includes information about the children
 childVers = {
     "5":1.0,    # Nutrition
-    "6":1.0,    # Foods List
+    "6":1.01,    # Foods List
     "7":1.0,    # Log Algorithm
-    "8":1.0,    # Search Algorithm
+    "8":1.01,    # Search Algorithm
     "9":1.0,    # Generate Food ID
-    "10":1.0,   # Display Food Item
-    "11":1.0,   # Log Foods At Time
-    "12":1.0,   # Log Foods At Different Times
+    "10":1.01,   # Display Food Item
+    "11":1.01,   # Log Foods At Time
+    "12":1.01,   # Log Foods At Different Times
     "13":1.0,   # Saved And Search
     "14":1.0,   # Clear Cache And Backlog
     "15":1.0,   # Edit Saved Food
     "16":1.0,   # Select Saved Foods
-    "17":1.0,   # Make Preset
+    "17":1.01,   # Make Preset
     "18":1.0,   # Get Recent
     "19":1.0,   # Add Recent
     "20":1.0,   # Barcode Search
