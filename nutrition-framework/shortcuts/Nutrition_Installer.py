@@ -126,17 +126,17 @@ if Number(updateRes['version']) > updateInfo['version']:
 
         # updater shorcut needs to be updated
         if newInstall == FALSE:
-            updateText.append(f"Updater Shortcut: {updateInfo['version']} ➡️ {updateRes['version']}")
+            updateText.append(f"Updater Shortcut: v{updateInfo['version']} ➡️ v{updateRes['version']}")
             updateLinks.append(f"Updater Shortcut: {updateRes['link']}\n")
 
         for child in updateRes['children']:
             curVer = childVers[ child['id'] ]
             if Number(child['version']) > curVer:
-                updateText.append(f"{child['name']}: {curVer} ➡️ {child['version']}")
+                updateText.append(f"{child['name']}: v{curVer} ➡️ v{child['version']}")
                 updateLinks.append(f"{child['name']}: {child['link']}\n")
 
         date = Date(updateRes['releaseTime'])
-        splitText = SplitText(updateRes['releaseNotes'], '\\n')
+        splitText = SplitText(updateRes['releaseNotes'], custom='\n')
 
         if newInstall == TRUE:
             IFRESULT = f"""
