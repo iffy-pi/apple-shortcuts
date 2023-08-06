@@ -7,8 +7,8 @@
 
     "version": 4.01,
     "link": "TOFILL",
-    "releaseNotes": "- Fixed issue when logging decimals that use comma instead of period",
-    "releaseTime": "2023-07-23",
+    "releaseNotes": "- Nutrition Installer\\n    - Added option when running shortcut between installing the shortcut or checking for updates\\n- Display Food Item v1.01\\n    - [Issue #1](https://github.com/iffy-pi/apple-shortcuts/issues/1)\\n    - Trying to fix issue that occurs when logging  decimal values with comma instead of period\\n    - Brought to my attention by redditor\\n- Search Algorithm v1.01\\n    - Search query no longer allows multiple lines\\n- Log Foods At Time v1.01\\n    - [Issue #3](https://github.com/iffy-pi/apple-shortcuts/issues/3)\\n    - Fixed bug that suppressed Make Preset option even when more than one food was logged\\n- Foods List v1.01\\n    - [PR #2](https://github.com/iffy-pi/apple-shortcuts/pull/2)\\n    - Updated to increase speed when sending foods to Log Foods At Different Times and Make Preset\\n- Log Foods At Different Times v1.01\\n    - [PR #2](https://github.com/iffy-pi/apple-shortcuts/pull/2)\\n    - Updated to increase speed when receiving foods from Foods List\\n- Make Preset v1.01\\n    - [PR #2](https://github.com/iffy-pi/apple-shortcuts/pull/2)\\n    - Updated to increase speed when receiving foods from Foods List\\n    - Fixed bug that allows users to create an empty preset",
+    "releaseTime": "2023-08-05",
     "children": [
         {
             "id":5,
@@ -21,8 +21,8 @@
             "id":6,
             "name":"Foods List",
             "type":"child",
-            "version":1.0,
-            "link": "https://www.icloud.com/shortcuts/00c6c86765274e8289b7d04c68e60d76"
+            "version":1.01,
+            "link": "TOFILL"
         },
         {
             "id":7,
@@ -35,8 +35,8 @@
             "id":8,
             "name":"Search Algorithm",
             "type":"child",
-            "version":1.0,
-            "link": "https://www.icloud.com/shortcuts/2a544721f22042b29914c72304ee9a89"
+            "version":1.01,
+            "link": "TOFILL"
         },
         {
             "id":9,
@@ -56,15 +56,15 @@
             "id":11,
             "name":"Log Foods At Time",
             "type":"child",
-            "version":1.0,
-            "link": "https://www.icloud.com/shortcuts/c6f49fcae08c40e8855326e7c440fe3a"
+            "version":1.01,
+            "link": "TOFILL"
         },
         {
             "id":12,
             "name":"Log Foods At Different Times",
             "type":"child",
-            "version":1.0,
-            "link": "https://www.icloud.com/shortcuts/b7f6d0a2436a4cd8bf4f8090dfb9f972"
+            "version":1.01,
+            "link": "TOFILL"
         },
         {
             "id":13,
@@ -98,8 +98,8 @@
             "id":17,
             "name":"Make Preset",
             "type":"child",
-            "version":1.0,
-            "link": "https://www.icloud.com/shortcuts/ae3149e966fe4d6cb5549404de4fa378"
+            "version":1.01,
+            "link": "TOFILL"
         },
         {
             "id":18,
