@@ -11,8 +11,8 @@ if file is not None:
 else:
     IFRESULT = "0"
 
-_id = Number(IFRESULT)
-num = _id + 1
+nextId = Number(IFRESULT)
+num = nextId + 1
 SaveFile(num, f"{storage}/Other/nextFoodId.txt")
-StopShortcut() 
+StopShortcut(output=num) 
 
