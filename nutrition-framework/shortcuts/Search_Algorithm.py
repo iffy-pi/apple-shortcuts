@@ -124,10 +124,10 @@ for _ in range (50):
 
         text = f'''
         "{query}" Search Results ⸱ Page {pageNo}
-        Foods with ❶ are the best match to your search.
+        Foods with ❶ are the verified best matches to your search.
         '''
 
-        chosenItem = ChooseFrom(contacts, prompt=f'"{query}" Search Results | Page {pageNo}')
+        chosenItem = ChooseFrom(contacts, prompt=text)
         isControlItem = FALSE
 
         if chosenItem.Notes == 'Next':
