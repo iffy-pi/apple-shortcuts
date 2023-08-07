@@ -36,6 +36,7 @@ for _ in range (50):
 
         for repeatItem in res['items']:
             # cache the item away using its id
+            tags = repeatItem['tags']
             item = repeatItem['item']
             itemId = item['id']
             searchItems[ itemId ] = item
@@ -59,11 +60,17 @@ for _ in range (50):
             subtitle = f'''
                 {IFRESULT}\nCals: {item['nutritional_contents.energy.value']} ⸱ Carbs: {item['nutritional_contents.carbohydrates']}g ⸱ Fat: {item['nutritional_contents.fat']}g ⸱ Protein: {item['nutritional_contents.protein']}g
             '''
+
+            files = filter(tags, whereAny=['Name' == 'canonical', 'Name' == 'best_match'])
+            if Count(files) == 2:
+                IFRESULT = ' ❶'
+            else:
+                IFRESULT = ''
             
             text = f'''
             BEGIN:VCARD
             VERSION:3.0
-            N;CHARSET=UTF-8:{item['description']}
+            N;CHARSET=UTF-8:{item['description']}{IFRESULT}
             ORG;CHARSET=UTF-8:{subtitle}
             NOTE;CHARSET=UTF-8:{itemId}
             END:VCARD
@@ -114,6 +121,11 @@ for _ in range (50):
 
         renamedItem = SetName(text, 'vcard.vcf')
         contacts = GetContacts(renamedItem)
+
+        text = f'''
+        "{query}" Search Results ⸱ Page {pageNo}
+        Foods with ❶ are the best match to your search.
+        '''
 
         chosenItem = ChooseFrom(contacts, prompt=f'"{query}" Search Results | Page {pageNo}')
         isControlItem = FALSE
