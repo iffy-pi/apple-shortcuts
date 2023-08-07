@@ -17,6 +17,7 @@ forwardIcon = # forwardIcon.txt
 backwardIcon = # backwardIcon.txt
 searchIcon = # searchIcon.txt
 cancelIcon = # cancelIcon.txt
+verifIcon = '★'
 
 
 resCount = 6
@@ -63,7 +64,7 @@ for _ in range (50):
 
             files = filter(tags, whereAny=['Name' == 'canonical', 'Name' == 'best_match'])
             if Count(files) == 2:
-                IFRESULT = ' ❶'
+                IFRESULT = f' {verifIcon}'
             else:
                 IFRESULT = ''
             
@@ -124,7 +125,7 @@ for _ in range (50):
 
         text = f'''
         "{query}" Search Results ⸱ Page {pageNo}
-        Foods with ❶ are the verified best matches to your search.
+        Foods with {verifIcon} are the verified best matches to your search.
         '''
 
         chosenItem = ChooseFrom(contacts, prompt=text)
