@@ -14,7 +14,7 @@
             "id":5,
             "name":"Nutrition",
             "type":"child",
-            "version":1.0,
+            "version":1.01,
             "link": "https://www.icloud.com/shortcuts/3db089d930c04f13b8fe3f4596332387"
         },
         {
@@ -28,7 +28,7 @@
             "id":7,
             "name":"Log Algorithm",
             "type":"child",
-            "version":1.0,
+            "version":1.01,
             "link": "https://www.icloud.com/shortcuts/794825e25987431f872a9fc36cb53d81"
         },
         {
@@ -70,7 +70,7 @@
             "id":13,
             "name":"Saved And Search",
             "type":"child",
-            "version":1.0,
+            "version":1.01,
             "link": "https://www.icloud.com/shortcuts/095905e0e20b45c093dc9d9fdf444f27"
         },
         {
