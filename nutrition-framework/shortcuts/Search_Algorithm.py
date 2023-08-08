@@ -125,7 +125,7 @@ for _ in range (50):
 
         text = f'''
         "{query}" Search Results ⸱ Page {pageNo}
-        Foods with {verifIcon} are the verified best matches to your search.
+        {verifIcon} - Verified Best Matches
         '''
 
         chosenItem = ChooseFrom(contacts, prompt=text)
