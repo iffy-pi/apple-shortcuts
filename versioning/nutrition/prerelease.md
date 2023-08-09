@@ -37,6 +37,9 @@ Calculate Stats
 - Nutrition Installer
 	- [Issue #9](https://github.com/iffy-pi/apple-shortcuts/issues/9)
 	- Update and Installation notes are now generated from markdown
+- Foods List v1.02
+	- [Issue #11](https://github.com/iffy-pi/apple-shortcuts/issues/11)
+	- Fixed bug where foods that were logged at different times are not added to your recent foods
 - Search Algorithm v1.02
 	- [Issue #7](https://github.com/iffy-pi/apple-shortcuts/issues/7)
 	- Fix for bug caused by cancelling a search after viewing search results
