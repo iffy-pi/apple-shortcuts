@@ -23,6 +23,16 @@ Food History
 Nutrition Statistics
 Calculate Stats
 
+## v4.04
+- Log Foods At Different Times v1.02 (or v1.1)
+	- Experimental: Update with more options for selecting and editing dates?
+	- [Issue #10](https://github.com/iffy-pi/apple-shortcuts/issues/10)
+	- Updated so that users will set times for all foods before they are logged
+	- Also updated to improve speeds when making a preset with logged foods
+- Make Presets v1.02
+	- [Issue #10](https://github.com/iffy-pi/apple-shortcuts/issues/10)
+	- Updated to improve speeds when making a preset with foods logged at different times
+
 ## v4.03
 - Nutrition Installer
 	- [Issue #9](https://github.com/iffy-pi/apple-shortcuts/issues/9)
