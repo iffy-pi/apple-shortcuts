@@ -16,8 +16,21 @@ foodsDix = {}
 selectedIds = []
 nextId = 0
 
-if ShortcutInput is not None:
+
+if shortcutInput is not None:
     confirmServings = TRUE
+    item = shortcutInput.getItemAtIndex(1)
+    if item['foodsInfo'] is not None:
+        foodsInfo = item['foodsInfo']
+else:
+    # there is no input so use foodsDix
+    foodsInfo = RunShortcut(nutrDix['Foods List'], input={ 'passToBulkEntry': True})
+
+
+if foodsInfo is not None:
+    selectedIds = foodsInfo['selectedIds']
+    foodsDix = Dictionary(foodsInfo['foodsDix'])
+else:
     # if we dont do this, then if result will be the item above the if
     # i.e. nutrDix
     foods = ShortcutInput
@@ -25,10 +38,6 @@ if ShortcutInput is not None:
         foodsDix[nextId] = item
         selectedIds.append(nextId)
         nextId = nextId+1
-else:
-    foodsInfo = RunShortcut(nutrDix['Foods List'], input={ 'passToBulkEntry': True})
-    selectedIds = foodsInfo['selectedIds']
-    foodsDix = Dictionary(foodsInfo['foodsDix'])
 
 file = GetFile(f'{storage}/Other/nutriKeys.txt')
 nutriKeys = SplitText(file, '\n')

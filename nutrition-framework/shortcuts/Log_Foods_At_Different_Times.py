@@ -63,23 +63,26 @@ for _ in range(Count(selectedIds)):
         listId = Contact(item).Notes
         selectedIds = filter(selectedIds, where=['Name' == listId])
         food = foodsDix[listId]
-        text = {
+        dix = Dictionary({
             'Date': date.format(date="medium", time="short"),
             'Food': food
-        }
-        res = RunShortcut('Log Algorithm', input=text)
-        loggedFoods.append(res)
+        })
+        logItems.append(dix)
 
-    if hasNotes == TRUE:
-        Menu('Clear food notes?'):
-            case 'Yes':
-                file = GetFile(f"{storage}/Other/foodNotes.txt")
-                DeleteFile(file, deleteImmediately=True)
-            case 'No':
-                pass
-    
-    Menu('Make Preset?'):
+for item in logItems:
+    res = RunShortcut('Log Algorithm', input=item)
+    loggedFoods.append(res)
+
+if hasNotes == TRUE:
+    Menu('Clear food notes?'):
         case 'Yes':
-            RunShortcut(nutrDix['Make Preset'], input=loggedFoods)
+            file = GetFile(f"{storage}/Other/foodNotes.txt")
+            DeleteFile(file, deleteImmediately=True)
         case 'No':
             pass
+
+Menu('Make Preset?'):
+    case 'Yes':
+        RunShortcut(nutrDix['Make Preset'], input={ 'foodsInfo': foodsInfo })
+    case 'No':
+        pass
