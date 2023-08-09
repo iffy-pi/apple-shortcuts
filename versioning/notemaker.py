@@ -12,7 +12,7 @@ def main():
     selected = lines[startLineNo-1: endLineNo]
 
     dix = {
-        'notes' : '\\n'.join([ l.rstrip() for l in selected])
+        'notes' : ''.join(selected)
     }
 
     print(json.dumps(dix))
