@@ -38,6 +38,16 @@ childVers = {
     "24":1.0    # Calculate Stats
 }
 
+emojiUnicodes = {
+    "arrow": "&#x27A1;&#xFE0F;",
+    "clock": "&#x1F566;",
+    "checkmark": "&#x2705;",
+    "notes": "&#x1F4DD;",
+    "mailbox": "&#x1F4EC;",
+    "books": "&#x1F4DA;",
+    "magnifier": "&#x1F50E;"
+}
+
 params = Dictionary(ShortcutInput)
 
 if params['updateCheck'] is not None:
@@ -126,54 +136,60 @@ if Number(updateRes['version']) > updateInfo['version']:
 
         # updater shorcut needs to be updated
         if newInstall == FALSE:
-            updateText.append(f"Updater Shortcut: v{updateInfo['version']} ➡️ v{updateRes['version']}")
-            updateLinks.append(f"Updater Shortcut: {updateRes['link']}\n")
+            updateText.append(f"- Nutrition Installer: v{updateInfo['version']} {emojiUnicodes['arrow']} v{updateRes['version']}")
+            updateLinks.append(f"- Nutrition Installer - [Download]({updateRes['link']})")
 
         for child in updateRes['children']:
             curVer = childVers[ child['id'] ]
             if Number(child['version']) > curVer:
-                updateText.append(f"{child['name']}: v{curVer} ➡️ v{child['version']}")
-                updateLinks.append(f"{child['name']}: {child['link']}\n")
+                updateText.append(f"- {child['name']}: v{curVer} {emojiUnicodes['arrow']} v{child['version']}")
+                updateLinks.append(f"- {child['name']} - [Download]({child['link']})")
 
         date = Date(updateRes['releaseTime'])
-        splitText = SplitText(updateRes['releaseNotes'], custom='\n')
 
         if newInstall == TRUE:
             IFRESULT = f"""
-                Installing {updateRes['name']}  Shortcut
-
-                The Nutrition Shortcut is made up of several helper shortcuts for its extensive functionality. Please install the shortcuts listed below.
-                Note: If you wish to use Nutrition Statistics, you must install Charty: (https://apps.apple.com/ca/app/charty-for-shortcuts/id1494386093)
-
-                ✅ Install:
-                {updateLinks}
-
-                Tutorial:
-                Not sure where to start? See the tutorial here: https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/data/tutorial.html
-
-                📬 Developer:
-                Reddit: iffythegreat
+                #  Installing {updateRes['name']} Shortcut
+                ## &#x1F50E; Description:
+                The Nutrition Shortcut is made up of several helper shortcuts for its extensive functionality. Please install all the shortcuts listed in the Install section below.
+                &nbsp;
+                After installation, the main shortcut to run is Nutrition. Not sure where to start? Check out the [tutorial](https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/data/tutorial.html).
+                &nbsp;
+                Note: If you wish to use Nutrition Statistics, you must install [Charty](https://apps.apple.com/ca/app/charty-for-shortcuts/id1494386093).
+                &nbsp;
+                If you run into any errors or issues, please contact developer. (See developer contact below)
             """
         else:
             IFRESULT = f"""
-                {updateRes['name']} Shortcut Update
-                Updates are available for shortcuts:
+                # {updateRes['name']} Shortcut Update
+                ## Updates are available for shortcuts:
                 {updateText}
 
-                🕦 Released:
+                &nbsp;
+                ## &#x1F566; Released:
                 {date.format(date="long", time=None)}
-
-                ✅ Install:
-                {updateLinks}
-
-                📝 Release Notes:
-                {splitText}
-
-                📬 Developer:
-                Reddit: iffythegreat
-
-                📚 Full Update History:
-                {updateRes['rhub']}/changelog
             """
-        note = CreateNote(IFRESULT)
-        OpenNote(note)
+
+        text = f"""
+            {IFRESULT}
+
+            &nbsp;
+            ## &#x2705; Install:
+            {updateLinks}
+
+            &nbsp;
+            ## &#x1F4DD; Release Notes:
+            {updateRes['releaseNotes']}
+
+            &nbsp;
+            ## &#x1F4EC; Developer Contact:
+            Reddit: [u/iffythegreat](https://www.reddit.com/user/iffythegreat)
+            RoutineHub: [iffy-pi](https://routinehub.co/user/iffy-pi)
+
+            &nbsp;
+            ## &#x1F4DA; Full Update History:
+            {updateRes['rhub']}/changelog
+        """
+        richText = MakeRichTextFromMarkdown(text)
+        note = CreateNote(richText, openNote=True)
+
