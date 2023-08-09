@@ -50,9 +50,10 @@ for _ in range(Count(selectedIds)):
         {notes}
 
         Select foods to log for time...
+        Foods will be logged after all foods have been selected.
         '''
     else:
-        IFRESULT = 'Select foods to log for time...'
+        IFRESULT = 'Select foods to log for time...\nFoods will be logged after all foods have been selected.'
 
     chosen = ChooseFrom(contacts, prompt=IFRESULT, selectMultiple=True)
     
