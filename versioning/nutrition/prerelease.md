@@ -45,6 +45,8 @@ Calculate Stats
 	- Fix for bug caused by cancelling a search after viewing search results
 	- [Issue #8](https://github.com/iffy-pi/apple-shortcuts/issues/8)
 	- Verified foods from MyFitnessPal are now tagged
+- Clear Cache and Backlog v1.01
+	- Fixed bug where backlog wasn't cleared even when on Apple Health compatible device ([#12](https://github.com/iffy-pi/apple-shortcuts/issues/12))
 - Select Saved Foods v1.01
 	- [Issue #7](https://github.com/iffy-pi/apple-shortcuts/issues/7)
 	- Update to prevent future bug caused by missing shortcut input.
