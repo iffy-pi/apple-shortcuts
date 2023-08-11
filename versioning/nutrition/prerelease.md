@@ -26,30 +26,24 @@ Calculate Stats
 ## v4.04
 - Log Foods At Different Times v1.02 (or v1.1)
 	- Experimental: Update with more options for selecting and editing dates?
-	- [Issue #10](https://github.com/iffy-pi/apple-shortcuts/issues/10)
+	- ([#10](https://github.com/iffy-pi/apple-shortcuts/issues/10))
 	- Updated so that users will set times for all foods before they are logged
 	- Also updated to improve speeds when making a preset with logged foods
 - Make Presets v1.02
-	- [Issue #10](https://github.com/iffy-pi/apple-shortcuts/issues/10)
+	- ([#10](https://github.com/iffy-pi/apple-shortcuts/issues/10))
 	- Updated to improve speeds when making a preset with foods logged at different times
 
 ## v4.03
 - Nutrition Installer
-	- [Issue #9](https://github.com/iffy-pi/apple-shortcuts/issues/9)
-	- Update and Installation notes are now generated from markdown
+	- Update and Installation notes are now generated from markdown ([#9](https://github.com/iffy-pi/apple-shortcuts/issues/9)).
 - Foods List v1.02
-	- [Issue #11](https://github.com/iffy-pi/apple-shortcuts/issues/11)
-	- Fixed bug where foods that were logged at different times are not added to your recent foods
+	- Fixed bug where foods that were logged at different times are not added to your recent foods ([#11](https://github.com/iffy-pi/apple-shortcuts/issues/11)).
 - Search Algorithm v1.02
-	- [Issue #7](https://github.com/iffy-pi/apple-shortcuts/issues/7)
-	- Fix for bug caused by cancelling a search after viewing search results
-	- [Issue #8](https://github.com/iffy-pi/apple-shortcuts/issues/8)
-	- Verified foods from MyFitnessPal are now tagged
+	- Fix for bug caused by cancelling a search after viewing search results ([#7](https://github.com/iffy-pi/apple-shortcuts/issues/7)).
+	- Verified foods from MyFitnessPal are now tagged ([#8](https://github.com/iffy-pi/apple-shortcuts/issues/8)).
 - Clear Cache and Backlog v1.01
-	- Fixed bug where backlog wasn't cleared even when on Apple Health compatible device ([#12](https://github.com/iffy-pi/apple-shortcuts/issues/12))
+	- Fixed bug where backlog wasn't cleared even when on Apple Health compatible device ([#12](https://github.com/iffy-pi/apple-shortcuts/issues/12)).
 - Select Saved Foods v1.01
-	- [Issue #7](https://github.com/iffy-pi/apple-shortcuts/issues/7)
-	- Update to prevent future bug caused by missing shortcut input.
+	- Update to prevent future bug caused by missing shortcut input ([#7](https://github.com/iffy-pi/apple-shortcuts/issues/7)).
 - Add Recent v1.01
-	- [Issue #7](https://github.com/iffy-pi/apple-shortcuts/issues/7)
-	- Update to prevent future bug caused by missing shortcut input.
+	- Update to prevent future bug caused by missing shortcut input ([#7](https://github.com/iffy-pi/apple-shortcuts/issues/7)).
