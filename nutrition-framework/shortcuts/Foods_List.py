@@ -68,11 +68,6 @@ for _ in range(maxLoops):
         case 'Done Selecting Foods':
             addMenuResult = FALSE
 
-            for listId in selectedIds:
-                food = foodsDix[listId]
-                RunShortcut(nutrDix['Add Recent'], input=food)
-                REPEATRESULTS.append(food)
-
             if params['passToBulkEntry'] is not None:
                 # bulk entry uses the id to dictionary format for multiple selection
                 # so we can just pass that immediately
@@ -80,7 +75,11 @@ for _ in range(maxLoops):
                 dix['selectedIds'] = selectedIds
                 dix['foodsDix'] = foodsDix
                 StopShortcut(output = dix)
-            else: 
+            else:
+                for listId in selectedIds:
+                    food = foodsDix[listId]
+                    RunShortcut(nutrDix['Add Recent'], input=food)
+                    REPEATRESULTS.append(food)
                 StopShortcut(output = REPEATRESULTS)
 
         case 'Search Food':
