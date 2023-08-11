@@ -18,9 +18,9 @@ res = GetFile(f"{storage}/Other/shortcutNames.json")
 shortcutNames = Dictionary(res)
 
 hasHealthApp = FALSE
-matches = MatchText(GetDeviceDetails("Model"), "(iPhone)")
-if matches is not None:
-    hasHealthApp = TRUE
+file = GetFile(f"{storage}/Other/env.json")
+if file['hasHealthApp'] is not None:
+    hasHealthApp = file['hasHealthApp']
 
 if params['backlog'] is not None:
     # clearing the backlog
