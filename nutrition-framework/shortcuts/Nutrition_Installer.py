@@ -1,7 +1,6 @@
 '''
 Framework: Nutrition (id = 4)
 Is installer shortcut
-v4.01
 '''
 TRUE = 1
 FALSE = 0
@@ -16,26 +15,26 @@ updateInfo = {
 
 # also now includes information about the children
 childVers = {
-    "5":1.0,    # Nutrition
-    "6":1.01,    # Foods List
-    "7":1.0,    # Log Algorithm
-    "8":1.01,    # Search Algorithm
-    "9":1.0,    # Generate Food ID
-    "10":1.01,   # Display Food Item
-    "11":1.01,   # Log Foods At Time
-    "12":1.01,   # Log Foods At Different Times
-    "13":1.0,   # Saved And Search
-    "14":1.0,   # Clear Cache And Backlog
-    "15":1.0,   # Edit Saved Food
-    "16":1.0,   # Select Saved Foods
-    "17":1.01,   # Make Preset
-    "18":1.0,   # Get Recent
-    "19":1.0,   # Add Recent
-    "20":1.0,   # Barcode Search
-    "21":1.0,   # Make Food Manually
-    "22":1.0,   # Food History
-    "23":1.0,   # Nutrition Statistics
-    "24":1.0    # Calculate Stats
+    "19": 1.0,      # Add Recent
+    "20": 1.0,      # Barcode Search
+    "24": 1.0,      # Calculate Stats
+    "14": 1.0,      # Clear Cache And Backlog
+    "10": 1.01,     # Display Food Item
+    "15": 1.0,      # Edit Saved Food
+    "22": 1.0,      # Food History
+    "6": 1.01,      # Foods List
+    "9": 1.0,       # Generate Food ID
+    "18": 1.0,      # Get Recent
+    "7": 1.0,       # Log Algorithm
+    "12": 1.01,     # Log Foods At Different Times
+    "11": 1.01,     # Log Foods At Time
+    "21": 1.0,      # Make Food Manually
+    "17": 1.01,     # Make Preset
+    "5": 1.0,       # Nutrition
+    "23": 1.0,      # Nutrition Statistics
+    "13": 1.0,      # Saved And Search
+    "8": 1.01,      # Search Algorithm
+    "16": 1.0,      # Select Saved Foods
 }
 
 emojiUnicodes = {
