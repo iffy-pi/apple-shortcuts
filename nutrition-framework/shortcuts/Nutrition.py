@@ -189,6 +189,9 @@ Menu(prompt):
                 storage = newStorage
                 SaveFile(storage, "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
 
+        case 'Tutorial':
+            OpenURL("https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/data/tutorial.html")
+
 
 RunShortcut(shortcutNames['Clear Cache and Backlog'])
 
