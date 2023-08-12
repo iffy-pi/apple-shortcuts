@@ -4,7 +4,6 @@
    "type":"framework",
    "rhub":"https://routinehub.co/shortcut/5177",
    "updateLink":"https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json",
-   
    "version":4.03,
    "link":"https://www.icloud.com/shortcuts/58d49efad43a4fbeae6f4954acf011e1",
    "releaseNotes":"Nutrition Installer\\n- Feature: Update and Installation notes are now generated from markdown (#9).\\n- Feature: See what's cahnged in the for the current update (#14).\\n\\nSearch Algorithm v1.02\\n- Feature: Verified foods from MyFitnessPal are now tagged (#8).\\n- Bug Fix: Fix for bug caused by cancelling a search after viewing search results (#7).\\n\\nNutrition v1.01\\n- Feature: Updated to support fast tracking Apple Health sample permissions (#13).\\n\\nLog Algorithm v1.01\\n- Feature: Updated to support fast tracking Apple Health sample permissions (#13).\\n\\nLog Foods At Different Times v1.02\\n- Feature: Updated so that users will set times for all foods before they are logged (#10).\\n- Improvement: Also updated to improve speeds when making a preset with logged foods (#10).\\n\\nMake Presets v1.02\\n- Improvement: Updated to improve speeds when making a preset with foods logged at different times (#10).\\n\\nFoods List v1.02\\n- Bug Fix: Fixed bug where foods that were logged at different times are not added to your recent foods (#11).\\n\\nClear Cache and Backlog v1.01\\n- Bug Fix: Fixed bug where backlog wasn't cleared even when on Apple Health compatible device (#12).\\n\\nSelect Saved Foods v1.01\\n- Bug Fix: Update to prevent future bug caused by missing shortcut input (#7).\\n\\nAdd Recent v1.01\\n- Bug Fix: Update to prevent future bug caused by missing shortcut input (#7).\\n",
@@ -14,8 +13,8 @@
          "id":19,
          "name":"Add Recent",
          "type":"child",
-         "version":1.0,
-         "link":"https://www.icloud.com/shortcuts/3d10a650d47e43f78d9066088002e4cf"
+         "version":1.01,
+         "link":"https://www.icloud.com/shortcuts/83acc40023dd4f31acf88cc8f81f8757"
       },
       {
          "id":20,
@@ -35,8 +34,8 @@
          "id":14,
          "name":"Clear Cache And Backlog",
          "type":"child",
-         "version":1.0,
-         "link":"https://www.icloud.com/shortcuts/5dfebd65cf0c47ea8fdb8831c93b1176"
+         "version":1.01,
+         "link":"https://www.icloud.com/shortcuts/cdd0b24f5dc944dab22b6662f50fc2f1"
       },
       {
          "id":10,
@@ -63,8 +62,8 @@
          "id":6,
          "name":"Foods List",
          "type":"child",
-         "version":1.01,
-         "link":"https://www.icloud.com/shortcuts/b6b82fbd35184fdebc744b32599177e9"
+         "version":1.02,
+         "link":"https://www.icloud.com/shortcuts/ef0d84647b884b7e9a06e0c318aaa9a8"
       },
       {
          "id":9,
@@ -85,14 +84,14 @@
          "name":"Log Algorithm",
          "type":"child",
          "version":1.01,
-         "link":"https://www.icloud.com/shortcuts/794825e25987431f872a9fc36cb53d81"
+         "link":"https://www.icloud.com/shortcuts/9155f9551de1465ba5b166e918d4ecf6"
       },
       {
          "id":12,
          "name":"Log Foods At Different Times",
          "type":"child",
-         "version":1.01,
-         "link":"https://www.icloud.com/shortcuts/e176e41a2a01458c932b58540d7d1424"
+         "version":1.02,
+         "link":"https://www.icloud.com/shortcuts/8f6400212a7646afb782b196d4fa6cba"
       },
       {
          "id":11,
@@ -112,15 +111,15 @@
          "id":17,
          "name":"Make Preset",
          "type":"child",
-         "version":1.01,
-         "link":"https://www.icloud.com/shortcuts/ddafc0f5a3974bfda78779b763117cf0"
+         "version":1.02,
+         "link":"https://www.icloud.com/shortcuts/27f99277b8d943c7935669a091b1f48f"
       },
       {
          "id":5,
          "name":"Nutrition",
          "type":"child",
          "version":1.01,
-         "link":"https://www.icloud.com/shortcuts/3db089d930c04f13b8fe3f4596332387"
+         "link":"https://www.icloud.com/shortcuts/c845a6f27a0844e7a5acdfb4fe6bd051"
       },
       {
          "id":23,
@@ -140,15 +139,15 @@
          "id":8,
          "name":"Search Algorithm",
          "type":"child",
-         "version":1.01,
-         "link":"https://www.icloud.com/shortcuts/febfa60dd8da409ebe08bd3bb2ac051e"
+         "version":1.02,
+         "link":"https://www.icloud.com/shortcuts/176b326c77564fbf8270cf388940d8e8"
       },
       {
          "id":16,
          "name":"Select Saved Foods",
          "type":"child",
-         "version":1.0,
-         "link":"https://www.icloud.com/shortcuts/d75f91a36c8e42d285eb09bdf413057b"
+         "version":1.01,
+         "link":"https://www.icloud.com/shortcuts/a50cac2a1cbf4d27ab1cf2402f6cfca9"
       }
    ]
 }
