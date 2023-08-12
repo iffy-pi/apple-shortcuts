@@ -5,8 +5,8 @@
    "rhub":"https://routinehub.co/shortcut/5177",
    "updateLink":"https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json",
    "version":"4.03",
-   "link":"https://www.icloud.com/shortcuts/0570f358da7c4e5881fe4052c9d79e72",
-   "releaseNotes":"Nutrition Installer\\n- Feature: Update and Installation notes are now generated from markdown (#9).\\n- Feature: See what's cahnged in the for the current update (#14).\\n\\nSearch Algorithm v1.02\\n- Feature: Verified foods from MyFitnessPal are now tagged (#8).\\n- Bug Fix: Fix for bug caused by cancelling a search after viewing search results (#7).\\n\\nNutrition v1.01\\n- Feature: Updated to support fast tracking Apple Health sample permissions (#13).\\n\\nLog Algorithm v1.01\\n- Feature: Updated to support fast tracking Apple Health sample permissions (#13).\\n\\nLog Foods At Different Times v1.02\\n- Feature: Updated so that users will set times for all foods before they are logged (#10).\\n- Improvement: Also updated to improve speeds when making a preset with logged foods (#10).\\n\\nMake Presets v1.02\\n- Improvement: Updated to improve speeds when making a preset with foods logged at different times (#10).\\n\\nFoods List v1.02\\n- Bug Fix: Fixed bug where foods that were logged at different times are not added to your recent foods (#11).\\n\\nClear Cache and Backlog v1.01\\n- Bug Fix: Fixed bug where backlog wasn't cleared even when on Apple Health compatible device (#12).\\n\\nSelect Saved Foods v1.01\\n- Bug Fix: Update to prevent future bug caused by missing shortcut input (#7).\\n\\nAdd Recent v1.01\\n- Bug Fix: Update to prevent future bug caused by missing shortcut input (#7).\\n",
+   "link":"https://www.icloud.com/shortcuts/7cbc038a5abb46d2a960b4872bab3aaf",
+   "releaseNotes":"Nutrition Installer\\n- Feature: Update and Installation notes are now generated from markdown (#9).\\n- Feature: See what's cahnged for the current update (#14).\\n\\nSearch Algorithm v1.02\\n- Feature: Verified foods from MyFitnessPal are now tagged (#8).\\n- Bug Fix: Fix for bug caused by cancelling a search after viewing search results (#7).\\n\\nNutrition v1.01\\n- Feature: Updated to support fast tracking Apple Health sample permissions (#13).\\n\\nLog Algorithm v1.01\\n- Feature: Updated to support fast tracking Apple Health sample permissions (#13).\\n\\nLog Foods At Different Times v1.02\\n- Feature: Updated so that users will set times for all foods before they are logged (#10).\\n- Improvement: Also updated to improve speeds when making a preset with logged foods (#10).\\n\\nMake Presets v1.02\\n- Improvement: Updated to improve speeds when making a preset with foods logged at different times (#10).\\n\\nFoods List v1.02\\n- Bug Fix: Fixed bug where foods that were logged at different times are not added to your recent foods (#11).\\n\\nClear Cache and Backlog v1.01\\n- Bug Fix: Fixed bug where backlog wasn't cleared even when on Apple Health compatible device (#12).\\n\\nSelect Saved Foods v1.01\\n- Bug Fix: Update to prevent future bug caused by missing shortcut input (#7).\\n\\nAdd Recent v1.01\\n- Bug Fix: Update to prevent future bug caused by missing shortcut input (#7).\\n",
    "releaseTime":"2023-08-06",
    "children":[
       {
@@ -132,7 +132,7 @@
          "id":13,
          "name":"Saved And Search",
          "type":"child",
-         "version":"1.01",
+         "version":"1.0",
          "link":"https://www.icloud.com/shortcuts/095905e0e20b45c093dc9d9fdf444f27"
       },
       {
