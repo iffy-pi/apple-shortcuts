@@ -40,36 +40,30 @@ SaveFile(text, f"{storage}/Other/nutriKeys.txt")
 # if device does not have health app then we will be adding to backlog
 # using regex matching
 hasHealthApp = FALSE
-matches = MatchText(GetDeviceDetails("Model"), "(iPhone)")
+deviceModel = GetDeviceDetails("Model")
+matches = MatchText(deviceModel, "(iPhone)")
+
 if matches is not None:
     hasHealthApp = TRUE
 
+if deviceModel == 'iPad':
+    if GetDeviceDetails('System Version') >= 17:
+        hasHealthApp = TRUE
+
 # save the state of the health app to environment
 file = GetFile(f"{storage}/Other/env.json", errorIfNotFound=False)
-dix = Dictionary(file)
-dix['HasHealthAapp'] = hasHealthApp
-SaveFile(dix, f"{storage}/Other/env.json", overwrite=True)
+env = Dictionary(file)
+env['hasHealthApp'] = hasHealthApp
+SaveFile(env, f"{storage}/Other/env.json", overwrite=True)
 
-
-# itemsInHistCache = FALSE
-# file = GetFile(f"{storage}/History/foodHistoryCache.json", errorIfNotFound=False)
-# if file is not None:
-#     itemsInHistCache = TRUE
-#     dix = Dictionary(file)
-#     if Count(dix['cache']) >= 15:
-#         # we need to eventually clear the history cache so that it does not bloat in size
-#         exitAfterQuickLog = FALSE
-
-
-# determine if we are checking for updates
-# file = GetFile(f"{storage}/Other/lastUpdateCheck.txt", errorIfNotFound=False)
-# if file is not None:
-#     IFRESULT = file
-# else:
-#     IFRESULT = SubFromDate(CurrentDate(), weeks=1)
-
-# if TimeBetweenDates(IFRESULT, CurrentDate()) >= 1:
-#     checkForUpdates = TRUE
+# fast track permissions
+if env['permsEnabled'] is None:
+    if hasHealthApp == TRUE:
+        # run log algorithm
+        Alert("Your Apple Health permissions may have not been fully set, the shortcut will fast track through sample logging permissions", title="Health Sample Permissions")
+        RunShortcut(shortcutNames['Log Algorithm'], input={'setPerms': True})
+        env['permsEnabled'] = TRUE
+        SaveFile(env, f"{storage}/Other/env.json", overwrite=True)
 
 
 if hasHealthApp == FALSE:
