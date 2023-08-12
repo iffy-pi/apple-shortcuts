@@ -47,7 +47,7 @@ servings = Number(foodDix['Servings'])
 
 # get health app environment var
 dix = Dictionary(GetFile(f"{storage}/Other/env.json"))
-hasHelathApp = dix['HasHealthApp']
+hasHelathApp = dix['hasHealthApp']
 
 # add to backlog and exit if we are not on a device with a health app
 if hasHealthApp == FALSE:
