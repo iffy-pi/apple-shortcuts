@@ -124,11 +124,21 @@ updateRes = Dictionary(GetContentsOfURL(updateInfo['updateLink']))
 if Number(updateRes['version']) > updateInfo['version']:
     if proceedWithUpdates == FALSE:
         # ask the user
-        Menu(f'There is a new version ({updateRes['version']}) available for this shortcut'):
-            case 'Update':
-                proceedWithUpdates = TRUE
-            case 'Exit':
-                pass
+        for _ in range(5):
+            if proceedWithUpdates == FALSE:
+                Menu(f'There is a new version ({updateRes['version']}) available for this shortcut'):
+                    case "What's New?":
+                        text = f'''
+                        # What's New in v4.03:
+                        {updateRes['releaseNotes']}
+                        '''
+                        richText = MakeRichTextFromMarkdown(text)
+                        QuickLook(richText)
+                    case 'Update':
+                        proceedWithUpdates = TRUE
+                    case 'Exit':
+                        StopShortcut()
+
 
     if proceedWithUpdates == TRUE:
         updateText = []
