@@ -47,7 +47,7 @@ if matches is not None:
 # save the state of the health app to environment
 file = GetFile(f"{storage}/Other/env.json", errorIfNotFound=False)
 dix = Dictionary(file)
-dix['hasHealthAapp'] = hasHealthApp
+dix['HasHealthAapp'] = hasHealthApp
 SaveFile(dix, f"{storage}/Other/env.json", overwrite=True)
 
 

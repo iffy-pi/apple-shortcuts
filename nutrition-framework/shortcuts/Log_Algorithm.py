@@ -25,26 +25,25 @@ storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
 nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
 
-res = Dictionary(Text(ShortcutInput))
+setPerms = FALSE
+
+if ShortcutInput['setPerms'] is not None:
+    Alert("To enable permissions, just click 'Always Allow' when prompted", showCancel=False, Title="Permissions")
+    setPerms = TRUE
+    IFRESULT = {
+        'Food': { 'Servings': 1 },
+        'Date': CurrentDate()
+    }
+else:
+    IFRESULT = f'{ShortcutInput}'
+
+res = Dictionary(IFRESULT)
 
 loggingDate = Date(res['Date'])
 foodDix = Dictionary(res['Food'])
 
-foodName = foodDix['Name']
-servingSize = foodDix['Serving Size']
-
-dixValue = foodDix['Servings']
-if res is None:
-    IFRESULT = AskForInput(Input.Number, prompt=f"How many servings? (1 serving = {servingSize})",
-                default=1, allowDecimals=True, allowNegatives=True)
-else:
-    IFRESULT = GetNumbers(dixValue)
-
 # set servings in food dictionary
-mulitplier = IFRESULT
-foodDix['Servings'] = multiplier
 servings = Number(foodDix['Servings'])
-
 
 # get health app environment var
 dix = Dictionary(GetFile(f"{storage}/Other/env.json"))
@@ -52,9 +51,13 @@ hasHelathApp = dix['HasHealthApp']
 
 # add to backlog and exit if we are not on a device with a health app
 if hasHealthApp == FALSE:
+    if setPerms == TRUE:
+        Alert("You must be on a device with Apple Health to run through permissions", Title="Permissions")
+        StopShortcut()
+
     Notification(
         "Food will be logged when next on iPhone",
-        title=f'{foodName} Has Been Added to Backlog',
+        title=f'{foodDix['Name']} Has Been Added to Backlog',
     )
 
     # get the backlog file 
@@ -67,13 +70,12 @@ if hasHealthApp == FALSE:
 
     backlog = IFRESULT['backlog']
 
+    # add it to the backlog
     dix = {
         'Date': Text(loggingDate),
         'Food': Text(foodDix)
     }
     backlog.append(dix)
-
-    # add it to list
 
     # save file
     dix = { 'backlog': backlog }
@@ -81,17 +83,23 @@ if hasHealthApp == FALSE:
 
     StopShortcut(output = foodDix)
 
-
-# comment set of nutrients logged by the system
-
+# nutrients will be the dictionary of nutrients that have values above our threshold
+# used below when logging the system
 nutrients = Dictionary()
+
+# Normally we skip any nutrient values that are 0, but for setting permissions we want to log 0 values, so set threshold to -1
+if setPerms == TRUE:
+    IFRESULT = -1
+else:
+    IFRESULT = 0
+threshold = IFRESULT
 
 file = GetFile('FLS/Other/nutriKeys.txt')
 # store the nutrients in the dictionary
 for item in SplitText(file, ByNewLines):
     num = Number(foodDix[item])
     foodDix[item] = RoundNumber(num, hundredths)
-    if num > 0:
+    if num > threshold:
         num = num * servings
         num = Round(num, "hundredths")
         nutrients[item] = num
@@ -145,8 +153,12 @@ if nutrients["Iron"] is not None:
 if nutrients["Calories"] is not None:
     LogHealthSample("Dietary Energy", nutrients[@aboveKey], "kcal", loggingDate)
 
+if setPerms == TRUE:
+    Alert("All nutrient permissions have been set!", showCancel=False, Title="Permissions")
+    StopShortcut()
+
 Notification(
-    f'{foodName} has been logged to your meals',
+    f'{foodDix['Name']} has been logged to your meals',
     title='Yummy!'
 )
 
@@ -168,7 +180,7 @@ cache = res['cache']
 dix = {
     'date' : loggingDate.format(custom="yyyy-MM-dd"),
     'time' :  loggingDate.format(custom="HH:mm"),
-    'food' : foodName,
+    'food' : foodDix['Name'],
     'servings': servings,
     'id': foodDix['id'],
     'cals': cals
