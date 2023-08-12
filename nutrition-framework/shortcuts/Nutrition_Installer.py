@@ -10,7 +10,7 @@ proceedWithUpdates = FALSE
 
 updateInfo = {
     'updateLink' : 'https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json',
-    'version' : 4.03
+    'version' : '4.03'
 }
 
 # also now includes information about the children
