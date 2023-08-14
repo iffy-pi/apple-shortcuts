@@ -31,13 +31,16 @@ Calculate Stats
 | Bug Fix     | Hammer + Wrench | &#x0020;&#x1F6E0;&#xFE0F; |
 
 
-## v4.05
-- Log Foods At Different Times v1.1?
-	- Experimental: Update with more options for selecting and editing dates?
-
 ## v4.04
+### Markdown
+- Nutrition
+	- **&#x1F3AF; Improvement**: Optimized quick log so users enter servings for all foods before logging process begins ([#17](https://github.com/iffy-pi/apple-shortcuts/issues/17)).
+
+### RoutineHub
+
 
 ## v4.03
+### Markdown
 - Nutrition Installer
 	- **&#x0020;&#x1F525; Feature**: Update and Installation notes are now generated from markdown ([#9](https://github.com/iffy-pi/apple-shortcuts/issues/9)).
 	- **&#x0020;&#x1F525; Feature**: See what's cahnged for the current update ([#14](https://github.com/iffy-pi/apple-shortcuts/issues/14)).
@@ -62,7 +65,7 @@ Calculate Stats
 - Add Recent v1.01
 	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Update to prevent future bug caused by missing shortcut input ([#7](https://github.com/iffy-pi/apple-shortcuts/issues/7)).
 
-## v4.03 (RoutineHub)
+### RoutineHub
 Nutrition Installer
 - Feature: Update and Installation notes are now generated from markdown (#9).
 - Feature: See what's cahnged in the for the current update (#14).
