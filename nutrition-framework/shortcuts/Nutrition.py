@@ -74,8 +74,8 @@ else:
     healthSamples = HealthApp.Find(
             AllHealthSamples,
             whereAllAreTrue=[
-                Type="Dietary Energy",
-                StartDate=Today,
+                Type == "Dietary Energy",
+                StartDate == Today,
             ],
             Unit=cal
         )
@@ -105,20 +105,22 @@ Menu(prompt):
         # InRecents does not exist!
 
         for item in  RunShortcut(shortcutNames['Get Recent']):
-            CurFood = item
+            curFood = item
 
             RunShortcut(shortcutNames["Add Recent"], input=dix)
 
-            text = f"How many servings of {CurFood['Name']}\n(1 serving = {CurFood['Serving Size']})"
+            text = f"How many servings of {curFood['Name']}\n(1 serving = {curFood['Serving Size']})"
             
-            # translates to set dictionary value in CurFood and then set dictionary
-            CurFood['Servings'] = AskForInput(text, Input.Number, default=1, allowDecimalNumbers=True, allowNegativeNumbers=False)
+            # translates to set dictionary value in curFood and then set dictionary
+            curFood['Servings'] = AskForInput(text, Input.Number, default=1, allowDecimalNumbers=True, allowNegativeNumbers=False)
+            REPEATRESULTS.append(curFood)
 
-            dix = {
+        for food in REPEATRESULTS:
+            dix = Text({
                 'Date': str(Date.CurrentDate)
-                'Food': dix(CurFood)
-            }
-            RunShortcut(shortcutNames["Log Algorithm"], input=dix)
+                'Food': dix(food)
+            })
+            RunShortcut(shortcutNames["Log Algorithm"], input=food)
 
         if exitAfterQuickLog == TRUE:
             StopShortcut()
