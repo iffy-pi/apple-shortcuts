@@ -45,9 +45,6 @@ function App() {
             if ( !res.success ) throw new Error('Invalid response: '+res)
 
             alert('Promotion Completed Successfully!')
-            setUpdates(res.content)
-            setGenTest(true);
-            setPromote(false);
 
         } catch ( error ){
             alert(error.message)

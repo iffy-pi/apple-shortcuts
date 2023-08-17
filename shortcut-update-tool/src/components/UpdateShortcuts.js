@@ -14,6 +14,7 @@ const UpdateShortcuts = ({ updatesPath, updates, issueNo }) => {
     const [ link, setLink ] = useState('')
     const [ showRelease, setShowRelease ] = useState(false)
     const [ releaseNotes, setReleaseNotes ] = useState('')
+    const [ showDone, setShowDone ] = useState(false)
 
 
     const addNew = () => {
@@ -96,6 +97,7 @@ const UpdateShortcuts = ({ updatesPath, updates, issueNo }) => {
             if ( !res.success ) throw new Error('Invalid response: '+res)
 
             alert('Successfully updated the release notes!')
+            setShowDone(true)
         } catch ( error ){
             alert(error.message)
         }
@@ -147,13 +149,17 @@ const UpdateShortcuts = ({ updatesPath, updates, issueNo }) => {
                 showRelease &&
                 <div>
                     <h2>Update Release Notes and Release Date</h2>
-                    <p>Enter Release notes in the text box below</p>
+                    <p>Enter Release notes in the text box below, it will be converted into the required JSON format</p>
                     <textarea 
                     name="verMap" 
                     rows="10" cols="60" 
                     value={releaseNotes} onChange={(e)=> {setReleaseNotes(e.target.value)}} />
                     <Button buttonText="Update Release Notes" onClick={updateReleaseNotes}/>
                 </div>
+            }
+            {
+                showDone &&
+                <p><b>You're all done! Test your updates using the Test Updater shortcut and then promote them with "Promote Updates" button at the top!</b></p>
             }
         </div>
     )
