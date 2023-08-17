@@ -71,7 +71,7 @@ for _ in range(Count(selectedIds)):
         logItems.append(dix)
 
 for item in logItems:
-    RunShortcut(nutrDix['Add Recent'], input=item['Food'])
+    # RunShortcut(nutrDix['Add Recent'], input=item['Food'])
     res = RunShortcut(nutrDix['Log Algorithm'], input=item)
     loggedFoods.append(res)
 

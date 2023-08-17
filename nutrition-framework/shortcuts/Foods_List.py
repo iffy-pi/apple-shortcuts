@@ -78,7 +78,6 @@ for _ in range(maxLoops):
             else:
                 for listId in selectedIds:
                     food = foodsDix[listId]
-                    RunShortcut(nutrDix['Add Recent'], input=food)
                     REPEATRESULTS.append(food)
                 StopShortcut(output = REPEATRESULTS)
 
@@ -137,6 +136,7 @@ for _ in range(maxLoops):
                         res = AskForInput(Input.Number, f'How many servings? (1 serving = {food['Serving Size']})', allowNegatives=False)
                         food['Servings'] = res
                         foodsDix[listId] = food
+                        RunShortcut(nutrDix['Add Recent'], input=food)
 
                     case 'View/Edit Other Fields':
                         changedFood = RunShortcut(nutrDix['Display Food Item'], input=food)
@@ -145,6 +145,7 @@ for _ in range(maxLoops):
                                 # if we edit a food, it is now different from its source food so generate a new food ID for it
                                 changedFood['id'] = RunShortcut(nutrDix['GFID'])
                                 foodsDix[listId] = changedFood
+                                RunShortcut(nutrDix['Add Recent'], input=changedFood)
                             case 'No':
                                 pass
 
@@ -180,6 +181,7 @@ for _ in range(maxLoops):
                 # Ask for the servings
                 servings = AskForInput(Input.Number, f'How many servings of {food['Name']}? (1 serving = {food['Serving Size']})', allowDecimals=True, allowNegatives=False)
                 food['Servings'] = servings
+                RunShortcut(nutrDix['Add Recent'], input=food)
 
                 # generate list Id for the item
                 foodsDix[nextId] = food
