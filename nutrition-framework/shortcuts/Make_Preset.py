@@ -98,6 +98,9 @@ for _ in Count(selectedIds):
                 if askForServings == TRUE:
                     IFRESULT = AskForInput(Input.Number, prompt=f'How many servings of "{defaultName}"? (1 serving = {defaultSize})',
                                 default=1, allowDecimals=True, allowNegatives=False)
+                else:
+                    IFRESULT = curFood['Servings']
+                
                 servings = IFRESULT
 
                 for nutr in nutriKeys:
