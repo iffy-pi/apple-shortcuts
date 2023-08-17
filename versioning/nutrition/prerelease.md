@@ -33,12 +33,12 @@ Calculate Stats
 
 ## v4.04
 ### Markdown
-- Nutrition
+- Nutrition v1.02
 	- **&#x1F3AF; Improvement**: Optimized quick log so users enter servings for all foods before logging process begins ([#17](https://github.com/iffy-pi/apple-shortcuts/issues/17)).
+- Make Preset v1.03
+	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where presets created from *Saved and Search > Presets > Make Preset* have empty nutrients ([#18](https://github.com/iffy-pi/apple-shortcuts/issues/18)).
 
 ### RoutineHub
-
-
 ## v4.03
 ### Markdown
 - Nutrition Installer
