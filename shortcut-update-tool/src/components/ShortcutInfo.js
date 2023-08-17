@@ -18,6 +18,7 @@ const ShortcutInfo = ({ shortcuts, selectedShortcuts, setShortcuts, index, onRem
     const updateId = (selectedIndex) => {
         const newObject = { ...selectedShortcuts[index], id:shortcuts[selectedIndex].id, version:shortcuts[selectedIndex].version}
         setShortcuts([...(selectedShortcuts.filter((x,i) => i != index )), newObject])
+        setVersion(shortcuts[selectedIndex].version)
     }
 
     return (
@@ -25,7 +26,7 @@ const ShortcutInfo = ({ shortcuts, selectedShortcuts, setShortcuts, index, onRem
             <label for={"shortcut.dropdown."+index}>Shortcut to Update:   </label>
             <DropDownSelector options={shortcuts.map(x=> x.name)} onSelect={updateId}/>
             <br></br>
-            <label for={"shortcut.version."+index}>New Version (Cur={selectedShortcuts[index].version}):   </label>
+            <label for={"shortcut.version."+index}>New Version (Cur={version}):   </label>
             <input type="text" id={"shortcut.version."+index}
             value={selectedShortcuts[index].version} onChange={(e) => updateVersion(e.target.value)}/>
             <br></br>
