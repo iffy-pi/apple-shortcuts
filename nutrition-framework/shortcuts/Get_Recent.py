@@ -4,6 +4,8 @@ ID:  18
 Ver: 1.0
 '''
 
+# Select one or more foods from recent
+
 storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
 cancelIcon = # ... 
@@ -11,8 +13,10 @@ cancelIcon = # ...
 dir_ = GetFile(f"{storage}/Recents/Foods")
 
 files = GetContentsOfFolder(dir_, errorIfNotFound=False)
+# sorting by latest first allows last used food to be on top
 files = filter(files, sortBy='Last Modified Date', order='Latest First')
 
+# Generating contact cards for selected foods
 for item in files:
     date = Text(item.lastModifiedDate.format(date="How Long Ago/Until"))
     food = Dictionary(item)
@@ -27,6 +31,7 @@ for item in files:
     '''
     REPEATRESULTS.append(text)
 
+# Add cancel button
 text = f'''
     BEGIN:VCARD
     VERSION:3.0

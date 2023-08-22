@@ -4,6 +4,8 @@ ID:  14
 Ver: 1.01
 '''
 
+# Clear the food backlog and food history cache
+
 storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
 if ShortcutInput is not None:
     IFRESULT = ShortcutInput
@@ -55,6 +57,7 @@ if params['cache'] is not None:
             IFRESULT = {}
         history = Dictionary( IFRESULT )
 
+        # add items in cache to history
         for item in histCache:
             dayKey = item['date']
             timeKey = item['time']

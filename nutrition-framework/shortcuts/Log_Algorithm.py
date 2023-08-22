@@ -4,19 +4,7 @@ ID:  7
 Ver: 1.01
 '''
 
-'''
-Update to use new backlog system
-Update to use dictionary from input
-{
-    'Date':..
-    'Food':...
-}
-'''
-
-'''
-Changelist:
-- Removed contin
-'''
+# Takes { Food: ... , Date: ... } and logs the food at the given date
 
 TRUE = 1
 FALSE = 0

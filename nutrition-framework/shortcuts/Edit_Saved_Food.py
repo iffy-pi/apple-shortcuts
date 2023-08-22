@@ -4,6 +4,8 @@ ID:  15
 Ver: 1.0
 '''
 
+# Used to edit saved foods, either preset or barcode
+
 TRUE = 1
 FALSE = 0
 storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
@@ -15,9 +17,10 @@ savedInfo = {
     'presets': { 'folder': f'{storage}/Presets', 'prompt': 'Preset'}
 }
 
-
-
 nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
+
+# To determine whether we are editing for a preset or barcode we use the `type` field in the parameter dictionary passed into the shortcut
+# This can either be `barcodes` or `presets`
 
 if params['args'] is not None:
     IFRESULT = params['args']
@@ -25,6 +28,7 @@ else:
     IFRESULT = RunShortcut(nutrDix['Select Saved Foods'], input=params)
 selectedFoods = IFRESULT
 
+# get the config for the given type from saved info, this includes the food folder as well as the prompt
 config = savedInfo [ params['type'] ]
 
 file = GetFile(f"{storage}/Other/nutriKeys.txt")
@@ -50,7 +54,7 @@ for item in selectedFoods:
             MENURESULT = oldFood
 
         case 'Edit Food Fields Manually':
-            # do display food editing TODO
+            # Edit foods with display food item
             MENURESULT = RunShortcut(nutrDix['Display Food Item'], input=oldFood)
 
     newFood = MENURESULT

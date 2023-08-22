@@ -20,12 +20,7 @@ mg = '(mg)'
 # The goal is to display the dictionary in a way that makes sense to the user
 # So we have to use special keys for the dictionary
 
-
-# unit Dix maps the keys of the food dictionary to their user understandable fields
-
-# displayDix maps the user fields to the appropriate key values
-
-# displayKeys translate keys in foodDix to the key that will be displayed to user
+# displayKeys maps keys in our food object to keys that will be used in the dictionary displayed to the user
 displayKeys = {
     "Name":            "Name",
     "Barcode":         "Barcode",
@@ -49,39 +44,74 @@ displayKeys = {
     "Iron":            "Iron (mg)"
 }
 
-# display dix is where the user does the actual editing
+# displayDix maps the display keys to the values in the food object
+# we ask for user input so that the dictionary is displayed to them
 displayDix = {
-    # uses the displayKeys (i.e. for key i, the key field in displayDix is displayKeys[i])
-    # for key in displayKeys:
-    #     dispKey = displayKeys[key]
-    #     displayDix[key] = foodDix[key]
-
-    # Note: Number fields are typed as text because shortcuts dictionary does not support decimal number entering
-    ... # see actual shortcut
+    "Name":                 foodDix["Name"] + AskEachTime(),
+    "Barcode":              foodDix["Barcode"],
+    "Serving Size":         foodDix["Serving Size"],
+    "Calories (kCal)":      foodDix["Calories"],
+    "Carbs (g)":            foodDix["Carbs"],
+    "Protein (g)":          foodDix["Protein"],
+    "Fat (g)":              foodDix["Fat"],
+    "Sugar (g)":            foodDix["Sugar"],
+    "Fiber (g)":            foodDix["Fiber"],
+    "Monounsaturated (g)":  foodDix["Monounsaturated"],
+    "Polyunsaturated (g)":  foodDix["Polyunsaturated"],
+    "Saturated (g)":        foodDix["Saturated"],
+    "Cholesterol (mg)":     foodDix["Cholesterol"],
+    "Trans (g)":            foodDix["Trans"],
+    "Sodium (mg)":          foodDix["Sodium"],
+    "Potassium (mg)":       foodDix["Potassium"],
+    "VitA (mcg)":           foodDix["VitA"],
+    "VitC (mg)":            foodDix["VitC"],
+    "Calcium (mg)":         foodDix["Calcium"],
+    "Iron (mg)":            foodDix["Iron"]
 }
 
-# Text takes keys in displayDix and maps them back to the food dictionary
-# in code terms:
-# for key in displayKeys:
-#     dispKey = displayKeys[key]
-#     textDix[key] = displayDix[dispKey]
-text = ... # see actual shortcut
+
+# Text maps values from displayDix back to food object text version
+text = '{' + f'''
+    "Name":            "{displayDix["Name"]}",
+    "Barcode":         "{displayDix["Barcode"]}",
+    "Serving Size":    "{displayDix["Serving Size"]}",
+    "Calories":        {displayDix["Calories (kCal)"]},
+    "Carbs":           {displayDix["Carbs (g)"]},
+    "Protein":         {displayDix["Protein (g)"]},
+    "Fat":             {displayDix["Fat (g)"]},
+    "Sugar":           {displayDix["Sugar (g)"]},
+    "Fiber":           {displayDix["Fiber (g)"]},
+    "Monounsaturated": {displayDix["Monounsaturated (g)"]},
+    "Polyunsaturated": {displayDix["Polyunsaturated (g)"]},
+    "Saturated":       {displayDix["Saturated (g)"]},
+    "Cholesterol":     {displayDix["Cholesterol (mg)"]},
+    "Trans":           {displayDix["Trans (g)"]},
+    "Sodium":          {displayDix["Sodium (mg)"]},
+    "Potassium":       {displayDix["Potassium (mg)"]},
+    "VitA":            {displayDix["VitA (mcg)"]},
+    "VitC":            {displayDix["VitC (mg)"]},
+    "Calcium":         {displayDix["Calcium (mg)"]},
+    "Iron":            {displayDix["Iron (mg)"]},
+''' + '}'
+
+# We create a dictionary from the text to get the viewed/edited food object
+# This provides a faster method than just iterating through all the keys
 
 dix = Dictionary(text)
 if dix is not None:
+    # Parsing could fail if user leaves leading zeros in numbers, in that case we default to key iteration to handle the leading zeros
+    
+    # If parsing completes, then set the Servings and ID field in the food if they existed
     newFoodDix = dix
-    # it could be parsed correctly
-    # If the user keeps 0s before values, parsing will fail so we need to check
-    # set the food ID if it is present
     if foodDix['id'] is not None:
         newFoodDix['id'] = foodDix['id']
 
     if foodDix['Servings'] is not None:
-        newFoodDix['id'] = foodDix['id']
+        newFoodDix['Servings'] = foodDix['Servings']
 
     foodDix = newFoodDix
 else:
-    # parsing failed, build it the normal way
+    # parsing failed, build it the normal way by iterating through the keys
     file = GetFile('FLS/Other/nutriKeys.txt')
     nutriKeys = SplitText(file, '\n')
 

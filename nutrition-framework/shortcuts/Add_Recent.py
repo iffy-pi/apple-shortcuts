@@ -4,6 +4,8 @@ ID:  19
 Ver: 1.01
 '''
 
+# Add input food to recents
+
 storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
 # Text of shortcut input to unlink from file handler of food file
@@ -26,7 +28,7 @@ else:
 foodId = IFRESULT
 
 # add food to recent if it doesn't already exist
-# by saving it, it will be at top of list since sorted by modified after
+# by saving it, it will be at top of list when we get recents
 SaveFile(food, f"{storage}/Recents/Foods/{fileName}.json", overwrite=True)
 
 dir_ = GetFile(f"{storage}/Recents/Foods")
@@ -34,6 +36,7 @@ files = GetContentsOfFolder(dir_)
 files = filter(files, sortBy='Last Modified Date', order='Latest First')
 
 if Count(files) > maxRecents:
+    # delete the latest exisiting food files until under maxRecents amount
     for _ in range(Count(files)-maxRecents):
         deletefile = files.getLastItem()
         DeleteFile(foodFile, deleteImmediately=True)

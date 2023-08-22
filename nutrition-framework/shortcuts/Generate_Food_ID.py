@@ -3,6 +3,7 @@ Framework: Nutrition (id = 4)
 ID:  9
 Ver: 1.0
 '''
+# generates a unique FOOD ID
 
 storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
 file = GetFile(f"{storage}/Other/nextFoodId.txt")

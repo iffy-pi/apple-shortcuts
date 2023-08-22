@@ -4,6 +4,8 @@ ID:  20
 Ver: 1.0
 '''
 
+# Get food from databse or seach, or make food from databse or seacrh
+
 TRUE = 1
 FALSE = 0
 
@@ -14,11 +16,15 @@ params = Dictionary(ShortcutInput)
 
 showMenu = FALSE
 
+# shortcut can either be called to retrieve a food
+# or can be called as a standalone for adding a food to the personal database
+# 'getFood' in params is used to identify the former function
 
 if params['getFood'] is not None:
     # we are getting a food from the database
     Menu("Get Food"):
         case 'Select from Personal Database':
+            # user selects one of the foods saved in the personal databse
             StopShortcut(output=RunShortcut(nutrDix['Get Saved Food'], input={'type': 'barcodes'}))
 
         case 'Scan Barcode':
@@ -27,27 +33,36 @@ if params['getFood'] is not None:
         case 'Cancel':
             StopShortcut()
 
-# we are adding to the database so scan immediately
+# scan the barcode
 barcode = Text(ScanBarcode())
 
+# barcodeCache maps barcodes to the ID of their food objects, allows immediate access of barcodes alread in personal database
 file = GetFile(f'{storage}/Barcodes/barcodeCache.json', errorIfNotFound=False)
 if file is not None:
     IFRESULT = file
 else:
+    # if the barcode cache does not exist, create it and then return the created cache
     barcodeCache = {}
     folder = GetFile(f'{storage}/Barcodes/Foods', errorIfNotFound=False)
     for item in GetContentsOfFolder(folder):
         barcodeCache[ item['Barcode'] ] = item['id']
+    
     SaveFile(barcodeCache, f'{storage}/Barcodes/barcodeCache.json', overwrite=True)
+    
     IFRESULT = barcodeCache
+
 barcodeCache = IFRESULT
 
 if barcodeCache[barcode] is not None:
+    # if barcode is in cache retrieve the food using the food ID i.e. barcodeCache[barcode]
     file = GetFile(f'{storage}/Barcodes/Foods/food_{barcodeCache[barcode]}.json')
+    
     if params['getFood'] is not None:
+        # if we are getting a food then return the food
         StopShortcut(output = file)
     else:
-        # the barcode has a match in the personal database, either edit it, cancel or remke it
+        # we are adding a food to the personal database but there is already a food mapped to the barcode
+        # ask user if they would like to edit the food, remake the food or cancel
         Menu(f'There is a food in your database with the barcode "{barcode}"'):
             case 'Edit Food':
                 RunShortcut(nutrDix['Edit Saved Food'], input={'type': 'barcodes', 'args': file})
@@ -63,11 +78,12 @@ foodResolved = FALSE
 doSearch = FALSE
 testing = FALSE
 
-# Search online database
+# Search online database openfoodfacts.org
 
 if testing == TRUE:
-    IFRESULT = ... # text of some barcode result
+    IFRESULT = ... # text of some barcode result (files/barcode.json)
 else:
+    # query the API
     url = URL(f'https://world.openfoodfacts.org/api/v0/product/{barcode}.json')
     IFRESULT = GetContentsOfURL(url)
 
@@ -107,6 +123,7 @@ if res['status'] == 1:
     num = Number(nutrInfo['vitamin-a_value']) * 0.3
     outputFood['VitA'] = num
 
+    # prompt user if they would like to accept the result, edit the result, or cancel
     prompt = f'''
     Search Result:
     {outputFood['Name']} ({outputFood['Serving Size']})
@@ -144,7 +161,7 @@ if foodResolved == FALSE:
             StopShortcut()
 
 if doSearch == TRUE:
-    # perform search
+    # perform search with search algorithm
     outputFood = RunShortcut(nutrDix['Search Algorithm'])
     
     if outputFood is not None:
@@ -166,6 +183,8 @@ outputFood['Barcode'] = barcode
 barcodeCache[barcode] = outputFood['id']
 SaveFile(barcodeCache, f'{storage}/Barcodes/barcodeCache.json', overwrite=True)
 SaveFile(outputFood, f'{storage}/Barcodes/Foods/food_{outputFood['id']}.json', overwrite=True)
+
+# delete the vcardCache for barcodes since we have added a new item
 DeleteFile(GetFile(f"{storage}/Barcodes/vcardCache.txt", errorIfNotFound=False), deleteImmediately=True)
 
 StopShortcut(output = outputFood)

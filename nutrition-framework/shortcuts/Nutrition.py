@@ -56,7 +56,7 @@ env = Dictionary(file)
 env['hasHealthApp'] = hasHealthApp
 SaveFile(env, f"{storage}/Other/env.json", overwrite=True)
 
-# fast track permissions
+# fast track health app permissions
 if env['permsEnabled'] is None:
     if hasHealthApp == TRUE:
         # run log algorithm
@@ -70,6 +70,7 @@ if hasHealthApp == FALSE:
     text = f"Foods logged on {deviceModel} will be added to backlog"
 
 else:
+    # if on health app, calculate total calories consumed today and show in menu prompt
     calsToday = 0
     healthSamples = HealthApp.Find(
             AllHealthSamples,
@@ -102,12 +103,10 @@ if file is not None:
 
 Menu(prompt):
     case "Quick Log":
-        # InRecents does not exist!
-
         for item in  RunShortcut(shortcutNames['Get Recent']):
             curFood = item
 
-            RunShortcut(shortcutNames["Add Recent"], input=dix)
+            RunShortcut(shortcutNames["Add Recent"], input=curFood)
 
             text = f"How many servings of {curFood['Name']}\n(1 serving = {curFood['Serving Size']})"
             
@@ -115,6 +114,7 @@ Menu(prompt):
             curFood['Servings'] = AskForInput(text, Input.Number, default=1, allowDecimalNumbers=True, allowNegativeNumbers=False)
             REPEATRESULTS.append(curFood)
 
+        # we log foods in different iteration to fast track user input
         for food in REPEATRESULTS:
             dix = Text({
                 'Date': str(Date.CurrentDate)
@@ -132,7 +132,8 @@ Menu(prompt):
 
     case "Make Food Note":
         res = AskForInput(Input.Text, "What is the name of the food you would like to note down?", allowMultipleLines=False)
-        text = f'{res} @ {CurrentDate.format(date="medium", time="short")}'
+        date = AskForInput(Input.DateAndTime, "What is the date and time?")
+        text = f'{res} @ {date.format(date="medium", time="short")}'
         AppendToFile(text, "FLS/Other/foodNotes.txt", makeNewLine=True)
         StopShortcut()
 

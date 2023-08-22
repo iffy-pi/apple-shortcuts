@@ -4,6 +4,8 @@ ID:  6
 Ver: 1.02
 '''
 
+# Select one or more foods from the different available foods sources
+
 TRUE = 1
 FALSE = 0
 
@@ -24,7 +26,11 @@ breakLoop = FALSE
 
 hasNotes = FALSE
 
-# used to see if we are passing to bulk entry as a result
+# If we are passing results to a shortcut where the user has to select foods (e.g. Log Foods At Different Times, Make Preset)
+# We can eliminate redundant iteration by passing the generated foods dix and unique selection ids
+# to that shortcut, instead of just the raw list of foods
+# This functionality is requested with the `passToBulkEntry` field in the params
+
 params = Dictionary(ShortcutInput)
 
 
@@ -53,6 +59,7 @@ for _ in range(maxLoops):
             IFRESULT = f'''
             No foods selected
             '''
+        # append our food notes if they are any
         if hasNotes == TRUE:
             IFRESULT2 = f'''
                 {notes}
@@ -65,115 +72,116 @@ for _ in range(maxLoops):
         addMenuResult = TRUE
 
         Menu(IFRESULT2):
-        case 'Done Selecting Foods':
-            addMenuResult = FALSE
+            case 'Done Selecting Foods':
+                addMenuResult = FALSE
 
-            if params['passToBulkEntry'] is not None:
-                # bulk entry uses the id to dictionary format for multiple selection
-                # so we can just pass that immediately
-                dix = {}
-                dix['selectedIds'] = selectedIds
-                dix['foodsDix'] = foodsDix
-                StopShortcut(output = dix)
-            else:
+                if params['passToBulkEntry'] is not None:
+                    # sends the foods dictionary and selection ids as foods info to the shortcut
+                    dix = {}
+                    dix['selectedIds'] = selectedIds
+                    dix['foodsDix'] = foodsDix
+                    StopShortcut(output = dix)
+                else:
+                    for listId in selectedIds:
+                        food = foodsDix[listId]
+                        REPEATRESULTS.append(food)
+                    StopShortcut(output = REPEATRESULTS)
+
+            case 'Search Food':
+                MENURESULT = RunShortcut(nutrDix['Search Algorithm'])
+
+            case 'Get Preset(s) Or Barcoded Food(s)':
+                MENURESULT = RunShortcut(nutrDix['Select Saved Foods'], input={'type': 'all'})
+
+            case 'Get Recent Meals':
+                MENURESULT = RunShortcut(nutrDix['Get Recent'])
+
+            case 'Scan Barcode':
+                MENURESULT = RunShortcut(nutrDix['Barcode Search'], input={'getFood': True})
+
+            case 'Make Food Manually':
+                # TODO, make manual maker
+                MENURESULT = RunShortcut(nutrDix['Make Food Manually'])
+
+            case 'View/Edit Food':
+                addMenuResult = FALSE
+                
+                # generate contact cards or user to select food using list ID
                 for listId in selectedIds:
                     food = foodsDix[listId]
-                    REPEATRESULTS.append(food)
-                StopShortcut(output = REPEATRESULTS)
+                    text = f'''
+                        BEGIN:VCARD
+                        VERSION:3.0
+                        N;CHARSET=UTF-8:{food['Name']}
+                        ORG;CHARSET=UTF-8:{food['Servings']} servings
+                        NOTE;CHARSET=UTF-8:{listId}
+                        END:VCARD
+                    '''
+                    REPEATRESULTS.append(text)
 
-        case 'Search Food':
-            MENURESULT = RunShortcut(nutrDix['Search Algorithm'])
-
-        case 'Get Preset(s) Or Barcoded Food(s)':
-            MENURESULT = RunShortcut(nutrDix['Select Saved Foods'], input={'type': 'all'})
-
-        case 'Get Recent Meals':
-            MENURESULT = RunShortcut(nutrDix['Get Recent'])
-
-        case 'Scan Barcode':
-            MENURESULT = RunShortcut(nutrDix['Barcode Search'], input={'getFood': True})
-
-        case 'Make Food Manually':
-            # TODO, make manual maker
-            MENURESULT = RunShortcut(nutrDix['Make Food Manually'])
-
-        case 'View/Edit Food':
-            addMenuResult = FALSE
-            # Remove selection
-            for listId in selectedIds:
-                food = foodsDix[listId]
+                # cancel contact card
                 text = f'''
+                    BEGIN:VCARD
+                    VERSION:3.0
+                    N;CHARSET=UTF-8:Cancel
+                    ORG;CHARSET=UTF-8:No foods will be selected
+                    NOTE;CHARSET=UTF-8:Cancel
+                    {cancelIcon}
+                    END:VCARD
+                    {REPEATRESULTS}
+                '''
+                renamedItem = SetName(text, 'vcard.vcf')
+                contacts = GetContacts(renamedItem)
+
+                edit = ChooseFrom(contacts, prompt='Select Food To View')
+
+                listId = Contact(edit.Notes)
+                if listId != 'Cancel':
+                    # get the food at the id
+                    food = foodsDix[listId]
+                    Menu('Select an action'):
+                        case 'Edit Serving Size':
+                            res = AskForInput(Input.Number, f'How many servings? (1 serving = {food['Serving Size']})', allowNegatives=False)
+                            food['Servings'] = res
+                            foodsDix[listId] = food
+                            RunShortcut(nutrDix['Add Recent'], input=food)
+
+                        case 'View/Edit Other Fields':
+                            changedFood = RunShortcut(nutrDix['Display Food Item'], input=food)
+                            Menu(f'Save Changes to {changedFood['Name']}?'):
+                                case 'Yes':
+                                    # if we edit a food, it is now different from its source food so generate a new food ID for it
+                                    changedFood['id'] = RunShortcut(nutrDix['GFID'])
+                                    foodsDix[listId] = changedFood
+                                    RunShortcut(nutrDix['Add Recent'], input=changedFood)
+                                case 'No':
+                                    pass
+
+            case 'Remove Selected Foods':
+                addMenuResult = FALSE
+                # Remove selection
+                for listId in selectedIds:
+                    food = foodsDix[listId]
+                    text = f'''
                     BEGIN:VCARD
                     VERSION:3.0
                     N;CHARSET=UTF-8:{food['Name']}
                     ORG;CHARSET=UTF-8:{food['Servings']} servings
                     NOTE;CHARSET=UTF-8:{listId}
                     END:VCARD
-                '''
-                REPEATRESULTS.append(text)
+                    '''
+                    REPEATRESULTS.append(text)
 
-            text = f'''
-                BEGIN:VCARD
-                VERSION:3.0
-                N;CHARSET=UTF-8:Cancel
-                ORG;CHARSET=UTF-8:No foods will be selected
-                NOTE;CHARSET=UTF-8:Cancel
-                {cancelIcon}
-                END:VCARD
-                {REPEATRESULTS}
-            '''
-            renamedItem = SetName(text, 'vcard.vcf')
-            contacts = GetContacts(renamedItem)
+                text = Text(REPEATRESULTS)
+                renamedItem = SetName(text, 'vcard.vcf')
+                contacts = GetContacts(renamedItem)
 
-            edit = ChooseFrom(contacts, prompt='Select Food To View')
+                deletes = ChooseFrom(contacts, selectMultiple=True, prompt='Select foods to remove')
 
-            listId = Contact(edit.Notes)
-            if listId != 'Cancel':
-                # get the food at the id
-                food = foodsDix[listId]
-                Menu('Select an action'):
-                    case 'Edit Serving Size':
-                        res = AskForInput(Input.Number, f'How many servings? (1 serving = {food['Serving Size']})', allowNegatives=False)
-                        food['Servings'] = res
-                        foodsDix[listId] = food
-                        RunShortcut(nutrDix['Add Recent'], input=food)
-
-                    case 'View/Edit Other Fields':
-                        changedFood = RunShortcut(nutrDix['Display Food Item'], input=food)
-                        Menu(f'Save Changes to {changedFood['Name']}?'):
-                            case 'Yes':
-                                # if we edit a food, it is now different from its source food so generate a new food ID for it
-                                changedFood['id'] = RunShortcut(nutrDix['GFID'])
-                                foodsDix[listId] = changedFood
-                                RunShortcut(nutrDix['Add Recent'], input=changedFood)
-                            case 'No':
-                                pass
-
-        case 'Remove Selected Foods':
-            addMenuResult = FALSE
-            # Remove selection
-            for listId in selectedIds:
-                food = foodsDix[listId]
-                text = f'''
-                BEGIN:VCARD
-                VERSION:3.0
-                N;CHARSET=UTF-8:{food['Name']}
-                ORG;CHARSET=UTF-8:{food['Servings']} servings
-                NOTE;CHARSET=UTF-8:{listId}
-                END:VCARD
-                '''
-                REPEATRESULTS.append(text)
-
-            text = Text(REPEATRESULTS)
-            renamedItem = SetName(text, 'vcard.vcf')
-            contacts = GetContacts(renamedItem)
-
-            deletes = ChooseFrom(contacts, selectMultiple=True, prompt='Select foods to remove')
-
-            for delete in deletes:
-                listId = Contact(delete).Notes
-                # remove it from the list
-                selectedIds = filter(selectedIds, where=['Name' != listId])
+                for delete in deletes:
+                    listId = Contact(delete).Notes
+                    # remove it from the list
+                    selectedIds = filter(selectedIds, where=['Name' != listId])
 
         if addMenuResult == TRUE:
             # add the foods to our selected foods
