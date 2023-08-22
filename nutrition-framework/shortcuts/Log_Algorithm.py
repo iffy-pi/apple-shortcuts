@@ -92,54 +92,7 @@ for item in SplitText(file, ByNewLines):
         num = Round(num, "hundredths")
         nutrients[item] = num
 
-# now just go through each nutrient and add them 
-if nutrients["Carbs"] is not None:
-    LogHealthSample("Carbohydrates", nutrients[@aboveKey], "g", loggingDate)
-
-if nutrients["Fiber"] is not None:
-    LogHealthSample("Fiber", nutrients[@aboveKey], "g", loggingDate)
-
-if nutrients["Sugar"] is not None:
-    LogHealthSample("Dietary Sugar", nutrients[@aboveKey], "g", loggingDate)
-
-if nutrients["Fat"] is not None:
-    LogHealthSample("Total Fat", nutrients[@aboveKey], "g", loggingDate)
-
-if nutrients["Polyunsaturated"] is not None:
-    LogHealthSample("Polyunsaturated Fat", nutrients[@aboveKey], "g", loggingDate)
-
-if nutrients["Monounsaturated"] is not None:
-    LogHealthSample("Monounsaturated Fat", nutrients[@aboveKey], "g", loggingDate)
-
-if nutrients["Saturated"] is not None:
-    LogHealthSample("Saturated Fat", nutrients[@aboveKey], "g", loggingDate)
-
-if nutrients["Protein"] is not None:
-    LogHealthSample("Protein", nutrients[@aboveKey], "g", loggingDate)
-
-if nutrients["Sodium"] is not None:
-    LogHealthSample("Sodium", nutrients[@aboveKey], "mg", loggingDate)
-
-if nutrients["Potassium"] is not None:
-    LogHealthSample("Potassium", nutrients[@aboveKey], "mg", loggingDate)
-
-if nutrients["Cholesterol"] is not None:
-    LogHealthSample("Dietary Cholesterol", nutrients[@aboveKey], "mg", loggingDate)
-
-if nutrients["VitA"] is not None:
-    LogHealthSample("Vitamin A", nutrients[@aboveKey], "mcg", loggingDate)
-
-if nutrients["VitC"] is not None:
-    LogHealthSample("Vitamin C", nutrients[@aboveKey], "mg", loggingDate)
-
-if nutrients["Calcium"] is not None:
-    LogHealthSample("Calcium", nutrients[@aboveKey], "mg", loggingDate)
-
-if nutrients["Iron"] is not None:
-    LogHealthSample("Iron", nutrients[@aboveKey], "mg", loggingDate)
-
-if nutrients["Calories"] is not None:
-    LogHealthSample("Dietary Energy", nutrients[@aboveKey], "kcal", loggingDate)
+RunShortcut("Log Nutrients To Health", input=Text('Nutrients'))
 
 if setPerms == TRUE:
     Alert("All nutrient permissions have been set!", showCancel=False, Title="Permissions")
