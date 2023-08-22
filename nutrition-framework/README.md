@@ -14,8 +14,8 @@ Log foods from the MyFitnessPal and OpenFoodFacts.org directly to your Apple Hea
   <img src="./readme-assets/saved_foods.png" alt="Display Food Item" height="500"/>
 </p>
 
-## Tutorial
+# Tutorial
 View Tutorial [here](https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/data/tutorial.html).
 
-## Technical Documentation
-TODO...
+# Technical Documentation
+## Food Object
