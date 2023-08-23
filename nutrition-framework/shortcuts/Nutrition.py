@@ -60,6 +60,10 @@ SaveFile(env, f"{storage}/Other/env.json", overwrite=True)
 if env['permsEnabled'] is None:
     if hasHealthApp == TRUE:
         # run log algorithm
+        text = '''
+            Your Apple Health permissions may have not been fully set, the shortcut will fast track through sample logging permissions.
+            You can do this again by going to Clear and Other Settings > Fast Track Health Permissions.
+        '''
         Alert("Your Apple Health permissions may have not been fully set, the shortcut will fast track through sample logging permissions", title="Health Sample Permissions")
         RunShortcut(shortcutNames['Log Algorithm'], input={'setPerms': True})
         env['permsEnabled'] = TRUE
@@ -165,6 +169,10 @@ Menu(prompt):
         case "Clear Food Notes":
             file = GetFile(f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
             DeleteFile(file, deleteImmediately=True)
+
+        case "Fast Track Health Permissions":
+            Alert("Your Apple Health permissions may have not been fully set, the shortcut will fast track through sample logging permissions", title="Health Sample Permissions")
+            RunShortcut(shortcutNames['Log Algorithm'], input={'setPerms': True})
 
         case "View Storage Folder":
             folder = GetFile(storage)
