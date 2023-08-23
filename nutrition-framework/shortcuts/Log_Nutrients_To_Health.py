@@ -6,9 +6,12 @@ Ver: ?
 
 # Log Nutrients to Health
 
-loggingDate = Date(ShortcutInput['Date'])
+storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+SaveFile(f'{storage}/Other/temp.txt', Text(ShortcutInput), overwrite=True)
 
-nutrients = Dictionary(Text(ShortcutInput))
+nutrients = Dictionary( Text( GetFile(f'{storage}/Other/temp.txt') ) )
+
+loggingDate = Date(nutrients['Date'])
 
 if nutrients["Carbs"] is not None:
 	text = f'0{nutrients["Carbs"]}'

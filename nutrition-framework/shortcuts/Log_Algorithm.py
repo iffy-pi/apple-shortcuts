@@ -39,10 +39,10 @@ hasHelathApp = dix['hasHealthApp']
 
 # add to backlog and exit if we are not on a device with a health app
 if hasHealthApp == FALSE:
-    if setPerms == TRUE:
-        Alert("You must be on a device with Apple Health to run through permissions", Title="Permissions")
-        StopShortcut()
-
+        if setPerms == TRUE:
+            Alert("You must be on a device with Apple Health to run through permissions", Title="Permissions")
+            StopShortcut()
+    
     Notification(
         "Food will be logged when next on iPhone",
         title=f'{foodDix['Name']} Has Been Added to Backlog',
@@ -71,6 +71,35 @@ if hasHealthApp == FALSE:
 
     StopShortcut(output = foodDix)
 
+else:
+    if setPerms == TRUE:
+        text = '''
+            { "0": { "Protein": 0, "Trans": 0, "Cholesterol": 0, "Sugar": 0, "Monounsaturated": 0,
+            "Polyunsaturated": 0, "Fat": 0, "Fiber": 0, "VitC": 0, "Calories": 0,
+            "Iron": 0, "VitA": 0, "Potassium": 0, "Saturated": 0, "Calcium": 0,
+            "Sodium": 0, "Carbs": 0 } }
+        '''
+        foodItems = Dictionary(text)
+
+        text = f'''
+            BEGIN:VCARD
+            VERSION:3.0
+            N;CHARSET=UTF-8:Test Food
+            ORG;CHARSET=UTF-8:Test Servings
+            NOTE;CHARSET=UTF-8:0
+            END:VCARD
+        '''
+
+        contact = macros.textToContacts(text)
+
+        res = f'{foodItems[contact.Notes]}'
+        res['Date'] = CurrentDate()
+        RunShortcut('Log Nutrients To Health', input=res)
+
+        Alert("All nutrient permissions have been set!", showCancel=False, Title="Permissions")
+        StopShortcut()
+
+
 # nutrients will be the dictionary of nutrients that have values above our threshold
 # used below when logging the system
 nutrients = Dictionary()
@@ -92,11 +121,9 @@ for item in SplitText(file, ByNewLines):
         num = Round(num, "hundredths")
         nutrients[item] = num
 
-RunShortcut("Log Nutrients To Health", input=Text('Nutrients'))
-
-if setPerms == TRUE:
-    Alert("All nutrient permissions have been set!", showCancel=False, Title="Permissions")
-    StopShortcut()
+# Log nutrients
+nutrients['Date'] = loggingDate
+RunShortcut("Log Nutrients To Health", input=Text(nutrients))
 
 Notification(
     f'{foodDix['Name']} has been logged to your meals',
