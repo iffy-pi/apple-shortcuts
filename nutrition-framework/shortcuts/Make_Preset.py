@@ -4,6 +4,8 @@ ID:  17
 Ver: 1.03
 '''
 
+# Make a preset with passed in foods or a new list of foods
+
 storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
 nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
 
@@ -18,22 +20,24 @@ nextId = 0
 
 
 if shortcutInput is not None:
+    # If foods are passed in, then the user should be allowed to edit the servings
     confirmServings = TRUE
+
     item = shortcutInput.getItemAtIndex(1)
     if item['foodsInfo'] is not None:
         foodsInfo = item['foodsInfo']
 else:
-    # there is no input so use foodsDix
+    # there is no input so use Foods List, with optimization
     foodsInfo = RunShortcut(nutrDix['Foods List'], input={ 'passToBulkEntry': True})
 
 
 if foodsInfo is not None:
+    # Get the selected IDs and foodsDix from output of Foods List
     selectedIds = foodsInfo['selectedIds']
     foodsDix = Dictionary(foodsInfo['foodsDix'])
 else:
-    # if we dont do this, then if result will be the item above the if
-    # i.e. nutrDix
     foods = ShortcutInput
+    # Generate selectedIds and foodsDix
     for item in foods:
         foodsDix[nextId] = item
         selectedIds.append(nextId)
@@ -44,13 +48,14 @@ nutriKeys = SplitText(file, '\n')
 
 breakLoop = FALSE
 
-# check to make sure it doesnt clash with other food names
+# Get the presetNames
 folder = GetFile(f"{storage}/Presets/Foods", errorIfNotFound=False)
 for file in GetContentsOfFolder(folder):
     presetNames.append(file['Name'])
 
 for _ in Count(selectedIds):
     if breakLoop == FALSE:
+        # Generate food contact cards
         for listId in selectedIds
             food = foodsDix[listId]
             text = f'''
@@ -84,11 +89,12 @@ for _ in Count(selectedIds):
                 item = foodsDix[contact.Notes]
                 curFood = Dictionary(item)
 
+                # set the default name and serving size for preset food and name auto fill
                 defaultSize = curFood['Serving Size']
                 defaultName = curFood['Name']
 
+                # Ask for servings if there are no servings or confirmServings is true
                 askForServings = FALSE
-
                 if confirmServings == TRUE:
                     askForServings = TRUE
 
@@ -103,6 +109,7 @@ for _ in Count(selectedIds):
                 
                 servings = IFRESULT
 
+                # For each selected food, multiply food value by servings and add to preset Food
                 for nutr in nutriKeys:
                     curFoodValue = Number(curFood[nutr])
                     presetValue = Number(presetFood[nutr])
@@ -116,6 +123,7 @@ for _ in Count(selectedIds):
                 defaultSize = ''
                 defaultName = ''
 
+            # Check if the current name already exists as a preset, and prompt user if it does
             name = AskForInput(Input.Text, prompt="What is the name of this preset?", default=defaultName)
 
             if Count(presetNames) > 0:

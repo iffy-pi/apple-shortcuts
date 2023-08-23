@@ -4,6 +4,8 @@ ID:  21
 Ver: 1.0
 '''
 
+# Create a food by manually filling in the nutrient fieldds
+
 storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
 nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
 exactValDix = {
@@ -13,9 +15,10 @@ exactValDix = {
     'Iron': 14
 }
 
+# Run display food item to allow user to input values
 foodDix = RunShortcut(nutrDix['Display Food Item'])
 
-# we need to check if there are any vitamin values before
+# If there are any vitamins or minerals, we ask if the value is Exact Values or Daily Percentages
 num = foodDix['VitA'] + foodDix['VitC'] + foodDix['Calcium'] + foodDix['Iron']
 
 if num > 0:
@@ -24,7 +27,7 @@ if num > 0:
             MENURESULT = 0
         case 'Daily Percentages':
             MENURESULT = 1
-    IFRESULT = 1
+    IFRESULT = MENURESULT
 else:
     IFRESULT = 0
 
@@ -50,6 +53,7 @@ else:
     IFRESULT = AskForInput(Input.Text, 'What is the serving size of the food?', allowMultipleLines=False)
 servingSize = IFRESULT
 
+# Generate food ID for food
 foodId = RunShortcut(nutrDix['GFID'])
 foodDix['id'] = foodId
 foodDix['Name'] = name

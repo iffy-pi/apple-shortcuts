@@ -4,6 +4,8 @@ ID:  11
 Ver: 1.01
 '''
 
+# Log foods at a selected time
+
 TRUE = 1
 FALSE = 0
 
@@ -34,6 +36,7 @@ if file is not None:
 
 makePreset = TRUE
 
+# If we only logged one item and the food is already a preset, then we dont prompt the make preset option
 if Count(loggedFoods) == 1:
     file = GetFile(f"{storage}/Presets/Foods/food_{loggedFoods['id']}.json")
     if file is not None:

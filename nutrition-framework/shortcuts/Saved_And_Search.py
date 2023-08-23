@@ -4,6 +4,8 @@ ID:  13
 Ver: 1.0
 '''
 
+# View, Make, Edit and Remove Presets and/or Barcodes, view Recents and do Search items
+
 TRUE = 1
 FALSE = 0
 
@@ -19,62 +21,60 @@ Menu("Saved And Search"):
         for item in res:
             searchResult = res
             postSearchMenu = Menu(["Log Entry", "Make Preset", "Exit"])
+            Menu():
+                case "Log Entry":
+                    date = AskForInput("Date:", Input.DateAndTime, default=Date.CurrentDate)
 
-            if postSearchMenu.opt("Log Entry"):
-                date = AskForInput("Date:", Input.DateAndTime, default=Date.CurrentDate)
+                    dix = {
+                        'Date': str(date)
+                        'Food': dix(searchResult)
+                    }
+                    res = RunShortcut(shortcutNames[
+                        "Log Algorithm"],
+                        input=dix)
 
-                dix = {
-                    'Date': str(date)
-                    'Food': dix(searchResult)
-                }
-                res = RunShortcut(shortcutNames[
-                    "Log Algorithm"],
-                    input=dix)
+                    LoggedFoods2 = res
 
-                LoggedFoods2 = res
+                    svp = Menu(["Yes", "No"], prompt="Save As Preset?")
 
-                svp = Menu(["Yes", "No"], prompt="Save As Preset?")
+                    if svp.opt("Yes"):
+                        RunShorctut("Make Preset", input=LoggedFoods2)
+                    if svp.opt("No"):
+                        pass
 
-                if svp.opt("Yes"):
-                    RunShorctut("Make Preset", input=LoggedFoods2)
-                if svp.opt("No"):
+                case "Make Preset":
+                    RunShortcut(shortcutNames["Make Preset"], input=searchResult)
+
+                case "Exit":
                     pass
 
-            elif postSearchMenu.opt("Make Preset"):
-                RunShortcut(shortcutNames["Make Preset"], input=searchResult)
-
-            elif postSearchMenu.opt("Exit"):
-                pass
-
     case "Presets":
-        prm = Menu(prompt="Presets", options=["View Presets", "Make Preset", "Edit Preset", "Remove Preset(s)"])
-
-        if prm.opt("View Presets"):
-            deletePresetCache = FALSE
-            res = RunShortcut(shortcutNames["Select Saved Foods"], input={'type': 'presets'})
-            for repeatItem in res:
-                changedFood = Dictionary(RunShortcut(shortcutNames["Display Food Item"], input=repeatItem))
-                Menu(f'Save Changes to {changedFood['Name']}?'):
-                    case 'Yes':
-                        SaveFile(changedFood, f"{storage}/Presets/Foods/food_{changedFood['id']}.json", overwrite=True)
-                        deletePresetCache = TRUE
-                    case 'No':
-                        pass
+        Menu("Presets"):
+            case "View Presets":
+                deletePresetCache = FALSE
+                res = RunShortcut(shortcutNames["Select Saved Foods"], input={'type': 'presets'})
+                for repeatItem in res:
+                    changedFood = Dictionary(RunShortcut(shortcutNames["Display Food Item"], input=repeatItem))
+                    Menu(f'Save Changes to {changedFood['Name']}?'):
+                        case 'Yes':
+                            SaveFile(changedFood, f"{storage}/Presets/Foods/food_{changedFood['id']}.json", overwrite=True)
+                            deletePresetCache = TRUE
+                        case 'No':
+                            pass
 
                 if deletePresetCache == TRUE:
                     file = GetFile('FLS/Presets/vcardCache.txt', errorIfNotFound=False)
                     DeleteFile(file, deleteImmediately=True)
 
+            case "Make Preset":
+                # run shortcutNames[foods list ]to get list of foods to be made into a preset
+                RunShortcut(shortcutNames["Make Preset"])
 
-        elif prm.opt("Make Preset"):
-            # run shortcutNames[foods list ]to get list of foods to be made into a preset
-            RunShortcut(shortcutNames["Make Preset"])
+            case "Edit Preset":
+                RunShortcut(shortcutNames["Edit Saved Food"], input={'type': 'presets'})
 
-        elif prm.opt("Edit Preset"):
-            RunShortcut(shortcutNames["Edit Saved Food"], input={'type': 'presets'})
-
-        elif prm.opt("Remove Preset(s)"):
-            RunShortcut(shortcutNames["Select Saved Foods"], input={'type': 'presets', 'deleteMode': True})
+            case "Remove Preset(s)":
+                RunShortcut(shortcutNames["Select Saved Foods"], input={'type': 'presets', 'deleteMode': True})
 
     case "Barcodes":
         brm = Menu(prompt="Barcodes", options=[
@@ -84,33 +84,32 @@ Menu("Saved And Search"):
             "Remove From Personal Database"
             ])
 
-
-        if brm.opt("View Personal Database"):
-            deletePresetCache = FALSE
-            res = RunShortcut(shortcutNames["Select Saved Foods"], input={'type': 'barcodes'})
-            for repeatItem in res:
-                changedFood = Dictionary(RunShortcut(shortcutNames["Display Food Item"], input=repeatItem))
-                Menu(f'Save Changes to {changedFood['Name']}?'):
-                    case 'Yes':
-                        SaveFile(changedFood, f"{storage}/Barcodes/Foods/food_{changedFood['id']}.json", overwrite=True)
-                        deletePresetCache = TRUE
-                    case 'No':
-                        pass
+        Menu("Barcodes"):
+            case "View Personal Database":
+                deletePresetCache = FALSE
+                res = RunShortcut(shortcutNames["Select Saved Foods"], input={'type': 'barcodes'})
+                for repeatItem in res:
+                    changedFood = Dictionary(RunShortcut(shortcutNames["Display Food Item"], input=repeatItem))
+                    Menu(f'Save Changes to {changedFood['Name']}?'):
+                        case 'Yes':
+                            SaveFile(changedFood, f"{storage}/Barcodes/Foods/food_{changedFood['id']}.json", overwrite=True)
+                            deletePresetCache = TRUE
+                        case 'No':
+                            pass
 
                 if deletePresetCache == TRUE:
                     file = GetFile('FLS/Barcodes/vcardCache.txt', errorIfNotFound=False)
                     DeleteFile(file, deleteImmediately=True)
-        elif brm.opt("Add to Personal Database"):
-            RunShortcut(shortcutNames["Barcode Search"])
+            case "Add to Personal Database":
+                RunShortcut(shortcutNames["Barcode Search"])
 
-        elif brm.opt("Edit Items in Personal Database"):
-            RunShortcut(shortcutNames["Edit Saved Food"], input={'type': 'barcodes'})
+            case "Edit Items in Personal Database":
+                RunShortcut(shortcutNames["Edit Saved Food"], input={'type': 'barcodes'})
 
-        elif brm.opt("Remove From Personal Database"):
-            RunShortcut(shortcutNames["Select Saved Foods"], input={'type': 'barcodes', 'deleteMode': True})
+            case "Remove From Personal Database":
+                RunShortcut(shortcutNames["Select Saved Foods"], input={'type': 'barcodes', 'deleteMode': True})
     
     case "Recent Meals":
-        res = RunShortcut(shortcutNames["Get Recent"])
-        for item in res:
+        for item in RunShortcut(shortcutNames["Get Recent"]):
             RunShortcut(shortcutNames["Display Food Item"], input=item)
 

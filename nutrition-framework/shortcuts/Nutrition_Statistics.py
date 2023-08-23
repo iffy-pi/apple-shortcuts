@@ -4,6 +4,8 @@ ID:  23
 Ver: 1.0
 '''
 
+# Calculate statsistics for nutrients
+
 TRUE = 1
 FALSE = 0
 
@@ -42,6 +44,7 @@ else:
 end = IFRESULT
 termEnd = AddToDate(end, days=1)
 
+# We make the calorie breakdown graph if there is more than one day in our sample range
 repeats = TimeBetweenDates(start, termEnd, inDays=True)
 if repeats > 1:
     makeCaloriePlot = TRUE

@@ -4,6 +4,9 @@ ID:  16
 Ver: 1.01
 '''
 
+# Select foods from Presets or Barcodes
+# Can also select foods to delete by setting deleteMode to be true
+
 TRUE = 1
 FALSE = 0
 storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
@@ -17,6 +20,9 @@ savedInfo = {
     'presets': { 'folder': 'Presets', 'prompt': 'Presets'}
     'all': { 'prompt' : 'Preset(s) and Barcoded Food(s)'}
 }
+
+# Specify which source using the 'type' field in the parameters shortcut input
+# Get the config from saved info
 
 params = Dictionary(ShortcutInput)
 
@@ -37,6 +43,7 @@ else:
     IFRESULT = params['type']
 searchTypes = IFRESULT
 
+# Get the cache for each source
 for curType in searchTypes:
     dixVal = savedInfo[curType]
     parentFolder = dixVal['folder']
@@ -46,7 +53,7 @@ for curType in searchTypes:
     if file is not None:
         IFRESULT = Text(file)
     else:
-        # create the vcard cache
+        # create the vcard cache if it does not exist
         folder = GetFile(f"{storage}/{parentFolder}/Foods")
         files = GetContentsOfFolder(folder)
         files = filter(files, sortBy='Last Modified Date', order='Latest First')
@@ -75,7 +82,7 @@ for curType in searchTypes:
 
 vcardCache = Text(REPEATRESULTS)
 
-
+# Add cancel button
 text = f'''
     BEGIN:VCARD
     VERSION:3.0
@@ -86,6 +93,7 @@ text = f'''
     END:VCARD
 '''
 
+# Add the cancel button, then the foods from the different sources
 renamedItem = SetName(text, 'vcard.vcf')
 contact = GetContacts(renamedItem)
 choices.append(contact)
@@ -125,7 +133,7 @@ for chosen in selectedItems:
         selectedFoods.append(food)
 
 if deleteMode == TRUE:
-    # delete the cache since it is invalid
+    # delete the cache since some foods were deleted
     file = GetFile(f"{storage}/{parentFolder}/vcardCache.txt", errorIfNotFound=False)
     DeleteFile(file, deleteImmediately=True)
 

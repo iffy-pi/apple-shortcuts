@@ -2,6 +2,9 @@
 Framework: Nutrition (id = 4)
 Is installer shortcut
 '''
+
+# Installer for the nutrition shortcut
+
 TRUE = 1
 FALSE = 0
 
@@ -61,7 +64,10 @@ if params['useTest'] is not None:
     updateInfo['updateLink'] = 'https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/testupdates.json'
 
 if newInstall == TRUE:
+    # If we are doing a new install, we have to save the shortcutNames
+    # And also generate installation links for all the children files
 
+    # Let user select the storage folder 
     file = GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt", errorIfNotFound=False)
     if file is not None:
         IFRESULT = file

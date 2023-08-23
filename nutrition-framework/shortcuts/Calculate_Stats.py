@@ -16,7 +16,7 @@ emptyList = []
 
 params = Dictionary(ShortcutInput)
 
-# whether we are calculating the average breakdown
+# whether we are calculating the average of the sample range
 averageBreakdown = params['averageBreakdown']
 # whether we are generating pie charts for nutrients
 plotNutrients = params['plotNutrients']

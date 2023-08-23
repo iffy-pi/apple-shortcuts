@@ -4,6 +4,8 @@ ID:  5
 Ver: 1.02
 '''
 
+# Main shortcut
+
 TRUE = 1
 FALSE = 0
 
@@ -37,8 +39,7 @@ text = '''
 '''
 SaveFile(text, f"{storage}/Other/nutriKeys.txt")
 
-# if device does not have health app then we will be adding to backlog
-# using regex matching
+# Device has health app if on iphone or iPad on OS 17 and higher
 hasHealthApp = FALSE
 deviceModel = GetDeviceDetails("Model")
 matches = MatchText(deviceModel, "(iPhone)")
@@ -107,6 +108,7 @@ if file is not None:
 
 Menu(prompt):
     case "Quick Log":
+        # Log food from Recent and exit immediately
         for item in  RunShortcut(shortcutNames['Get Recent']):
             curFood = item
 

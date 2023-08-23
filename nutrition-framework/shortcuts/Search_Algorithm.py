@@ -4,6 +4,8 @@ ID:  8
 Ver: 1.02
 '''
 
+# Search for food in MyFitnessPal Database
+
 TRUE = 1
 FALSE = 0
 
@@ -58,10 +60,12 @@ for _ in range (50):
             else:
                 IFRESULT = f"{servingSize}"
 
+            # Note this is actually a literal \n, not a newline character
             subtitle = f'''
                 {IFRESULT}\nCals: {item['nutritional_contents.energy.value']} ⸱ Carbs: {item['nutritional_contents.carbohydrates']}g ⸱ Fat: {item['nutritional_contents.fat']}g ⸱ Protein: {item['nutritional_contents.protein']}g
             '''
 
+            # Add verifIcon if it is a best match
             files = filter(tags, whereAny=['Name' == 'canonical', 'Name' == 'best_match'])
             if Count(files) == 2:
                 IFRESULT = f' {verifIcon}'
@@ -80,7 +84,7 @@ for _ in range (50):
             REPEATRESULTS.append(text)
         itemCards = REPEATRESULTS
 
-        # we need to create the vcards for next and previous
+        # Add next, previous, new search and cancel search buttons
         nextPage = pageNo+1
         prevPage = nextPage-2
 

@@ -5,6 +5,7 @@ Ver: 1.01
 '''
 
 # Takes { Food: ... , Date: ... } and logs the food at the given date
+# Can fast track permissions if the key 'setPerms' exists in the shortcut input
 
 TRUE = 1
 FALSE = 0
@@ -73,6 +74,7 @@ if hasHealthApp == FALSE:
 
 else:
     if setPerms == TRUE:
+        # If we are fast tracking permissions, we just pass in a food with 0 value nutrients into Log Nutrients To Health
         text = '''
             { "0": { "Protein": 0, "Trans": 0, "Cholesterol": 0, "Sugar": 0, "Monounsaturated": 0,
             "Polyunsaturated": 0, "Fat": 0, "Fiber": 0, "VitC": 0, "Calories": 0,
