@@ -10,8 +10,8 @@ storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
 # We save the dictionary to file and repull it because it enables us to fast track permissions
 # If we don't do it, fast tracking permissions wont work
-SaveFile(f'{storage}/Other/temp.txt', Text(ShortcutInput), overwrite=True)
-nutrients = Dictionary( Text( GetFile(f'{storage}/Other/temp.txt') ) )
+SaveFile(f'{storage}/Other/tempNutrientsDix.txt', Text(ShortcutInput), overwrite=True)
+nutrients = Dictionary( Text( GetFile(f'{storage}/Other/tempNutrientsDix.txt') ) )
 
 loggingDate = Date(nutrients['Date'])
 
