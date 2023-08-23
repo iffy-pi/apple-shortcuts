@@ -103,7 +103,7 @@ for _ in range(maxLoops):
                 # TODO, make manual maker
                 MENURESULT = RunShortcut(nutrDix['Make Food Manually'])
 
-            case 'View/Edit Food':
+            case 'View/Edit Selected Foods':
                 addMenuResult = FALSE
                 
                 # generate contact cards or user to select food using list ID
