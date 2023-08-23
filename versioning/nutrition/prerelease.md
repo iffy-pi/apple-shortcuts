@@ -37,6 +37,8 @@ Calculate Stats
 	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where fast tracked permissions did not work ([#21](https://github.com/iffy-pi/apple-shortcuts/issues/21)).
 - Nutrition v1.03
 	- **&#x0020;&#x1F525; Feature**: Added option to manually fast track Health permissions through *Clear and Other Settings > Fast Track Health Permissions* ([#21](https://github.com/iffy-pi/apple-shortcuts/issues/21)).
+- Foods List v1.03
+	- **Improvement**: Updated option name.
 
 ### RoutineHub
 
