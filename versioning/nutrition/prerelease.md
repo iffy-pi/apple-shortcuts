@@ -31,6 +31,16 @@ Calculate Stats
 | Bug Fix     | Hammer + Wrench | &#x0020;&#x1F6E0;&#xFE0F; |
 
 
+## v4.05
+### Markdown
+- Log Algorithm v1.1 and Log Nutrients to Health
+	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where fast tracked permissions did not work ([#21](https://github.com/iffy-pi/apple-shortcuts/issues/21)).
+- Nutrition v1.03
+	- **&#x0020;&#x1F525; Feature**: Added option to manually fast track Health permissions through *Clear and Other Settings > Fast Track Health Permissions* ([#21](https://github.com/iffy-pi/apple-shortcuts/issues/21)).
+
+### RoutineHub
+
+
 ## v4.04
 ### Markdown
 - Nutrition v1.02
@@ -43,6 +53,7 @@ Nutrition v1.02
 	- Improvement: Optimized quick log so users enter servings for all foods before logging process begins (#17).
 Make Preset v1.03
 	- Bug Fix: Fixed bug where presets created from Saved and Search > Presets > Make Preset have empty nutrients (#18).
+
 
 ## v4.03
 ### Markdown
