@@ -187,4 +187,6 @@ SaveFile(outputFood, f'{storage}/Barcodes/Foods/food_{outputFood['id']}.json', o
 # delete the vcardCache for barcodes since we have added a new item
 DeleteFile(GetFile(f"{storage}/Barcodes/vcardCache.txt", errorIfNotFound=False), deleteImmediately=True)
 
+Notification(title='Barcoded Food Created', f'Barcoded Food "{barcode}" has been added to your database allowing you to scan them for later!')
+
 StopShortcut(output = outputFood)
