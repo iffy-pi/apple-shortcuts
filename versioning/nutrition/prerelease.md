@@ -39,9 +39,10 @@ Calculate Stats
 	- **&#x0020;&#x1F525; Feature**: Added option to manually fast track Health permissions through *Clear and Other Settings > Fast Track Health Permissions* ([#21](https://github.com/iffy-pi/apple-shortcuts/issues/21)).
 - Foods List v1.03
 	- **&#x1F3AF; Improvement**: Updated option name.
-- Barcode Search v1.0
+- Barcode Search v1.01
 	- **&#x1F3AF; Improvement**: Users are now notified when a barcoded food is added to their personal database.
-
+- Food History v1.01
+	- **&#x0020;&#x1F525; Feature**: New option "Foods Logged in last..." allows users to customize how far back they would like to view food history.
 ### RoutineHub
 
 

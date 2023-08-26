@@ -188,7 +188,7 @@ You can generate a nutrient breakdown for a specific date, generate them for mul
 
 The **Calorie Breakdown** plots your total daily calories for each day in the date range, along with the calculated average. Calorie breakdowns are included with *Nutrient Breakdown for Dates*, but can be specifically generated with *Calorie Breakdown Between Dates*.
 
-![Nutrient Breakdown (MilliGram Nutrients)](./images/calorie_breakdown.png?raw=true)
+![Calorie Breakdown (Nutrients)](./images/calorie_breakdown.png?raw=true)
 
 ## Food Backlog
 Sometimes, you may wish to log foods on Apple devices that do not have the Apple Health app e.g. the iPad (though this will change with iOS 17). The shortcut is still functional for these devices, but instead of logging foods directly to Health, they are saved to the backlog.

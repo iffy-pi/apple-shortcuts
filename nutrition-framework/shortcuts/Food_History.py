@@ -50,17 +50,16 @@ Menu(prompt=prompt, ['More History Options', 'Exit']):
                 start = AskForInput(Input.Date)
                 end = AddToDate(start, days=1)
 
+            case 'Foods Logged in the last ...':
+                # allow the user to specify how much to subtract from the date
+                # Users can configure which options they would like
+                date = SubFromDate(today, days=AskEachTime())
+                start = AddToDate(date, days=1)
+                end = AddToDate(today, days=1)
+
             case 'Foods Logged Between...':
                 start = AskForInput(Input.Date)
                 end = AddToDate(AskForInput(Input.Date), days=1)
-
-            case 'Foods Logged In Past Week':
-                start = SubFromDate(today, weeks=1)
-                end = AddToDate(today, days=1)
-
-            case 'Foods Logged In Past Month':
-                start = SubFromDate(today, months=1)
-                end = AddToDate(today, days=1)
 
             case 'Foods Logged All Time':
                 useDateList = TRUE

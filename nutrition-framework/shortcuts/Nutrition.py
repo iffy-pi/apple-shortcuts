@@ -140,7 +140,7 @@ Menu(prompt):
         res = AskForInput(Input.Text, "What is the name of the food you would like to note down?", allowMultipleLines=False)
         date = AskForInput(Input.DateAndTime, "What is the date and time?")
         text = f'{res} @ {date.format(date="medium", time="short")}'
-        AppendToFile(text, "FLS/Other/foodNotes.txt", makeNewLine=True)
+        AppendToFile(text, f"{storage}/Other/foodNotes.txt", makeNewLine=True)
         StopShortcut()
 
     case 'Saved Foods and Search':
