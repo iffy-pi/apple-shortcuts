@@ -32,7 +32,7 @@ const ShortcutInfo = ({ shortcuts, selectedShortcuts, setShortcuts, index, onRem
             <br></br>
             <label for={"shortcut.link."+index}>New Link:   </label>
             <input type="text" id={"shortcut.link."+index}
-            value={selectedShortcuts[index].link} onChange={(e) => updateLink(e.target.value)}/>
+            value={selectedShortcuts[index].link} onChange={(e) => updateLink(e.target.value)} size={Math.max(20, selectedShortcuts[index].link.length)}/>
             <br></br>
             <Button buttonText="Remove" onClick={() => onRemove(index)}/>
         </div>

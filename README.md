@@ -3,7 +3,7 @@ A repository for handling the updates and versioning of my apple shortcuts, and 
 
 **NEXT SHORTCUT ID:**
 ```
-25
+26
 ```
 
 ## Creating a Versioned Shortcut
