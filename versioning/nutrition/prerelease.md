@@ -23,100 +23,50 @@ Food History
 Nutrition Statistics
 Calculate Stats
 
+## Emoji Features
+- Feature
+	- New additions or features added to the shortcut
+	- Emoji: Fire - &#x0020;&#x1F525;
+- Improvement
+	- Changes or enhancements in shortcut but does not introduce any new features
+	- Emoji: Target Board - &#x1F3AF;
+- Bug Fix
+	- Fixes for identified bugs
+	- Emoji: Hammer + Wrench - &#x0020;&#x1F6E0;&#xFE0F;
 
-| Description | Emoji Name      | Unicode                   |
-|-------------|-----------------|---------------------------|
-| Feature     | Fire            | &#x0020;&#x1F525;         |
-| Improvement | Target Board    | &#x1F3AF;                 |
-| Bug Fix     | Hammer + Wrench | &#x0020;&#x1F6E0;&#xFE0F; |
 
-
-## v4.05
-### Markdown
+# v4.05
+## Markdown
 - Log Algorithm v1.1 & Log Nutrients to Health v1.0
 	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where fast tracked permissions did not work ([#21](https://github.com/iffy-pi/apple-shortcuts/issues/21)).
 - Nutrition v1.03
 	- **&#x0020;&#x1F525; Feature**: Added option to manually fast track Health permissions through *Clear and Other Settings > Fast Track Health Permissions* ([#21](https://github.com/iffy-pi/apple-shortcuts/issues/21)).
+	- **&#x1F3AF; Improvement**: Optimized quick log so users enter servings for all foods before logging process begins ([#17](https://github.com/iffy-pi/apple-shortcuts/issues/17)).
 - Foods List v1.03
 	- **&#x1F3AF; Improvement**: Updated option name.
 - Barcode Search v1.01
 	- **&#x1F3AF; Improvement**: Users are now notified when a barcoded food is added to their personal database.
 - Food History v1.01
 	- **&#x0020;&#x1F525; Feature**: New option "Foods Logged in last..." allows users to customize how far back they would like to view food history.
-
-#### RoutineHub
-
-
-## v4.04
-### Markdown
-- Nutrition v1.02
-	- **&#x1F3AF; Improvement**: Optimized quick log so users enter servings for all foods before logging process begins ([#17](https://github.com/iffy-pi/apple-shortcuts/issues/17)).
 - Make Preset v1.03
 	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where presets created from *Saved and Search > Presets > Make Preset* have empty nutrients ([#18](https://github.com/iffy-pi/apple-shortcuts/issues/18)).
 
-### RoutineHub
-Nutrition v1.02
-	- Improvement: Optimized quick log so users enter servings for all foods before logging process begins (#17).
+## RoutineHub
+Log Algorithm v1.1 & Log Nutrients to Health v1.0
+	- 🛠️ Bug Fix: Fixed bug where fast tracked permissions did not work (#21).
+
+Nutrition v1.03
+	- 🔥 Feature: Added option to manually fast track Health permissions through Clear and Other Settings > Fast Track Health Permissions (#21).
+	- 🎯 Improvement: Optimized quick log so users enter servings for all foods before logging process begins (#17).
+
+Foods List v1.03
+	- 🎯 Improvement: Updated option name.
+
+Barcode Search v1.01
+	- 🎯 Improvement: Users are now notified when a barcoded food is added to their personal database.
+
+Food History v1.01
+	- 🔥 Feature: New option "Foods Logged in last..." allows users to customize how far back they would like to view food history.
+
 Make Preset v1.03
-	- Bug Fix: Fixed bug where presets created from Saved and Search > Presets > Make Preset have empty nutrients (#18).
-
-
-## v4.03
-### Markdown
-- Nutrition Installer
-	- **&#x0020;&#x1F525; Feature**: Update and Installation notes are now generated from markdown ([#9](https://github.com/iffy-pi/apple-shortcuts/issues/9)).
-	- **&#x0020;&#x1F525; Feature**: See what's cahnged for the current update ([#14](https://github.com/iffy-pi/apple-shortcuts/issues/14)).
-- Search Algorithm v1.02
-	- **&#x0020;&#x1F525; Feature**: Verified foods from MyFitnessPal are now tagged ([#8](https://github.com/iffy-pi/apple-shortcuts/issues/8)).
-	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fix for bug caused by cancelling a search after viewing search results ([#7](https://github.com/iffy-pi/apple-shortcuts/issues/7)).
-- Nutrition v1.01
-	- **&#x0020;&#x1F525; Feature**: Updated to support fast tracking Apple Health sample permissions ([#13](https://github.com/iffy-pi/apple-shortcuts/issues/13)).
-- Log Algorithm v1.01
-	- **&#x0020;&#x1F525; Feature**: Updated to support fast tracking Apple Health sample permissions ([#13](https://github.com/iffy-pi/apple-shortcuts/issues/13)).
-- Log Foods At Different Times v1.02
-	- **&#x0020;&#x1F525; Feature**: Updated so that users will set times for all foods before they are logged ([#10](https://github.com/iffy-pi/apple-shortcuts/issues/10)).
-	- **&#x1F3AF; Improvement**: Also updated to improve speeds when making a preset with logged foods ([#10](https://github.com/iffy-pi/apple-shortcuts/issues/10)).
-- Make Presets v1.02
-	- **&#x1F3AF; Improvement**: Updated to improve speeds when making a preset with foods logged at different times ([#10](https://github.com/iffy-pi/apple-shortcuts/issues/10)).
-- Foods List v1.02
-	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where foods that were logged at different times are not added to your recent foods ([#11](https://github.com/iffy-pi/apple-shortcuts/issues/11)).
-- Clear Cache and Backlog v1.01
-	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where backlog wasn't cleared even when on Apple Health compatible device ([#12](https://github.com/iffy-pi/apple-shortcuts/issues/12)).
-- Select Saved Foods v1.01
-	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Update to prevent future bug caused by missing shortcut input ([#7](https://github.com/iffy-pi/apple-shortcuts/issues/7)).
-- Add Recent v1.01
-	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Update to prevent future bug caused by missing shortcut input ([#7](https://github.com/iffy-pi/apple-shortcuts/issues/7)).
-
-### RoutineHub
-Nutrition Installer
-- Feature: Update and Installation notes are now generated from markdown (#9).
-- Feature: See what's cahnged in the for the current update (#14).
-
-Search Algorithm v1.02
-- Feature: Verified foods from MyFitnessPal are now tagged (#8).
-- Bug Fix: Fix for bug caused by cancelling a search after viewing search results (#7).
-
-Nutrition v1.01
-- Feature: Updated to support fast tracking Apple Health sample permissions (#13).
-
-Log Algorithm v1.01
-- Feature: Updated to support fast tracking Apple Health sample permissions (#13).
-
-Log Foods At Different Times v1.02
-- Feature: Updated so that users will set times for all foods before they are logged (#10).
-- Improvement: Also updated to improve speeds when making a preset with logged foods (#10).
-
-Make Presets v1.02
-- Improvement: Updated to improve speeds when making a preset with foods logged at different times (#10).
-
-Foods List v1.02
-- Bug Fix: Fixed bug where foods that were logged at different times are not added to your recent foods (#11).
-
-Clear Cache and Backlog v1.01
-- Bug Fix: Fixed bug where backlog wasn't cleared even when on Apple Health compatible device (#12).
-
-Select Saved Foods v1.01
-- Bug Fix: Update to prevent future bug caused by missing shortcut input (#7).
-
-Add Recent v1.01
-- Bug Fix: Update to prevent future bug caused by missing shortcut input (#7).
+	- 🛠️ Bug Fix: Fixed bug where presets created from Saved and Search > Presets > Make Preset have empty nutrients (#18).
