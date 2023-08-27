@@ -5,10 +5,10 @@
     "rhub": "https://routinehub.co/shortcut/5177",
     "updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json",
     "pyfile": "nutrition-framework/shortcuts/Nutrition_Installer.py",
-    "version": "4.04",
-    "link": "https://www.icloud.com/shortcuts/d74e0b1773ac410cbce01b57d57e7d3c",
-    "releaseNotes": "- Nutrition v1.02\n\t- **&#x1F3AF; Improvement**: Optimized quick log so users enter servings for all foods before logging process begins ([#17](https://github.com/iffy-pi/apple-shortcuts/issues/17)).\n- Make Preset v1.03\n\t- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where presets created from *Saved and Search > Presets > Make Preset* have empty nutrients ([#18](https://github.com/iffy-pi/apple-shortcuts/issues/18)).",
-    "releaseTime": "2023-08-17",
+    "version": "4.05",
+    "link": "https://www.icloud.com/shortcuts/d716042195474a888c02a69fa0ae710f",
+    "releaseNotes": "- Log Algorithm v1.1 & Log Nutrients to Health v1.0\n\t- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where fast tracked permissions did not work ([#21](https://github.com/iffy-pi/apple-shortcuts/issues/21)).\n- Nutrition v1.03\n\t- **&#x0020;&#x1F525; Feature**: Added option to manually fast track Health permissions through *Clear and Other Settings > Fast Track Health Permissions* ([#21](https://github.com/iffy-pi/apple-shortcuts/issues/21)).\n- Foods List v1.03\n\t- **&#x1F3AF; Improvement**: Updated option name.\n- Barcode Search v1.01\n\t- **&#x1F3AF; Improvement**: Users are now notified when a barcoded food is added to their personal database.\n- Food History v1.01\n\t- **&#x0020;&#x1F525; Feature**: New option \"Foods Logged in last...\" allows users to customize how far back they would like to view food history.",
+    "releaseTime": "2023-08-27",
     "children": [
         {
             "id": 19,
@@ -23,8 +23,8 @@
             "name": "Barcode Search",
             "type": "child",
             "pyfile": "nutrition-framework/shortcuts/Barcode_Search.py",
-            "version": "1.0",
-            "link": "https://www.icloud.com/shortcuts/c8ae5bb20bc949dba3a096843440e46e"
+            "version": "1.01",
+            "link": "https://www.icloud.com/shortcuts/c76c0ea4ac8a45e181663a24b5a9b695"
         },
         {
             "id": 24,
@@ -63,16 +63,16 @@
             "name": "Food History",
             "type": "child",
             "pyfile": "nutrition-framework/shortcuts/Food_History.py",
-            "version": "1.0",
-            "link": "https://www.icloud.com/shortcuts/22e92e68ccbb40e6846e7a099f9b6246"
+            "version": "1.01",
+            "link": "https://www.icloud.com/shortcuts/6d7f46789a704a7a8c3f6009ddc277de"
         },
         {
             "id": 6,
             "name": "Foods List",
             "type": "child",
             "pyfile": "nutrition-framework/shortcuts/Foods_List.py",
-            "version": "1.02",
-            "link": "https://www.icloud.com/shortcuts/ef0d84647b884b7e9a06e0c318aaa9a8"
+            "version": "1.03",
+            "link": "https://www.icloud.com/shortcuts/4988f8aa4133440abe2cf35313b86fc4"
         },
         {
             "id": 9,
@@ -95,8 +95,8 @@
             "name": "Log Algorithm",
             "type": "child",
             "pyfile": "nutrition-framework/shortcuts/Log_Algorithm.py",
-            "version": "1.01",
-            "link": "https://www.icloud.com/shortcuts/9155f9551de1465ba5b166e918d4ecf6"
+            "version": "1.1",
+            "link": "https://www.icloud.com/shortcuts/fa47fee730664137a579eb806e4ed56d"
         },
         {
             "id": 12,
@@ -113,6 +113,14 @@
             "pyfile": "nutrition-framework/shortcuts/Log_Foods_At_Time.py",
             "version": "1.01",
             "link": "https://www.icloud.com/shortcuts/a5e5a4a1018b48fcb631c17cdef5adb4"
+        },
+        {
+            "id": 25,
+            "name": "Log Nutrients To Health",
+            "type": "child",
+            "pyfile": "nutrition-framework/shortcuts/Log_Nutrients_To_Health.py",
+            "version": "1.0",
+            "link": "https://www.icloud.com/shortcuts/10ce3b6aa36e4cac96fe779a1d0dc281"
         },
         {
             "id": 21,
@@ -135,8 +143,8 @@
             "name": "Nutrition",
             "type": "child",
             "pyfile": "nutrition-framework/shortcuts/Nutrition.py",
-            "version": "1.02",
-            "link": "https://www.icloud.com/shortcuts/a5b7386b27084081a8095074f8af6aea"
+            "version": "1.03",
+            "link": "https://www.icloud.com/shortcuts/b071b8c179964a82b68c2a8adad0a870"
         },
         {
             "id": 23,

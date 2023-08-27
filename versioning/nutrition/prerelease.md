@@ -43,7 +43,8 @@ Calculate Stats
 	- **&#x1F3AF; Improvement**: Users are now notified when a barcoded food is added to their personal database.
 - Food History v1.01
 	- **&#x0020;&#x1F525; Feature**: New option "Foods Logged in last..." allows users to customize how far back they would like to view food history.
-### RoutineHub
+
+#### RoutineHub
 
 
 ## v4.04
