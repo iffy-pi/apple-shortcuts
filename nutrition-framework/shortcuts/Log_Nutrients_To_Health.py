@@ -1,7 +1,7 @@
 '''
 Framework: Nutrition (id = 4)
-ID:  ?
-Ver: ?
+ID:  26
+Ver: 1.0
 '''
 
 # Log Nutrients to Apple Health
