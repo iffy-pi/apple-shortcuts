@@ -5,10 +5,10 @@
     "rhub": "https://routinehub.co/shortcut/5177",
     "updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json",
     "pyfile": "nutrition-framework/shortcuts/Nutrition_Installer.py",
-    "version": "4.05",
-    "link": "https://www.icloud.com/shortcuts/d716042195474a888c02a69fa0ae710f",
-    "releaseNotes": "- Log Algorithm v1.1 & Log Nutrients to Health v1.0\n\t- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where fast tracked permissions did not work ([#21](https://github.com/iffy-pi/apple-shortcuts/issues/21)).\n- Nutrition v1.03\n\t- **&#x0020;&#x1F525; Feature**: Added option to manually fast track Health permissions through *Clear and Other Settings > Fast Track Health Permissions* ([#21](https://github.com/iffy-pi/apple-shortcuts/issues/21)).\n- Foods List v1.03\n\t- **&#x1F3AF; Improvement**: Updated option name.\n- Barcode Search v1.01\n\t- **&#x1F3AF; Improvement**: Users are now notified when a barcoded food is added to their personal database.\n- Food History v1.01\n\t- **&#x0020;&#x1F525; Feature**: New option \"Foods Logged in last...\" allows users to customize how far back they would like to view food history.",
-    "releaseTime": "2023-08-27",
+    "version": "4.06",
+    "link": "https://www.icloud.com/shortcuts/8391d0e1acdd4a03a6e00e09f9f40fd9",
+    "releaseNotes": "- Saved and Search 1.01\n\t- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where Barcoded Foods could not be edited, and instead immediately went back to main menu.",
+    "releaseTime": "2023-08-28",
     "children": [
         {
             "id": 19,
@@ -159,8 +159,8 @@
             "name": "Saved And Search",
             "type": "child",
             "pyfile": "nutrition-framework/shortcuts/Saved_And_Search.py",
-            "version": "1.0",
-            "link": "https://www.icloud.com/shortcuts/095905e0e20b45c093dc9d9fdf444f27"
+            "version": "1.01",
+            "link": "https://www.icloud.com/shortcuts/d9bb711952474e858aad14133b343362"
         },
         {
             "id": 8,
