@@ -13,7 +13,7 @@ proceedWithUpdates = FALSE
 
 updateInfo = {
     'updateLink' : 'https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json',
-    'version':'4.05'
+    'version':'4.06'
 }
 
 # also now includes information about the children
@@ -36,7 +36,7 @@ childVers = {
     "17":"1.03",     # Make Preset
     "5":"1.03",       # Nutrition
     "23":"1.0",      # Nutrition Statistics
-    "13":"1.0",      # Saved And Search
+    "13":"1.01",      # Saved And Search
     "8":"1.02",      # Search Algorithm
     "16":"1.01",      # Select Saved Foods
 }
