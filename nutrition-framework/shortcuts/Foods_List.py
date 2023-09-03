@@ -140,7 +140,7 @@ for _ in range(maxLoops):
                     # get the food at the id
                     food = foodsDix[listId]
                     Menu('Select an action'):
-                        case 'Edit Serving Size':
+                        case 'Edit Servings':
                             res = AskForInput(Input.Number, f'How many servings? (1 serving = {food['Serving Size']})', allowNegatives=False)
                             food['Servings'] = res
                             foodsDix[listId] = food
