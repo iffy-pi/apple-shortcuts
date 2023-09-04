@@ -59,26 +59,24 @@ for _ in range(maxLoops):
             IFRESULT = f'''
             No foods selected
             '''
+        prompt = IFRESULT
+        
         # append our food notes if they are any
         if hasNotes == TRUE:
-            IFRESULT2 = f'''
+            prompt = f'''
                 {notes}
-                {IFRESULT}
+                {prompt}
             '''
-        else:
-            IFRESULT2 = IFRESULT
 
         if params['inputPrompt'] is not None:
-            IFRESULT3 = f'''
+            prompt = f'''
             {params['inputPrompt']}
-            {IFRESULT2}
+            {prompt}
             '''
-        else:
-            IFRESULT3 = IFRESULT2
 
         addMenuResult = TRUE
 
-        Menu(IFRESULT3):
+        Menu(prompt):
             case 'Done Selecting Foods':
                 addMenuResult = FALSE
 
