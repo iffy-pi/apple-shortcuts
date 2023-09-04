@@ -75,8 +75,18 @@ for _ in range(30):
             case 'Add Foods For Time':
                 # Asks user for the date, runs foods list and maps 
                 # the selected foods to the given date and time 
-                date = AskForInput(Input.DateAndTime, prompt='Select Date and Time')
-                for food in RunShortcut(nutrDix['Foods List']):
+                if hasFoodNotes == TRUE:
+                    IFRESULT = f'''
+                    {notes}
+                    Enter A Log Time
+                    '''
+                else:
+                    IFRESULT = 'Enter A Log Time'
+                date = AskForInput(Input.DateAndTime, prompt=IFRESULT)
+                dix =  {
+                'inputPrompt': f'Select Foods to log for {date.format(custom='MMMM d, h:mm a')}'
+                }
+                for food in RunShortcut(nutrDix['Foods List'], input=dix):
                     foodsInfo[nextId] = food
                     datesInfo[nextId] = date
                     selectedIds.append(nextId)

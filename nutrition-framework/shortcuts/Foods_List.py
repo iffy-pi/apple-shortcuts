@@ -68,10 +68,17 @@ for _ in range(maxLoops):
         else:
             IFRESULT2 = IFRESULT
 
+        if params['inputPrompt'] is not None:
+            IFRESULT3 = f'''
+            {params['inputPrompt']}
+            {IFRESULT2}
+            '''
+        else:
+            IFRESULT3 = IFRESULT2
 
         addMenuResult = TRUE
 
-        Menu(IFRESULT2):
+        Menu(IFRESULT3):
             case 'Done Selecting Foods':
                 addMenuResult = FALSE
 
