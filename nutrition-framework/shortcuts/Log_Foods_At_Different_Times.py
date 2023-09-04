@@ -41,8 +41,14 @@ for _ in range(30):
             for listId in selectedIds:
                 food = foodsInfo[listId]
                 date = datesInfo[listId]
+                warning = ''
+                if date is not None:
+                    datePrompt = f' for {date.format(custom='h:mm a, MMM d')}'
+                else:
+                    warning = ' ⚠'
+                    datePrompt = ''
 
-                REPEATRESULTS.append(f'{food['Servings']}x {food['Name']} for {date.format(custom='h:mm a, MMM d')}')
+                REPEATRESULTS.append(f'{food['Servings']}x {food['Name']}{datePrompt}{warning}')
 
             IFRESULT = f'''
                 Added Foods:
@@ -51,57 +57,48 @@ for _ in range(30):
         else:
             IFRESULT = 'No Foods Added'
 
-        basePrompt = IFRESULT
+        prompt = IFRESULT
 
         if hasFoodNotes == TRUE:
-            IFRESULT = f'''
+            prompt = f'''
                 {notes}
 
-                {basePrompt}
+                {prompt}
             '''
-        else:
-            IFRESULT = basePrompt
-
         text = f'''
-            {IFRESULT}
-            Select An Option
+            Foods with ⚠ have no log time.
+            
+            {prompt}
         '''
-
         Menu(text):
             case 'Log Added Foods':
                 # breaks loop, foods are logged outside of loop
                 breakLoop = TRUE
 
-            case 'Add Foods For Time':
-                # Asks user for the date, runs foods list and maps 
-                # the selected foods to the given date and time 
-                if hasFoodNotes == TRUE:
-                    IFRESULT = f'''
-                    {notes}
-                    Enter A Log Time
-                    '''
-                else:
-                    IFRESULT = 'Enter A Log Time'
-                date = AskForInput(Input.DateAndTime, prompt=IFRESULT)
-                dix =  {
-                'inputPrompt': f'Select Foods to log for {date.format(custom='MMMM d, h:mm a')}'
-                }
-                for food in RunShortcut(nutrDix['Foods List'], input=dix):
+            case 'Add Foods':
+                for food in RunShortcut(nutrDix['Foods List']):
                     foodsInfo[nextId] = food
                     datesInfo[nextId] = date
                     selectedIds.append(nextId)
                     nextId = nextId+1
 
-            case 'Edit Times For Food...':
+            case 'Set/Edit Log Time For Foods...':
                 # use contact vcards to get the list ids of the foods the user wants to change
                 for listId in selectedIds:
                     food = foodsInfo[listId]
                     date = datesInfo[listId]
+                    warning = ''
+
+                    if date is not None:
+                        datePrompt = f'Log Time: {date.format(custom='h:mm a, MMMM d')}'
+                    else:
+                        datePrompt = 'No Log Time Added ⚠'
+
                     text = f'''
                         BEGIN:VCARD
                         VERSION:3.0
-                        N;CHARSET=UTF-8:{food['Name']}
-                        ORG;CHARSET=UTF-8:{food['Servings']} servings ⸱ {date.format(custom='h:mm a, MMMM d')}
+                        N;CHARSET=UTF-8:{food['Name']}{warning}
+                        ORG;CHARSET=UTF-8:{food['Servings']} servings ⸱ Log Time: {date.format(custom='h:mm a, MMMM d')}
                         NOTE;CHARSET=UTF-8:{listId}
                         END:VCARD
                     '''
@@ -110,25 +107,36 @@ for _ in range(30):
                 contacts = textToContacts(REPEATRESULTS)
 
                 selectedContacts = ChooseFromList(contacts, prompt='Select Foods To Edit', selectMultiple=True)
-                
-                # for each of the foods, use the input prompt to get the new date and time
-                for contact in selectedContacts:
-                    listId = contact.Notes
-                    food = foodsInfo[listId]
-                    date = datesInfo[listId]
-                    date = AskForInput(Input.Date, prompt=f'Select new date and time for {food['Servings']}x {food['Name']}', default=date)
-                    datesInfo[listId] = date
+
+                if Count(selectedContacts) > 0:
+
+                    contact = selectedContacts.getFirstItem()
+                    date = datesInfo[contact.Notes]
+                    date = AskForInput(Input.DateAndTime, prompt=f'Select log time for selected foods', default=date)
+
+                    
+                    # for each of the foods, set the date that the user selected
+                    for contact in selectedContacts:
+                        listId = contact.Notes
+                        datesInfo[listId] = date
 
             case 'Remove Added Food...':
                 # use contact vcards to get the list ids of the foods the user wants to remove
                 for listId in selectedIds:
                     food = foodsInfo[listId]
                     date = datesInfo[listId]
+
+                    if date is not None:
+                        datePrompt = f'Log Time: {date.format(custom='h:mm a, MMMM d')}'
+                        warning = ''
+                    else:
+                        datePrompt = 'No Log Time Added! ⚠'
+
                     text = f'''
                         BEGIN:VCARD
                         VERSION:3.0
-                        N;CHARSET=UTF-8:{food['Name']}
-                        ORG;CHARSET=UTF-8:{food['Servings']} servings ⸱ {date.format(custom='h:mm a, MMMM d')}
+                        N;CHARSET=UTF-8:{food['Name']}{warning}
+                        ORG;CHARSET=UTF-8:{food['Servings']} servings ⸱ {datePrompt}
                         NOTE;CHARSET=UTF-8:{listId}
                         END:VCARD
                     '''
@@ -150,8 +158,17 @@ for _ in range(30):
 for listId in selectedIds:
     food = foodsInfo[listId]
     date = datesInfo[listId]
-    res = RunShortcut(nutrDix['Log Algorithm'], input={'Date': date, 'Food': food})
-    loggedFoods.append(res)
+    logFood = TRUE
+    if date is None:
+        Menu(f'{food['Servings']}x {food['Name']} does not have a log time'):
+            case 'Set Log Time':
+                date = AskForInput(Input.DateAndTime, prompt='Enter Log Time')
+            case 'Do Not Log Food':
+                logFood = FALSE
+    
+    if logFood == TRUE:
+        res = RunShortcut(nutrDix['Log Algorithm'], input={'Date': date, 'Food': food})
+        loggedFoods.append(res)
 
 # clearing foods notes and making preset
 if hasNotes == TRUE:
