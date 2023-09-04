@@ -26,19 +26,19 @@ Calculate Stats
 ## Emoji Features
 - Feature
 	- New additions or features added to the shortcut
-	- Emoji: Fire - &#x0020;&#x1F525;
+	- Emoji: Fire - `&#x0020;&#x1F525;`
 - Improvement
 	- Changes or enhancements in shortcut but does not introduce any new features
-	- Emoji: Target Board - &#x1F3AF;
+	- Emoji: Target Board - `&#x1F3AF;`
 - Bug Fix
 	- Fixes for identified bugs
-	- Emoji: Hammer + Wrench - &#x0020;&#x1F6E0;&#xFE0F;
+	- Emoji: Hammer + Wrench - `&#x0020;&#x1F6E0;&#xFE0F;`
 
 
-# v4.06
+# v4.07
 ## Markdown
-- Saved and Search 1.01
-	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where Barcoded Foods could not be edited, and instead immediately went back to main menu.
+- Foods List v1.04
+	- **&#x1F3AF; Improvement**: Renamed menu items to be correct. ([#24](https://github.com/iffy-pi/apple-shortcuts/issues/24))
 
 ## RoutineHub
 Saved and Search 1.01
