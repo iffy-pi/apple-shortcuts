@@ -186,7 +186,7 @@ for _ in range(maxLoops):
                 for delete in deletes:
                     listId = Contact(delete).Notes
                     # remove it from the list
-                    selectedIds = filter(selectedIds, where=['Name' != listId])
+                    selectedIds = FilterFiles(selectedIds, where=['Name' != listId])
 
         if addMenuResult == TRUE:
             # add the foods to our selected foods

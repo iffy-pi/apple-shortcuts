@@ -121,14 +121,14 @@ for _ in range(30):
                     '''
                     REPEATRESULTS.append(text)
 
-                contacts = textToContacts(REPEATRESULTS)
+                contacts = macros.textToContacts(REPEATRESULTS)
 
                 selectedContacts = ChooseFromList(contacts, prompt='Select Foods To Remove', selectMultiple=True)
                 
                 # remove them from the selected Ids list
                 for contact in selectedContacts:
                     listId = contact.Notes
-                    selectedIds = filter(selectedIds, where=['Name' != listId])
+                    selectedIds = FilterFiles(selectedIds, where=['Name' != listId])
 
             case 'Cancel and Exit':
                 StopShortcut()
@@ -189,7 +189,7 @@ for _ in range(30):
                         for contact in selectedContacts:
                             listId = contact.Notes
                             datesInfo[listId] = date
-                            unsetIds = filter(unsetIds, where=['Name' != listId])
+                            unsetIds = FilterFiles(unsetIds, where=['Name' != listId])
 
                     # if user specifically requested to edit food times, then break immediately after one iteration
                     if fromEditOption == TRUE:
