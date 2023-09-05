@@ -137,7 +137,6 @@ for _ in range(30):
             breakEditLoop = FALSE
             # unsetIds is used here so that:
             # when foods are added, users are immediately prompted to select the time for the added foods
-            # when user wants to edit food times (fromEditOption == TRUE), all the foods are shown (since unsetIds is set to selectedIds)
             for _ in Count(unsetIds):
                 # break loop when there are no more foods with unset log times
                 if Count(unsetIds) == 0:
@@ -167,7 +166,19 @@ for _ in range(30):
 
                     contacts = macros.textToContacts(REPEATRESULTS)
 
-                    selectedContacts = ChooseFromList(contacts, prompt='Select Foods To Set/Edit Log Time', selectMultiple=True)
+                    prompt = '''
+                        Select foods to set/edit log time.
+                        Select no foods to return to main menu.
+                    '''
+
+                    if hasFoodNotes == TRUE:
+                        prompt = f'''
+                        {notes}
+
+                        {prompt}
+                        '''
+
+                    selectedContacts = ChooseFromList(contacts, prompt=prompt, selectMultiple=True)
 
                     if Count(selectedContacts) > 0:
                         contact = selectedContacts.getFirstItem()
@@ -189,11 +200,15 @@ for _ in range(30):
                         for contact in selectedContacts:
                             listId = contact.Notes
                             datesInfo[listId] = date
-                            unsetIds = FilterFiles(unsetIds, where=['Name' != listId])
+                            
+                            # if user selected edit option, keep all foods visible
+                            # i.e. dont filter out foods with set date.
+                            if fromEditOption == FALSE:
+                                unsetIds = FilterFiles(unsetIds, where=['Name' != listId])
 
-                    # if user specifically requested to edit food times, then break immediately after one iteration
-                    if fromEditOption == TRUE:
-                        breakEditLoop = TRUE
+                    # # if user specifically requested to edit food times, then break immediately after one iteration
+                    # if fromEditOption == TRUE:
+                    #     breakEditLoop = TRUE
 
 
 # log the foods in the selected Ids list
