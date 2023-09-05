@@ -70,8 +70,10 @@ for _ in range(30):
 
             {prompt}
         '''
+        
         setLogTimes = FALSE
         fromEditOption = FALSE
+
         Menu(text):
             case 'Log Added Foods':
                 # breaks loop, foods are logged outside of loop
