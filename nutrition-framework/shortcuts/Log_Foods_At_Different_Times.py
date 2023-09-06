@@ -190,10 +190,18 @@ for _ in range(30):
                             food = foodsInfo[contact.Notes]
                             REPEATRESULTS.append(f'{food['Servings']}x {food['Name']}')
 
-                        text = f'''
+                        prompt = f'''
                             Select log time for:
                             {REPEATRESULTS}
                         '''
+
+                        if hasFoodNotes == TRUE:
+                            prompt = f'''
+                                Food Notes:
+                                {notes}
+
+                                {prompt}
+                            '''
 
                         date = AskForInput(Input.DateAndTime, prompt=text, default=date)
 
