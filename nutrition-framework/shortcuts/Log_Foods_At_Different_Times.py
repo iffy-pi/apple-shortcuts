@@ -197,7 +197,6 @@ for _ in range(30):
 
                         if hasFoodNotes == TRUE:
                             prompt = f'''
-                                Food Notes:
                                 {notes}
 
                                 {prompt}
