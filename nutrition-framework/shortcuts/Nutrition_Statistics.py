@@ -75,7 +75,7 @@ if makeCaloriePlot == TRUE:
     chartId = Charty.NewChart(f"{start.format(custom="MMM dd")} - {end.format(custom="MMM dd")} Energy")
     Charty.AddSeries("Daily Energy", chartId, 'Line', xValues=stats['calorieLabels'], yValues=stats['calorieValues'])
     Charty.AddSeries("Average Energy", chartId, 'Line', xValues=stats['calorieLabels'], yValues=averageCalValues)
-    Charty.StyleAxis("X Axis", chartId, title="Dates", formatValuesAsDate={'custom'="MMM dd"})
+    Charty.StyleAxis("X Axis", chartId, title="Dates", formatValuesAs='Date', options={'custom': 'd'})
 
 OpenApp("Charty")
 
