@@ -39,6 +39,11 @@ Calculate Stats
 ## Markdown
 - Foods List v1.04
 	- **&#x1F3AF; Improvement**: Renamed menu items to be correct. ([#24](https://github.com/iffy-pi/apple-shortcuts/issues/24))
+- Log Foods At Time v1.02
+	- **&#x1F3AF; Improvement**: Added food notes to prompt when asking for date and time.
+- Nutrition Statistics v1.01
+	- **&#x1F3AF; Improvement**: Changed calorie plot units.
+
 
 ## RoutineHub
 Saved and Search 1.01
