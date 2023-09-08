@@ -14,12 +14,23 @@ storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
 res = GetFile(f"{storage}/Other/shortcutNames.json")
 shortcutNames = Dictionary(res)
 
-Dating = AskForInput("What date and time? Click Done for Right Now", Input.DateAndTime)
+prompt = 'What date and time?'
+
+file = GetFile(f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
+if file is not None:
+    prompt = f'''
+        Food Notes:
+        {file}
+
+        {prompt}
+    '''
+
+dating = AskForInput(prompt, Input.DateAndTime)
 
 for item in RunShortcut(shortcutNames["Foods List"]):
     CurFood = item
     dix = {
-        'Date': str(Dating)
+        'Date': str(dating)
         'Food': dix(CurFood)
     }
 
