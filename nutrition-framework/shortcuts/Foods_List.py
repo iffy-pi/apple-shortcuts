@@ -191,6 +191,10 @@ for _ in range(maxLoops):
         if addMenuResult == TRUE:
             # add the foods to our selected foods
             for food in MENURESULT:
+                text = Text(food)
+                SaveFile(To='Shortcuts', text, f'{storage}/Other/tempNutrientsDix.txt', overwrite=True)
+                food = Dictionary( Text(GetFile(From='Shortcuts', f'{storage}/Other/tempNutrientsDix.txt')) )
+
                 # Ask for the servings
                 servings = AskForInput(Input.Number, f'How many servings of {food['Name']}? (1 serving = {food['Serving Size']})', allowDecimals=True, allowNegatives=False)
                 food['Servings'] = servings
