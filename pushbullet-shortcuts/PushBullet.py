@@ -8,10 +8,10 @@ UpdateInfo = {
     'version': 1.41,
 }
 
-@SETUP
+@SETUP('Paste Your Access Token Here')
 accessToken = '...'
 
-@SETUP
+@SETUP('Enter 1 If You Have PushBullet Premium')
 pushbulletPremium = 0
 
 TRUE = 1
