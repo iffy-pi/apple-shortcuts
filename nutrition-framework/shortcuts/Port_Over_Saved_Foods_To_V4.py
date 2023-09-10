@@ -23,7 +23,7 @@ for REPEATITEM in nameFiles:
     foodsDir = foodDirs.getItemAtIndex(REPEATINDEX)
     for foodFile in GetContentsOfFolder(foodsDir):
 
-        filename = GetFileDetails("Name", foodFile)
+        filename = GetDetailsOfFiles("Name", foodFile)
 
         # only convert for those that are applicable, so that the shortcut supports failure
         if MatchText(filename, "food_[0-9][0-9]*") is not None:
