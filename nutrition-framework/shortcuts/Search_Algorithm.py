@@ -161,6 +161,7 @@ for _ in range (50):
             item = searchItems[ itemId ]
 
             # ask the user what serving size they want
+            # if only one size automatically select it
             # first accumulate serving size information
 
             baseCal = item['nutritional_contents.energy.value']
@@ -183,21 +184,28 @@ for _ in range (50):
                     '''
                 REPEATRESULTS.append(text)
 
-            # append a back button to make sure they are fine
-            text = f'''
-                {REPEATRESULTS}
-                BEGIN:VCARD
-                VERSION:3.0
-                N;CHARSET=UTF-8:Back
-                ORG;CHARSET=UTF-8:Go Back To Search
-                {backwardIcon}
-                END:VCARD
+            if Count(REPEATRESULTS) == 1:
+                # if only one, skip selection
+                text = f'{REPEATRESULTS}'
+                contacts = macros.textToContacts(text)
+                chosenSize = contacts.getFirstItem()
+            else:
+                # For multiple sizes, add a back button to go back to search page
+                text = f'''
+                    BEGIN:VCARD
+                    VERSION:3.0
+                    N;CHARSET=UTF-8:Back
+                    ORG;CHARSET=UTF-8:Go Back To Search
+                    {backwardIcon}
+                    END:VCARD
+                    {REPEATRESULTS}
                 '''
-            # choose from it
-            renamedItem = SetName(text, 'vcard.vcf')
-            contacts = GetContacts(renamedItem)
+                # choose from it
+                renamedItem = SetName(text, 'vcard.vcf')
+                contacts = GetContacts(renamedItem)
 
-            chosenSize = ChooseFrom(contacts, prompt="Which Serving Size?")
+                chosenSize = ChooseFrom(contacts, prompt="Which Serving Size?")
+
 
             if chosenSize.Name != "Back"
                 # we have the users food now we just need to create it
