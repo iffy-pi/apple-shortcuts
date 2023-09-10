@@ -43,6 +43,8 @@ Calculate Stats
 	- **&#x1F3AF; Improvement**: Added food notes to prompt when asking for date and time.
 - Nutrition Statistics v1.01
 	- **&#x1F3AF; Improvement**: Changed calorie plot units.
+- Nutrition v1.04
+	- **&#x1F3AF; Improvement**: Updated shortcut to handle errors if the storage folder cannot be found.
 
 
 ## RoutineHub
