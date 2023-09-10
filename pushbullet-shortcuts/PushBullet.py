@@ -9,7 +9,7 @@ UpdateInfo = {
 }
 
 @SETUP
-AccessToken = '...'
+accessToken = '...'
 
 @SETUP
 pushbulletPremium = 0
@@ -25,11 +25,11 @@ remoteFiles = {
 res = GetContentsOfURL(remoteFiles['mime'])
 mime = Dictionary(res)
 
-PushCall = {
-    'push_url': '...',
-    'upload_req_url': '...',
+pushCall = {
+    'push_url': 'https://api.pushbullet.com/v2/pushes',
+    'upload_req_url': 'https://api.pushbullet.com/v2/upload-request',
     'method': 'POST',
-    'accesstoken': AccessToken
+    'accesstoken': accessToken
 }
 
 pushBody = {
@@ -48,7 +48,7 @@ if ShortcutInput is None:
     StopShortcut()
 
 
-Contents = ShortcutInput
+contents = ShortcutInput
 
 typeId = {
     'link': 1,
@@ -56,7 +56,7 @@ typeId = {
     'file': 2
 }
 
-for repeatItem in Contents:
+for repeatItem in contents:
     item = repeatItem
 
     itemPushBody = pushBody
@@ -66,9 +66,9 @@ for repeatItem in Contents:
     pushType = -1
 
     itemType = GetTypeOf(item)
-    itemFname = GetFileDetails("Name", item)
-    itemSize = GetFileDetails("Size", item)
-    itemFext = GetFileDetails("File Extension", item)
+    itemFname = GetDetailsOfFiles("Name", item)
+    itemSize = GetDetailsOfFiles("Size", item)
+    itemFext = GetDetailsOfFiles("File Extension", item)
 
     itemErrorCode = 0
     ambiguousType
@@ -83,7 +83,7 @@ for repeatItem in Contents:
 
     # do link
     if pushType == -1:
-        files = Filter(
+        files = FilterFiles(
                     itemType, 
                     whereAny=[
                         "Name" is "URL",
@@ -106,7 +106,6 @@ for repeatItem in Contents:
             # check if extension is all numbers
             extIsAllNumbers = MatchText("([0-9][0-9]*[^a-z])", itemFext, caseSensitive=False)
             if extIsAllNumbers is not None:
-
                 res = MatchText(".*clipboard.*", itemFname, caseSensitive=False)
                 if res is not None:
                     # if extension is all numbers and came from clipboard, most likely raw text
@@ -114,7 +113,7 @@ for repeatItem in Contents:
                     isRawText = TRUE
                 
             else:
-                res = filter(f".{itemFext}", whereAny=["Name" is ".txt", "Name" is "."])
+                res = FilterFiles(f".{itemFext}", whereAny=["Name" is ".txt", "Name" is "."])
                 if res is not None:
                     # if txt extension or no extension treat as raw text
                     # other extensions that are not all numbers will be treated as a file (fall through)
@@ -123,18 +122,18 @@ for repeatItem in Contents:
 
             if isRawText == TRUE:
                 # assume its valid text
-                pushType = ['note']
+                pushType = typeId['note']
 
-                # text greater than 63kb must be a file as they dont fit in text box
-                if itemSize.Kilobytes() > 63:
+                # text greater than 63kb must be a file as they dont fit in text field
+                if SetSizeUnits(itemSize, 'KB') > 63:
                     pushType = typeId['file']
                     itemFname = "Pushed Text"
                     itemFext = "txt"
 
                 else:
-                    # if its greater than 5, might be a txt file being interpreted as text 
-                    # let user decide
-                    if itemSize.Kilobytes() > 5:
+                    # if its greater than 5, might be a .txt file being interpreted as text 
+                    # let user decide what to do
+                    if SetSizeUnits(itemSize, 'KB') > 5:
                         pushType = -2
 
     # do file
@@ -167,55 +166,41 @@ for repeatItem in Contents:
 
                     What is the type of this input?
                 '''
-                typeMenu = Menu(
-                        prompt=text,
-                        [
-                            "Text",
-                            "Link/URL",
-                            "File",
-                            "View Item",
-                        ]
-                    )
+                Menu(prompt=text):
 
-                if typeMenu.opt("Text"):
-                    # set the push type to text
-                    pushType = typeId['note']
-                    item = Text(item)
+                    case "Text":
+                        # set the push type to text
+                        pushType = typeId['note']
+                        item = Text(item)
 
-                elif typeMenu.opt("Link/URL"):
-                    pushType = typeId['link']
+                    case "Link/URL":
+                        pushType = typeId['link']
 
-                elif typeMenu.opt("File"):
-                    # filename might be confusing give users a chance to rename
-                    cm = Menu(prompt=f"Filename: {itemFname}.{itemFext}", options=["Accept Name", "Change Name", "Back"])
+                    case "File":
+                        # filename might be confusing give users a chance to rename
+                        Menu(prompt=f"Filename: {itemFname}.{itemFext}"):
+                            case "Change Name":
+                                res = AskForInput(Input.Text, prompt="Format: {filename}.{ext}", multipleLines=False)
+                                matches = MatchText("(.*)\\.(.*)", res)
+                                itemFname = GetMatchGroupAt(0, matches)
+                                itemFext = GetMatchGroupAt(1, matches)
 
-                    if cm.opt("Change Name"):
-                        res = AskForInput(Input.Text, prompt="Format: {filename}.{ext}", multipleLines=False)
-                        matches = MatchText("(.*)\\.(.*)", res)
-                        itemFname = GetMatchGroupAt(0, matches)
-                        itemFext = GetMatchGroupAt(1, matches)
+                            case "Back":
+                                exitLoop = FALSE
 
-                    if cm.opt("Back"):
+                        # if the item mime type is none, then we have an errror
+                        if Mime[itemFext] is not None:
+                            pushType = typeId['file']
+                        else
+                            itemErrorCode = 5
+                            itemErrorMsg = f"Extension: {itemFext}"
+
+                    case "View Item":
+                        # reloop to give user options again
+                        ShowResult(item)
                         exitLoop = FALSE
 
-                    filename = AskForInput
-                    # if the item mime type is none, then we have an errror
-                    if Mime[itemFext] is not None:
-                        pushType = typeId['file']
-                    else
-                        itemErrorCode = 5
-                        itemErrorMsg = f"Extension: {itemFext}"
-
-                elif typeMenu.opt("View Item"):
-                    # reloop to give user options again
-                    ShowResult(item)
-                    exitLoop = FALSE
-
-
-
-
     # ------------ HANDLE ITEM --------------
-
 
     if pushType == typeId['link']:
         itemPushBody['type'] = 'link'
@@ -230,11 +215,12 @@ for repeatItem in Contents:
     if pushType == typeId['file']:
         if itemFext == 'heic':
             item = ConvertImage(item, "JPEG")
-            itemFext = GetFileDetails("File Extension", item)
+            itemFext = GetDetailsOfFiles("File Extension", item)
 
         goodFileSize = TRUE
 
-        if GetFileDetails("File Size", item).MegaBytes() > 25:
+        size = GetDetailsOfFiles("File Size", item)
+        if SetSizeUnits(size, 'MB') > 25:
             if pushbulletPremium != 1:
                 goodFileSize = FALSE
 
@@ -252,11 +238,11 @@ for repeatItem in Contents:
             text = f"{itemFname}.{itemFext}"
 
             # upload request
-            UploadResponse = GetContentsOfURL(
-                    PushCall['upload_req_url'],
+            uploadResponse = GetContentsOfURL(
+                    pushCall['upload_req_url'],
                     method=POST,
                     headers={
-                        "Access-Token" : PushCall['accesstoken']
+                        "Access-Token" : pushCall['accesstoken']
                     },
                     type=JSON,
                     body={
@@ -265,7 +251,7 @@ for repeatItem in Contents:
                     }
                 )
 
-            text = UploadResponse['error']
+            text = uploadResponse['error']
 
             if text is not None:
                 itemErrorCode = 6
@@ -273,31 +259,31 @@ for repeatItem in Contents:
 
             else
                 GetContentsOfURL(
-                    UploadResponse['upload_url'],
-                    method=POST,
+                    uploadResponse['upload_url'],
+                    method='POST',
                     headers={
-                        "Access-Token" : PushCall['accesstoken']
+                        "Access-Token" : pushCall['accesstoken']
                     },
-                    type=FORM,
+                    type='FORM',
                     body={
                         'file': item
                     }
                 )
 
                 itemPushBody['type'] = 'file'
-                itemPushBody['file_name'] = UploadResponse['file_name']
-                itemPushBody['file_type'] = UploadResponse['file_type']
-                itemPushBody['file_url'] = UploadResponse['file_url']
+                itemPushBody['file_name'] = uploadResponse['file_name']
+                itemPushBody['file_type'] = uploadResponse['file_type']
+                itemPushBody['file_url'] = uploadResponse['file_url']
 
     # push the item
     if itemErrorCode == 0:
         res = GetContentsOfURL(
-                PushCall['push_url'],
-                method=POST,
+                pushCall['push_url'],
+                method='POST',
                 headers={
-                    "Access-Token" : PushCall['accesstoken']
+                    "Access-Token" : pushCall['accesstoken']
                 },
-                type=JSON,
+                type='JSON',
                 body=itemPushBody
             )
 
@@ -324,18 +310,23 @@ if Count("Items", failedPushes) > 0:
 # Check for updates
 UpdateRes = GetContentsOfURL(UpdateInfo['updateLink'])
 if Number(UpdateRes['version']) > UpdateInfo['version']:
-    split = SplitText(UpdateRes['releaseNotes'], SplitText.By.NewLines)
-    dt = Date(UpdateRes['releaseTime'])
+    Menu('There is a new version of this shortcut available'):
+        case 'Install Now':
+            split = SplitText(UpdateRes['releaseNotes'], SplitText.By.NewLines)
+            dt = Date(UpdateRes['releaseTime'])
 
-    text = f'''
-        Pushbullet Shortcut Update
-        An update is available for this shortcut
-        ...
-    '''
-    note = CreateNote(Text)
-    OpenNote(note)
+            text = f'''
+                Pushbullet Shortcut Update
+                An update is available for this shortcut
+                ...
+            '''
+            note = CreateNote(Text)
+            OpenNote(note)
 
-    StopShortcut()
+            StopShortcut()
+
+        case 'Later':
+            pass
 
 
 

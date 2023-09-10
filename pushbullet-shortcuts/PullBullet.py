@@ -25,7 +25,7 @@ dixOut = GetContentsOfURL(
 item = dixOut['pushes'][0]
 
 dixValue = item['type']
-filterContents = filter(
+filterContents = FilterFiles(
 		dixValue,
 		whereAny=[
 			"Name" is "note",
@@ -35,7 +35,6 @@ filterContents = filter(
 
 if filterContents is not None:
 	# note or link, but could contain a URL in the body
-	foundLink = None
 	bodyIsLink = FALSE
 	text = filterContents
 
@@ -43,11 +42,11 @@ if filterContents is not None:
 		# always has url
 		foundLink = item['url']
 	else:
-		size = GetFileDetails('File Size', item['body'])
-		if toBytes(size) <= 1024:
+		size = GetDetailsOfFiles('File Size', item['body'])
+		if SetSizeUnits(size, 'bytes') <= 1024:
 			# only consider when body is less than 1024 characters
 			# body may contain a url
-			urls = GetURLs(item['body'])
+			urls = GetURLsFrom(item['body'])
 			if urls is not None:
 				if urls.contains(item['body']):
 					# URLS are evaluated to full length
@@ -58,21 +57,21 @@ if filterContents is not None:
 	if foundLink is not None:
 		if bodyIsLink == TRUE:
 			item['body'] = ''
-		menu = Menu(prompt=f"Link:\n{foundLink}", options=["Open Link", "Copy Link", f"Copy Title ({item['title']})", f"Copy Message ({item['body']})"])
-
-		copyContent = None
-
-
-		if menu.opt("Open Link"):
+		
+		Menu(prompt=f'''
+				Link:
+				{foundLink}
+			'''):
+		case "Open Link":
 			OpenURL(foundLink)
 
-		elif menu.opt("Copy Link"):
+		case "Copy Link":
 			copyContent = foundLink
 
-		elif menu.opt("Copy Title"):
+		case f"Copy Title: {item['title']}":
 			copyContent = item['title']
 
-		elif menu.opt("Copy Message"):
+		case f"Copy Message ({item['body']})":
 			copyContent = item['body']
 
 
@@ -82,7 +81,10 @@ if filterContents is not None:
 
 	else:
 		if item['title'] is not None:
-			IFRESULT = f"{item['title']}\n{item['body']}"
+			IFRESULT = f'''
+				{item['title']}
+				{item['body']}
+			'''
 		else:
 			IFRESULT = f"{item['body']}"
 
@@ -91,7 +93,7 @@ if filterContents is not None:
 
 else:
 	# it is a file
-	urlContents = GetContentsOfURL(Item['file_url'])
+	urlContents = GetContentsOfURL(item['file_url'])
 	renamedItem = SetName(urlContents, item['file_name'], dontIncludeFileExtension=True)
 
 	if item['file_name'] == 'Pushed Text.txt':
@@ -107,16 +109,21 @@ else:
 # Check for updates
 UpdateRes = GetContentsOfURL(UpdateInfo['updateLink'])
 if Number(UpdateRes['version']) > UpdateInfo['version']:
-	split = SplitText(UpdateRes['releaseNotes'], SplitText.By.NewLines)
-	dt = Date(UpdateRes['releaseTime'])
+	Menu('There is a new version of this shortcut available'):
+		case 'Install Now':
+			split = SplitText(UpdateRes['releaseNotes'], SplitText.By.NewLines)
+			dt = Date(UpdateRes['releaseTime'])
 
-	text = f'''
-		Pushbullet Shortcut Update
-		An update is available for this shortcut
-		...
-	'''
-	note = CreateNote(Text)
-	OpenNote(note)
+			text = f'''
+				Pullbullet Shortcut Update
+				An update is available for this shortcut
+				...
+			'''
+			note = CreateNote(Text)
+			OpenNote(note)
 
-	StopShortcut()
+			StopShortcut()
+
+		case 'Later':
+			pass
 
