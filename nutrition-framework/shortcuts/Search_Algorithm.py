@@ -26,8 +26,16 @@ resCount = 6
 searchExit = FALSE
 pageNo = 1
 
+text = f'''
+    Enter Food/Drink search query.
+    To cancel, enter an empty search query.
+'''
 
 query = AskForInput(Input.Text, prompt="What Food/Drink?")
+
+updatedText = query.ReplaceText(' ', '')
+if updatedText is None:
+    StopShortcut()
 
 for _ in range (50):
     if searchExit == FALSE:

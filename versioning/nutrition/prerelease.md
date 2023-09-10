@@ -50,7 +50,7 @@ Calculate Stats
 	- **&#x1F3AF; Improvement**: Updated shortcut to handle errors if the storage folder cannot be found.
 - Search Algorithm v1.03
 	- **&#x1F3AF; Improvement**: Users no longer have to select a serving size for foods with only one available serving size ([#27](https://github.com/iffy-pi/apple-shortcuts/issues/27)).
-
+	- **&#x1F3AF; Improvement**: Users can cancel a search by entering an empty search query.
 
 ## RoutineHub
 Saved and Search 1.01
