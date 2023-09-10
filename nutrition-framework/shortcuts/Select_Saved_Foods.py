@@ -56,7 +56,7 @@ for curType in searchTypes:
         # create the vcard cache if it does not exist
         folder = GetFile(f"{storage}/{parentFolder}/Foods")
         files = GetContentsOfFolder(folder)
-        files = filter(files, sortBy='Last Modified Date', order='Latest First')
+        files = FilterFiles(files, sortBy='Last Modified Date', order='Latest First')
         for item in files:
             food = Dictionary(file)
             # some weird bug is limiting me to have to pull ID separately
@@ -100,7 +100,7 @@ choices.append(contact)
 
 SetName(vcardCache, 'vcard.vcf')
 contacts = GetContacts(renamedItem)
-files = filter(contacts, sortBy='Name')
+files = FilterFiles(contacts, sortBy='Name')
 choices.append(files)
 
 

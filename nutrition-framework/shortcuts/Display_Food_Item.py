@@ -118,8 +118,8 @@ else:
     for key in displayKeys.keys():
         field = displayKeys[key]
 
-        # get the field from the displayDix and set it in food
-        res = filter(nutriKeys, where=['Name' == key])
+        # If this is a nutrient, convert the value in the display dix to a number
+        res = FilterFiles(nutriKeys, where=['Name' == key])
         if res is not None:
             # replacing comma with dot to convert european decimals to standard decimals
             text = displayDix[field].replace(',', '.')

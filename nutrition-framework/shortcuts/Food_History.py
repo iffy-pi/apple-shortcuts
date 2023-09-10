@@ -65,7 +65,7 @@ Menu(prompt=prompt, ['More History Options', 'Exit']):
                 useDateList = TRUE
                 # go through all the keys
                 # reverse because we want the latest ones first
-                dateList = filter(history.keys(), sortBy=(Name, ZtoA))
+                dateList = FilterFiles(history.keys(), sortBy=(Name, ZtoA))
 
             case subMenu.opt('Exit'):
                 StopShortcut()
@@ -92,7 +92,7 @@ Menu(prompt=prompt, ['More History Options', 'Exit']):
 
             if dayDix is not None:
                 resultsForDay = []
-                keys = filter(dayDix.keys(), sortBy=(Name, ZtoA))
+                keys = FilterFiles(dayDix.keys(), sortBy=(Name, ZtoA))
 
                 # using this specific format as it remove ambiguity when converting from 24 h to 12 h time
                 text = Date(f'{timeKey}h').format(custom="h:mm a")

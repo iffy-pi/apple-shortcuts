@@ -84,7 +84,7 @@ for _ in Count(selectedIds):
 
             for contact in chosenIds:
                 # remove from selectedIds
-                selectedIds = filter(selectedIds, where='Name' != contact.Notes)
+                selectedIds = FilterFiles(selectedIds, where='Name' != contact.Notes)
 
                 item = foodsDix[contact.Notes]
                 curFood = Dictionary(item)
@@ -130,7 +130,7 @@ for _ in Count(selectedIds):
                 breakLoop = FALSE
                 for _ in range(10):
                     if breakLoop == FALSE:
-                        res = filter(presetNames, where['Name' == name])
+                        res = FilterFiles(presetNames, where['Name' == name])
                         if res is not None:
                             Menu(f'Preset "{name}" already exists'):
                                 case 'Select a different name':

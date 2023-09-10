@@ -14,7 +14,7 @@ dir_ = GetFile(f"{storage}/Recents/Foods")
 
 files = GetContentsOfFolder(dir_, errorIfNotFound=False)
 # sorting by latest first allows last used food to be on top
-files = filter(files, sortBy='Last Modified Date', order='Latest First')
+files = FilterFiles(files, sortBy='Last Modified Date', order='Latest First')
 
 # Generating contact cards for selected foods
 for item in files:

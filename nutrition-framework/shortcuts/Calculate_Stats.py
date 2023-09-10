@@ -203,7 +203,7 @@ for repeatIndex in range(repeats):
         # which is used to calculate the percentage for pie chart legeng
         dayTotal = CalculateStatistics("Sum", values)
 
-        for curNutrKey, index in filter(curSet['keys'], where='Name' != 'Calories'):
+        for curNutrKey, index in FilterFiles(curSet['keys'], where='Name' != 'Calories'):
             # for each nutrient, calculate its pie chart percentage and use it as the label for the nutrient
             # we filter calories because it is calculated separately
 
@@ -236,7 +236,7 @@ if averageBreakdown == TRUE:
 
         nutrTotal = CalculateStatistics("Sum", totalNutrDix.values())
         
-        for curNutrKey in filter(curSet['keys'], where='Name' != 'Calories'):
+        for curNutrKey in FilterFiles(curSet['keys'], where='Name' != 'Calories'):
             # divide each nutrient total by the number of dates we sampled 
 
             # calculates the percentage of the current nutrient in the sample range

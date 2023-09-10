@@ -71,7 +71,7 @@ for item in selectedFoods:
         breakLoop = FALSE
         for _ in range(10):
             if breakLoop == FALSE:
-                res = filter(foodNames, whereAll=['Name' == name, 'Name' != oldFood['Name']])
+                res = FilterFiles(foodNames, whereAll=['Name' == name, 'Name' != oldFood['Name']])
                 if res is not None:
                     Menu(f'There is already a food named "{name}"'):
                         case 'Select A Different Name':

@@ -66,7 +66,7 @@ for _ in range (50):
             '''
 
             # Add verifIcon if it is a best match
-            files = filter(tags, whereAny=['Name' == 'canonical', 'Name' == 'best_match'])
+            files = FilterFiles(tags, whereAny=['Name' == 'canonical', 'Name' == 'best_match'])
             if Count(files) == 2:
                 IFRESULT = f' {verifIcon}'
             else:

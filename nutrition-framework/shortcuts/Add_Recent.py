@@ -33,7 +33,7 @@ SaveFile(food, f"{storage}/Recents/Foods/{fileName}.json", overwrite=True)
 
 dir_ = GetFile(f"{storage}/Recents/Foods")
 files = GetContentsOfFolder(dir_)
-files = filter(files, sortBy='Last Modified Date', order='Latest First')
+files = FilterFiles(files, sortBy='Last Modified Date', order='Latest First')
 
 if Count(files) > maxRecents:
     # delete the latest exisiting food files until under maxRecents amount

@@ -37,7 +37,7 @@ for repeatItem in history.keys():
     if newDayDix is None:
         newDayDix = Dictionary()
     
-    for repeatItem2 in dayDix.keys().filter( name => name != "SAMPLE"):
+    for repeatItem2 in FilterFiles(dayDix.keys() where=['Name' != "SAMPLE"]):
         timeKey = repeatItem2
         logText = dayDix[timeKey]
         newTimeList = newDayDix[timeKey]
