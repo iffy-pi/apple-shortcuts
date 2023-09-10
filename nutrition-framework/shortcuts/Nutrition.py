@@ -9,7 +9,33 @@ Ver: 1.03
 TRUE = 1
 FALSE = 0
 
-storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+storageExists = FALSE
+
+file = GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt", errorIfNotFound=False)
+
+if file is not None:
+    storage = Text(file)
+else:
+    Menu('Storage Folder Could Not Be Found!'):
+        case 'Select Storage Folder From Folders In iCloud/Shortcuts':
+            folder = SelectFile(folders=True)
+            storage = f'{folder.Name}'
+        case 'Create Storage Folder in iCloud/Shortcuts':
+            storage = AskForInput(Input.Text, prompt="Enter folder name to store saved foods and configuration files", default='Nutrition')
+
+            breakLoop = FALSE
+            for _ in range(10):
+                if breakLoop == FALSE:
+                    if GetFile(storage, errorIfNotFound=False) is not None:
+                        Menu(f'Folder "{storage}" already exists in iCloud/Shortcuts'):
+                            case 'Select A Different Name':
+                                storage = AskForInput(Input.Text, prompt=f'Folder Name:')
+                            case 'Use Folder As Storage Folder':
+                                breakLoop = TRUE
+                    else:
+                        breakLoop = TRUE
+
+    SaveFile(storage, "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
 
 checkForUpdates = TRUE
 exitAfterQuickLog = TRUE
