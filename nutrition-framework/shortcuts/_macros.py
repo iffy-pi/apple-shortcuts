@@ -5,5 +5,5 @@ def textToContacts(var):
     return GetContacts(renamedItem)
 
 def convertTextFileToJSON():
-    GetFile(f"{folder}/{filename}.txt")
+    GetFile(From='Shortcuts', f"{folder}/{filename}.txt")
     RenameFile(f"{filename}.json")

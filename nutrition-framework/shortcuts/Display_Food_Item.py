@@ -4,7 +4,7 @@ ID:  10
 Ver: 1.01
 '''
 
-storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
 if ShortcutInput is not None:
     IFRESULT = foodDix
@@ -112,7 +112,7 @@ if dix is not None:
     foodDix = newFoodDix
 else:
     # parsing failed, build it the normal way by iterating through the keys
-    file = GetFile('FLS/Other/nutriKeys.txt')
+    file = GetFile(From='Shortcuts', 'FLS/Other/nutriKeys.txt')
     nutriKeys = SplitText(file, '\n')
 
     for key in displayKeys.keys():

@@ -9,9 +9,9 @@ Ver: 1.03
 TRUE = 1
 FALSE = 0
 
-storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
-nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
+nutrDix = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json"))
 cancelIcon = #.. cancelIcon.txt
 
 foodsDix = {}
@@ -34,7 +34,7 @@ hasNotes = FALSE
 params = Dictionary(ShortcutInput)
 
 
-file = GetFile(f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
+file = GetFile(From='Shortcuts', f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
 if file is not None:
     notes = f'''
         Food Notes:

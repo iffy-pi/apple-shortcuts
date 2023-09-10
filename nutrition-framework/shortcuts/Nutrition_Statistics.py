@@ -9,9 +9,9 @@ Ver: 1.0
 TRUE = 1
 FALSE = 0
 
-storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
-nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
+nutrDix = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json"))
 
 getDateRange = TRUE
 makeCaloriePlot = FALSE

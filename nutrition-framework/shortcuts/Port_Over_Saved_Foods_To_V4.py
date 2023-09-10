@@ -11,7 +11,7 @@ foodDirs = [
 ]
 
 # note files are originally text files without food ids
-file = GetFile("FLS/Other/nextFoodId.txt", errorIfNotFound=False)
+file = GetFile(From='Shortcuts', "FLS/Other/nextFoodId.txt", errorIfNotFound=False)
 if file is not None:
     IFRESULT = Number(file)
 else:
@@ -33,17 +33,17 @@ for REPEATITEM in nameFiles:
                 if food['id'] is None:
                     num = Number(nextId)
                     nextId = nextId+1
-                    SaveFile(nextId, "FLS/Other/nextFoodId.txt", overwrite=True)
+                    SaveFile(To='Shortcuts', nextId, "FLS/Other/nextFoodId.txt", overwrite=True)
                     IFRESULT = num
                 else:
                     IFRESULT = Number(food['id'])
                 
                 foodId = IFRESULT
-                SaveFile(food, f'{foodsDir}/food_{foodId}.json', overwrite=True)
+                SaveFile(To='Shortcuts', food, f'{foodsDir}/food_{foodId}.json', overwrite=True)
 
             DeleteFile(foodFile)
-    namesFile = GetFile(REPEATITEM, errorIfNotFound=False)
+    namesFile = GetFile(From='Shortcuts', REPEATITEM, errorIfNotFound=False)
     DeleteFile(namesFile, deleteImmediately=True)
 
-SaveFile(nextId, "FLS/Other/nextFoodId.txt", overwrite=True)
+SaveFile(To='Shortcuts', nextId, "FLS/Other/nextFoodId.txt", overwrite=True)
 

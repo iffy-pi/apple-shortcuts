@@ -34,7 +34,7 @@ RunShortcut(shortcuts['PFH'])
 Notification("4/5 Steps Completed")
 
 dix = Dictionary(Text(...)) # shortcutNames.json
-SaveFile(dix, "FLS/Other/shortcutNames.json", overwrite=True)
+SaveFile(To='Shortcuts', dix, "FLS/Other/shortcutNames.json", overwrite=True)
 
 delete = [
     "Other/shortcutDix.txt",
@@ -48,10 +48,10 @@ delete = [
 ]
 
 for d in delete:
-    file = GetFile(f"FLS/{d}", errorIfNotFound=False)
+    file = GetFile(From='Shortcuts', f"FLS/{d}", errorIfNotFound=False)
     DeleteFile(file)
 
-SaveFile("FLS", "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
+SaveFile(To='Shortcuts', "FLS", "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
 
 Notification("5/5 Steps Completed")
 

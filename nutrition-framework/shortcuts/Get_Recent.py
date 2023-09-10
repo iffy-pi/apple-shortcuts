@@ -6,11 +6,11 @@ Ver: 1.0
 
 # Select one or more foods from recent
 
-storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
 cancelIcon = # ... 
 
-dir_ = GetFile(f"{storage}/Recents/Foods")
+dir_ = GetFile(From='Shortcuts', f"{storage}/Recents/Foods")
 
 files = GetContentsOfFolder(dir_, errorIfNotFound=False)
 # sorting by latest first allows last used food to be on top
@@ -51,7 +51,7 @@ for chosen in selectedItems:
     if chosen.Notes == 'Cancel':
         StopShortcut()
 
-    file = GetFile(f"{storage}/Recents/Foods/food_{chosen.Notes}.json")
+    file = GetFile(From='Shortcuts', f"{storage}/Recents/Foods/food_{chosen.Notes}.json")
     selectedFoods.append(Dictionary(file))
 
 StopShorcut(output = selectedFoods)

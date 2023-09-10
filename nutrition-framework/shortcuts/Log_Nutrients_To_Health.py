@@ -6,12 +6,12 @@ Ver: 1.0
 
 # Log Nutrients to Apple Health
 
-storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
 # We save the dictionary to file and repull it because it enables us to fast track permissions
 # If we don't do it, fast tracking permissions wont work
-SaveFile(f'{storage}/Other/tempNutrientsDix.txt', Text(ShortcutInput), overwrite=True)
-nutrients = Dictionary( Text( GetFile(f'{storage}/Other/tempNutrientsDix.txt') ) )
+SaveFile(To='Shortcuts', f'{storage}/Other/tempNutrientsDix.txt', Text(ShortcutInput), overwrite=True)
+nutrients = Dictionary( Text( GetFile(From='Shortcuts', f'{storage}/Other/tempNutrientsDix.txt') ) )
 
 loggingDate = Date(nutrients['Date'])
 

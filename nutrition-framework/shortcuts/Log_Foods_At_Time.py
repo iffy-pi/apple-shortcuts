@@ -9,14 +9,14 @@ Ver: 1.01
 TRUE = 1
 FALSE = 0
 
-storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
-res = GetFile(f"{storage}/Other/shortcutNames.json")
+res = GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json")
 shortcutNames = Dictionary(res)
 
 prompt = 'What date and time?'
 
-file = GetFile(f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
+file = GetFile(From='Shortcuts', f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
 if file is not None:
     prompt = f'''
         Food Notes:
@@ -37,7 +37,7 @@ for item in RunShortcut(shortcutNames["Foods List"]):
     res = RunShortcut(shortcutNames["Log Algorithm"], input=dix)
     loggedFoods.append(res)
 
-file = GetFile(f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
+file = GetFile(From='Shortcuts', f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
 if file is not None:
     Menu('Clear food notes?'):
         case 'Yes':
@@ -49,7 +49,7 @@ makePreset = TRUE
 
 # If we only logged one item and the food is already a preset, then we dont prompt the make preset option
 if Count(loggedFoods) == 1:
-    file = GetFile(f"{storage}/Presets/Foods/food_{loggedFoods['id']}.json")
+    file = GetFile(From='Shortcuts', f"{storage}/Presets/Foods/food_{loggedFoods['id']}.json")
     if file is not None:
         makePreset = FALSE
 

@@ -9,8 +9,8 @@ Ver: 1.01
 TRUE = 1
 FALSE = 0
 
-storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
-nutrDix = Dictionary(GetFile(f'{storage}/Other/shortcutNames.json'))
+storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
+nutrDix = Dictionary(GetFile(From='Shortcuts', f'{storage}/Other/shortcutNames.json'))
 
 params = Dictionary(ShortcutInput)
 
@@ -37,17 +37,17 @@ if params['getFood'] is not None:
 barcode = Text(ScanBarcode())
 
 # barcodeCache maps barcodes to the ID of their food objects, allows immediate access of barcodes alread in personal database
-file = GetFile(f'{storage}/Barcodes/barcodeCache.json', errorIfNotFound=False)
+file = GetFile(From='Shortcuts', f'{storage}/Barcodes/barcodeCache.json', errorIfNotFound=False)
 if file is not None:
     IFRESULT = file
 else:
     # if the barcode cache does not exist, create it and then return the created cache
     barcodeCache = {}
-    folder = GetFile(f'{storage}/Barcodes/Foods', errorIfNotFound=False)
+    folder = GetFile(From='Shortcuts', f'{storage}/Barcodes/Foods', errorIfNotFound=False)
     for item in GetContentsOfFolder(folder):
         barcodeCache[ item['Barcode'] ] = item['id']
     
-    SaveFile(barcodeCache, f'{storage}/Barcodes/barcodeCache.json', overwrite=True)
+    SaveFile(To='Shortcuts', barcodeCache, f'{storage}/Barcodes/barcodeCache.json', overwrite=True)
     
     IFRESULT = barcodeCache
 
@@ -55,7 +55,7 @@ barcodeCache = IFRESULT
 
 if barcodeCache[barcode] is not None:
     # if barcode is in cache retrieve the food using the food ID i.e. barcodeCache[barcode]
-    file = GetFile(f'{storage}/Barcodes/Foods/food_{barcodeCache[barcode]}.json')
+    file = GetFile(From='Shortcuts', f'{storage}/Barcodes/Foods/food_{barcodeCache[barcode]}.json')
     
     if params['getFood'] is not None:
         # if we are getting a food then return the food
@@ -181,11 +181,11 @@ if foodResolved == FALSE:
 outputFood['Barcode'] = barcode
 
 barcodeCache[barcode] = outputFood['id']
-SaveFile(barcodeCache, f'{storage}/Barcodes/barcodeCache.json', overwrite=True)
-SaveFile(outputFood, f'{storage}/Barcodes/Foods/food_{outputFood['id']}.json', overwrite=True)
+SaveFile(To='Shortcuts', barcodeCache, f'{storage}/Barcodes/barcodeCache.json', overwrite=True)
+SaveFile(To='Shortcuts', outputFood, f'{storage}/Barcodes/Foods/food_{outputFood['id']}.json', overwrite=True)
 
 # delete the vcardCache for barcodes since we have added a new item
-DeleteFile(GetFile(f"{storage}/Barcodes/vcardCache.txt", errorIfNotFound=False), deleteImmediately=True)
+DeleteFile(GetFile(From='Shortcuts', f"{storage}/Barcodes/vcardCache.txt", errorIfNotFound=False), deleteImmediately=True)
 
 Notification(title='Barcoded Food Created', f'Barcoded Food "{barcode}" has been added to your database allowing you to scan them for later!')
 

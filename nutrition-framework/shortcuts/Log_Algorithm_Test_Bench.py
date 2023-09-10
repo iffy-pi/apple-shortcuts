@@ -1,7 +1,7 @@
 TRUE = 1
 FALSE = 0
 
-nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
+nutrDix = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json"))
 
 # clear cache before test
 RunShortcut(nutrDix['Clear Cache and Backlog'])
@@ -48,7 +48,7 @@ nutrSample = Dictionary({
 })
 
 # test that each nutrient is logged correctly
-file = GetFile('FLS/Other/nutriKeys.txt')
+file = GetFile(From='Shortcuts', 'FLS/Other/nutriKeys.txt')
 nutrients = SplitText(file, '\n')
 for i in (1,2):
     servings = i;
@@ -95,7 +95,7 @@ for i in (1,2):
 
         # check to make sure output food is logged to cache as expected
         cacheTestPassed = FALSE
-        dix = Dictionary( Text( GetFile(f"{storage}/History/foodHistoryCache.json") ))
+        dix = Dictionary( Text( GetFile(From='Shortcuts', f"{storage}/History/foodHistoryCache.json") ))
         cache = dix['cache']
         if cache is not None:
             cacheTestPassed = TRUE

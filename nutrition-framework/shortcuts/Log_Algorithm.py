@@ -10,9 +10,9 @@ Ver: 1.1
 TRUE = 1
 FALSE = 0
 
-storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
-nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
+nutrDix = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json"))
 
 setPerms = FALSE
 
@@ -35,7 +35,7 @@ foodDix = Dictionary(res['Food'])
 servings = Number(foodDix['Servings'])
 
 # get health app environment var
-dix = Dictionary(GetFile(f"{storage}/Other/env.json"))
+dix = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/env.json"))
 hasHelathApp = dix['hasHealthApp']
 
 # add to backlog and exit if we are not on a device with a health app
@@ -50,7 +50,7 @@ if hasHealthApp == FALSE:
     )
 
     # get the backlog file 
-    file = GetFile(f"{storage}/Other/backlog.json", noErrors=True)
+    file = GetFile(From='Shortcuts', f"{storage}/Other/backlog.json", noErrors=True)
 
     if file is not None:
         IFRESULT = Dictionary(file)
@@ -68,7 +68,7 @@ if hasHealthApp == FALSE:
 
     # save file
     dix = { 'backlog': backlog }
-    SaveFile(dix, f"{storage}/Other/backlog.json", overwrite=True)
+    SaveFile(To='Shortcuts', dix, f"{storage}/Other/backlog.json", overwrite=True)
 
     StopShortcut(output = foodDix)
 
@@ -113,7 +113,7 @@ else:
     IFRESULT = 0
 threshold = IFRESULT
 
-file = GetFile('FLS/Other/nutriKeys.txt')
+file = GetFile(From='Shortcuts', 'FLS/Other/nutriKeys.txt')
 # store the nutrients in the dictionary
 for item in SplitText(file, ByNewLines):
     num = Number(foodDix[item])
@@ -137,7 +137,7 @@ Notification(
 cals = RoundNumber(nutrients['Calories'], ones)
 
 # check if cache file exists and make one by default if not available
-file = GetFile(f"{storage}/History/foodHistoryCache.json", errorIfNotFound=False)
+file = GetFile(From='Shortcuts', f"{storage}/History/foodHistoryCache.json", errorIfNotFound=False)
 if file is not None:
     IFRESULT = Text(file)
 else:
@@ -162,7 +162,7 @@ dix = {
 }
 
 # save cache away for later
-SaveFile(dix, f"{storage}/History/foodHistoryCache.json", overwrite=True)
+SaveFile(To='Shortcuts', dix, f"{storage}/History/foodHistoryCache.json", overwrite=True)
 
 StopShortcut(output=foodDix)
 

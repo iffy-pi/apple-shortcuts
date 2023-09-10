@@ -9,7 +9,7 @@ Ver: 1.01
 
 TRUE = 1
 FALSE = 0
-storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
 cancelIcon = Text() 
 
@@ -49,12 +49,12 @@ for curType in searchTypes:
     parentFolder = dixVal['folder']
     prompt = dixVal['prompt']
 
-    file = GetFile(f"{storage}/{parentFolder}/vcardCache.txt", errorIfNotFound=False)
+    file = GetFile(From='Shortcuts', f"{storage}/{parentFolder}/vcardCache.txt", errorIfNotFound=False)
     if file is not None:
         IFRESULT = Text(file)
     else:
         # create the vcard cache if it does not exist
-        folder = GetFile(f"{storage}/{parentFolder}/Foods")
+        folder = GetFile(From='Shortcuts', f"{storage}/{parentFolder}/Foods")
         files = GetContentsOfFolder(folder)
         files = FilterFiles(files, sortBy='Last Modified Date', order='Latest First')
         for item in files:
@@ -76,7 +76,7 @@ for curType in searchTypes:
             '''
             REPEATRESULTS.append(text)
 
-        SaveFile(Text(REPEATRESULTS), f"{storage}/{parentFolder}/vcardCache.txt", overwrite=True)
+        SaveFile(To='Shortcuts', Text(REPEATRESULTS), f"{storage}/{parentFolder}/vcardCache.txt", overwrite=True)
 
         IFRESULT = Text(REPEATRESULTS)
 
@@ -120,7 +120,7 @@ for chosen in selectedItems:
     parentFolder = dix['folder']
 
     # make this the most used one
-    file = GetFile(f"{storage}/{parentFolder}/Foods/food_{foodId}.json")
+    file = GetFile(From='Shortcuts', f"{storage}/{parentFolder}/Foods/food_{foodId}.json")
     if file is not None:
         food = Dictionary(file)
 
@@ -134,11 +134,11 @@ for chosen in selectedItems:
 
 if deleteMode == TRUE:
     # delete the cache since some foods were deleted
-    file = GetFile(f"{storage}/{parentFolder}/vcardCache.txt", errorIfNotFound=False)
+    file = GetFile(From='Shortcuts', f"{storage}/{parentFolder}/vcardCache.txt", errorIfNotFound=False)
     DeleteFile(file, deleteImmediately=True)
 
     if params['type'] == 'barcodes':
-        file = GetFile(f"{storage}/{parentFolder}/barcodeCache.json", errorIfNotFound=False)
+        file = GetFile(From='Shortcuts', f"{storage}/{parentFolder}/barcodeCache.json", errorIfNotFound=False)
         DeleteFile(file, deleteImmediately=True)
 
 StopShortcut(output = selectedFoods)

@@ -23,7 +23,7 @@ For "1 [Chicken Noodles Super Pack (430 Kcal)]"
 '''
 
 newHistory = Dictionary()
-history = Dictionary(GetFile("FLS/History/foodHistoryDix.txt"))
+history = Dictionary(GetFile(From='Shortcuts', "FLS/History/foodHistoryDix.txt"))
 
 regex1 = text("([0-9][0-9]*[\.]*[0-9]*)x (.*) \(([0-9][0-9]*[\.]*[0-9]*) [kK][cC]al\)")
 regex2 = text("([0-9][0-9]*[\.]*[0-9]*) \[(.*) \(([0-9][0-9]*[\.]*[0-9]*) [kK][cC]al\)\]")
@@ -77,5 +77,5 @@ for repeatItem in history.keys():
     newHistory[dayKey] = newDayDix
 
     # save it to the file
-    SaveFile(newHistory, "FLS/History/foodHistory.json", overwrite=True)
+    SaveFile(To='Shortcuts', newHistory, "FLS/History/foodHistory.json", overwrite=True)
 

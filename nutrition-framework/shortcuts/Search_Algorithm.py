@@ -9,9 +9,9 @@ Ver: 1.02
 TRUE = 1
 FALSE = 0
 
-storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
-NutriDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
+NutriDix = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json"))
 
 # vcard base64 photo icons
 servingSizeIcon = # ... , see servingSizeIcon.txt
@@ -217,7 +217,7 @@ for _ in range (50):
                 }
 
                 # apply servings multiplier on nutrients
-                file = GetFile('FLS/Other/nutriKeys.txt')
+                file = GetFile(From='Shortcuts', 'FLS/Other/nutriKeys.txt')
                 nutrients = SplitText(file, '\n')
                 for item in nutrients:
                     num = Number(outputFood[item])

@@ -8,7 +8,7 @@ Ver: 1.0
 
 TRUE = 1
 FALSE = 0
-storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
 params = Dictionary(ShortcutInput)
 
@@ -17,7 +17,7 @@ savedInfo = {
     'presets': { 'folder': f'{storage}/Presets', 'prompt': 'Preset'}
 }
 
-nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
+nutrDix = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json"))
 
 # To determine whether we are editing for a preset or barcode we use the `type` field in the parameter dictionary passed into the shortcut
 # This can either be `barcodes` or `presets`
@@ -31,7 +31,7 @@ selectedFoods = IFRESULT
 # get the config for the given type from saved info, this includes the food folder as well as the prompt
 config = savedInfo [ params['type'] ]
 
-file = GetFile(f"{storage}/Other/nutriKeys.txt")
+file = GetFile(From='Shortcuts', f"{storage}/Other/nutriKeys.txt")
 nutriKeys = SplitText(file, '\n')
 
 for item in selectedFoods:
@@ -64,7 +64,7 @@ for item in selectedFoods:
         # need to ensure it isnt taken by something else
 
         # check to make sure it doesnt clash with other food names
-        folder = GetFile(f"{config['folder']}/Foods", errorIfNotFound=False)
+        folder = GetFile(From='Shortcuts', f"{config['folder']}/Foods", errorIfNotFound=False)
         for food in GetContentsOfFolder(folder):
             foodNames.append(food['Name'])
 
@@ -84,10 +84,10 @@ for item in selectedFoods:
     newFood['Name'] = name
 
     # save the file
-    SaveFile(newFood, f"{config['folder']}/food_{foodId}.json", overwrite=True)
+    SaveFile(To='Shortcuts', newFood, f"{config['folder']}/food_{foodId}.json", overwrite=True)
 
 # delete the cache since it is invalid
-file = GetFile(f"{config['folder']}/vcardCache.txt", errorIfNotFound=False)
+file = GetFile(From='Shortcuts', f"{config['folder']}/vcardCache.txt", errorIfNotFound=False)
 DeleteFile(file, deleteImmediately=True)
 
 

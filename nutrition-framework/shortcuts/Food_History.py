@@ -9,9 +9,9 @@ Ver: 1.01
 TRUE = 1
 FALSE = 0
 
-storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
-file = GetFile(f"{storage}/History/foodHistory.json")
+file = GetFile(From='Shortcuts', f"{storage}/History/foodHistory.json")
 if file is not None:
     IFRESULT = file
 else:

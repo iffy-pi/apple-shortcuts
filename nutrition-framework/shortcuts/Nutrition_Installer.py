@@ -69,7 +69,7 @@ if newInstall == TRUE:
     # And also generate installation links for all the children files
 
     # Let user select the storage folder 
-    file = GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt", errorIfNotFound=False)
+    file = GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt", errorIfNotFound=False)
     if file is not None:
         IFRESULT = file
     
@@ -79,7 +79,7 @@ if newInstall == TRUE:
         breakLoop = FALSE
         for _ in range(10):
             if breakLoop == FALSE:
-                if GetFile(newStorage, errorIfNotFound=False) is not None:
+                if GetFile(From='Shortcuts', newStorage, errorIfNotFound=False) is not None:
                     newStorage = AskForInput(Input.Text, prompt=f'Folder "{newStorage}" already exists, please select a different name', default=text)
                 else:
                     breakLoop = TRUE
@@ -87,14 +87,14 @@ if newInstall == TRUE:
         Alert('The folder name is saved in Shortcuts/Nutrition_Shortcut_Storage_Folder_Name.txt. To change the folder name, rename the folder and edit the text file'
             title=f'Shortcut files will be saved to Shortcuts/{newStorage}')
 
-        SaveFile(newStorage, "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
+        SaveFile(To='Shortcuts', newStorage, "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
 
         IFRESULT = newStorage
 
     storage = IFRESULT
 
     dix = Dictionary(...) # shortcutNames.json
-    SaveFile(dix, f"{storage}/Other/shortcutNames.json") # save shortcut names file
+    SaveFile(To='Shortcuts', dix, f"{storage}/Other/shortcutNames.json") # save shortcut names file
 
     proceedWithUpdates = TRUE
 

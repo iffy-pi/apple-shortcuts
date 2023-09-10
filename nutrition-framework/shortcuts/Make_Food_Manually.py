@@ -6,8 +6,8 @@ Ver: 1.0
 
 # Create a food by manually filling in the nutrient fieldds
 
-storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
-nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
+storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
+nutrDix = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json"))
 exactValDix = {
     'VitA': 1000,
     'VitC': 60,

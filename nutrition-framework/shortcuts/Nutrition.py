@@ -11,7 +11,7 @@ FALSE = 0
 
 storageExists = FALSE
 
-file = GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt", errorIfNotFound=False)
+file = GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt", errorIfNotFound=False)
 
 if file is not None:
     storage = Text(file)
@@ -26,7 +26,7 @@ else:
             breakLoop = FALSE
             for _ in range(10):
                 if breakLoop == FALSE:
-                    if GetFile(storage, errorIfNotFound=False) is not None:
+                    if GetFile(From='Shortcuts', storage, errorIfNotFound=False) is not None:
                         Menu(f'Folder "{storage}" already exists in iCloud/Shortcuts'):
                             case 'Select A Different Name':
                                 storage = AskForInput(Input.Text, prompt=f'Folder Name:')
@@ -35,13 +35,13 @@ else:
                     else:
                         breakLoop = TRUE
 
-    SaveFile(storage, "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
+    SaveFile(To='Shortcuts', storage, "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
 
 checkForUpdates = TRUE
 exitAfterQuickLog = TRUE
 
 # load names of the shortcuts
-res = GetFile(f"{storage}/Other/shortcutNames.json")
+res = GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json")
 shortcutNames = Dictionary(res)
 
 text = '''
@@ -63,7 +63,7 @@ text = '''
     Calcium
     Iron
 '''
-SaveFile(text, f"{storage}/Other/nutriKeys.txt")
+SaveFile(To='Shortcuts', text, f"{storage}/Other/nutriKeys.txt")
 
 # Device has health app if on iphone or iPad on OS 17 and higher
 hasHealthApp = FALSE
@@ -78,10 +78,10 @@ if deviceModel == 'iPad':
         hasHealthApp = TRUE
 
 # save the state of the health app to environment
-file = GetFile(f"{storage}/Other/env.json", errorIfNotFound=False)
+file = GetFile(From='Shortcuts', f"{storage}/Other/env.json", errorIfNotFound=False)
 env = Dictionary(file)
 env['hasHealthApp'] = hasHealthApp
-SaveFile(env, f"{storage}/Other/env.json", overwrite=True)
+SaveFile(To='Shortcuts', env, f"{storage}/Other/env.json", overwrite=True)
 
 # fast track health app permissions
 if env['permsEnabled'] is None:
@@ -94,7 +94,7 @@ if env['permsEnabled'] is None:
         Alert("Your Apple Health permissions may have not been fully set, the shortcut will fast track through sample logging permissions", title="Health Sample Permissions")
         RunShortcut(shortcutNames['Log Algorithm'], input={'setPerms': True})
         env['permsEnabled'] = TRUE
-        SaveFile(env, f"{storage}/Other/env.json", overwrite=True)
+        SaveFile(To='Shortcuts', env, f"{storage}/Other/env.json", overwrite=True)
 
 
 if hasHealthApp == FALSE:
@@ -114,7 +114,7 @@ else:
     _sum = CalculateStatistics(healthSamples, "Sum")
     calsToday = Round (_sum, "hundredths")
 
-    file = GetFile(f"{storage}/Other/backlog.json", errorIfNotFound=False)
+    file = GetFile(From='Shortcuts', f"{storage}/Other/backlog.json", errorIfNotFound=False)
     if file is not None:
         IFRESULT = f"You've eaten {calsToday} calories today.\nThere are foods in your backlog."
     else:
@@ -124,7 +124,7 @@ else:
 
 prompt = IFRESULT
 
-file = GetFile('FLS/Other/foodNotes.txt', errorIfNotFound=False)
+file = GetFile(From='Shortcuts', 'FLS/Other/foodNotes.txt', errorIfNotFound=False)
 if file is not None:
     prompt = f'''
     {prompt}
@@ -183,7 +183,7 @@ Menu(prompt):
         case "Food History":
             RunShortcut(shortcutNames["Clear Cache And Backlog"])
 
-            file = GetFile(f"{storage}/Other/backlog.json", errorIfNotFound=False)
+            file = GetFile(From='Shortcuts', f"{storage}/Other/backlog.json", errorIfNotFound=False)
             if file is not None
                 ShowAlert("There are items in the backlog, food history will not be accurate until backlog is cleared", showCancel=True)
             
@@ -195,7 +195,7 @@ Menu(prompt):
             RunShortcut(shortcutNames["Clear Cache And Backlog"])
 
         case "Clear Food Notes":
-            file = GetFile(f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
+            file = GetFile(From='Shortcuts', f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
             DeleteFile(file, deleteImmediately=True)
 
         case "Fast Track Health Permissions":
@@ -203,7 +203,7 @@ Menu(prompt):
             RunShortcut(shortcutNames['Log Algorithm'], input={'setPerms': True})
 
         case "View Storage Folder":
-            folder = GetFile(storage)
+            folder = GetFile(From='Shortcuts', storage)
             OpenFile(folder)
 
         case "Rename Storage Folder":
@@ -212,15 +212,15 @@ Menu(prompt):
                 breakLoop = FALSE
                 for _ in range(10):
                     if breakLoop == FALSE:
-                        if GetFile(newStorage, errorIfNotFound=False) is not None:
+                        if GetFile(From='Shortcuts', newStorage, errorIfNotFound=False) is not None:
                             newStorage = AskForInput(Input.Text, f'Folder "{newStorage}" already exists, please select a different name')
                         else
                             breakLoop = TRUE
 
-                folder = GetFile(storage)
+                folder = GetFile(From='Shortcuts', storage)
                 RenameFile(folder, newStorage)
                 storage = newStorage
-                SaveFile(storage, "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
+                SaveFile(To='Shortcuts', storage, "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
 
         case 'Tutorial':
             OpenURL("https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/data/tutorial.html")
@@ -230,4 +230,4 @@ RunShortcut(shortcutNames['Clear Cache and Backlog'])
 
 if checkForUpdates == TRUE:
     RunShortcut(shortcutNames["Installer"], input={'updateCheck': True})
-    #SaveFile(Text(CurrentDate.format(date="short", time=None)), f"{storage}/Other/lastUpdateCheck.txt", overwrite=True)
+    #SaveFile(To='Shortcuts', Text(CurrentDate.format(date="short", time=None)), f"{storage}/Other/lastUpdateCheck.txt", overwrite=True)

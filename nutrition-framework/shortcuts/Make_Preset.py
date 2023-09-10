@@ -6,8 +6,8 @@ Ver: 1.03
 
 # Make a preset with passed in foods or a new list of foods
 
-storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
-nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
+storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
+nutrDix = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json"))
 
 TRUE = 1
 FALSE = 0
@@ -43,13 +43,13 @@ else:
         selectedIds.append(nextId)
         nextId = nextId+1
 
-file = GetFile(f'{storage}/Other/nutriKeys.txt')
+file = GetFile(From='Shortcuts', f'{storage}/Other/nutriKeys.txt')
 nutriKeys = SplitText(file, '\n')
 
 breakLoop = FALSE
 
 # Get the presetNames
-folder = GetFile(f"{storage}/Presets/Foods", errorIfNotFound=False)
+folder = GetFile(From='Shortcuts', f"{storage}/Presets/Foods", errorIfNotFound=False)
 for file in GetContentsOfFolder(folder):
     presetNames.append(file['Name'])
 
@@ -150,11 +150,11 @@ for _ in Count(selectedIds):
             presetFood['Name'] = name
 
             # save to file
-            SaveFile(presetFood, f"{storage}/Presets/Foods/food_{foodId}.json", overwrite=True)
+            SaveFile(To='Shortcuts', presetFood, f"{storage}/Presets/Foods/food_{foodId}.json", overwrite=True)
 
         else:
             breakLoop = TRUE
 
 # delete the cache since it is invalid
-file = GetFile(f"{storage}/Presets/vcardCache.txt", errorIfNotFound=False)
+file = GetFile(From='Shortcuts', f"{storage}/Presets/vcardCache.txt", errorIfNotFound=False)
 DeleteFile(file, deleteImmediately=True)

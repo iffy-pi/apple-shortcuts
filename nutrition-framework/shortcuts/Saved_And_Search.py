@@ -9,9 +9,9 @@ Ver: 1.01
 TRUE = 1
 FALSE = 0
 
-storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
-res = GetFile(f"{storage}/Other/shortcutNames.json")
+res = GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json")
 shortcutNames = Dictionary(res)
 Menu("Saved And Search"):
     case "Search and View":
@@ -57,13 +57,13 @@ Menu("Saved And Search"):
                     changedFood = Dictionary(RunShortcut(shortcutNames["Display Food Item"], input=repeatItem))
                     Menu(f'Save Changes to {changedFood['Name']}?'):
                         case 'Yes':
-                            SaveFile(changedFood, f"{storage}/Presets/Foods/food_{changedFood['id']}.json", overwrite=True)
+                            SaveFile(To='Shortcuts', changedFood, f"{storage}/Presets/Foods/food_{changedFood['id']}.json", overwrite=True)
                             deletePresetCache = TRUE
                         case 'No':
                             pass
 
                 if deletePresetCache == TRUE:
-                    file = GetFile('FLS/Presets/vcardCache.txt', errorIfNotFound=False)
+                    file = GetFile(From='Shortcuts', 'FLS/Presets/vcardCache.txt', errorIfNotFound=False)
                     DeleteFile(file, deleteImmediately=True)
 
             case "Make Preset":
@@ -92,13 +92,13 @@ Menu("Saved And Search"):
                     changedFood = Dictionary(RunShortcut(shortcutNames["Display Food Item"], input=repeatItem))
                     Menu(f'Save Changes to {changedFood['Name']}?'):
                         case 'Yes':
-                            SaveFile(changedFood, f"{storage}/Barcodes/Foods/food_{changedFood['id']}.json", overwrite=True)
+                            SaveFile(To='Shortcuts', changedFood, f"{storage}/Barcodes/Foods/food_{changedFood['id']}.json", overwrite=True)
                             deletePresetCache = TRUE
                         case 'No':
                             pass
 
                 if deletePresetCache == TRUE:
-                    file = GetFile('FLS/Barcodes/vcardCache.txt', errorIfNotFound=False)
+                    file = GetFile(From='Shortcuts', 'FLS/Barcodes/vcardCache.txt', errorIfNotFound=False)
                     DeleteFile(file, deleteImmediately=True)
             case "Add to Personal Database":
                 RunShortcut(shortcutNames["Barcode Search"])

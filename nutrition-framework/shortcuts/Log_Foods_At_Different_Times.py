@@ -9,13 +9,13 @@ Ver: 1.02
 TRUE = 1
 FALSE = 0
 
-storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
-nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
+nutrDix = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json"))
 
 hasFoodNotes = FALSE
 
-file = GetFile(f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
+file = GetFile(From='Shortcuts', f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
 if file is not None:
     notes = f'''
         Food Notes:
@@ -240,7 +240,7 @@ for listId in selectedIds:
 if hasNotes == TRUE:
     Menu('Clear food notes?'):
         case 'Yes':
-            file = GetFile(f"{storage}/Other/foodNotes.txt")
+            file = GetFile(From='Shortcuts', f"{storage}/Other/foodNotes.txt")
             DeleteFile(file, deleteImmediately=True)
         case 'No':
             pass

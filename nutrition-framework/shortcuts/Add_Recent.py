@@ -6,7 +6,7 @@ Ver: 1.01
 
 # Add input food to recents
 
-storage = Text(GetFile("Nutrition_Shortcut_Storage_Folder_Name.txt"))
+storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
 # Text of shortcut input to unlink from file handler of food file
 # Without it, overwrites dont really work as it just passes the same file to the system
@@ -15,7 +15,7 @@ food = Dictionary(Text(ShortcutInput))
 if food is None:
     StopShortcut()
 
-nutrDix = Dictionary(GetFile(f"{storage}/Other/shortcutNames.json"))
+nutrDix = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json"))
 
 maxRecents = 30
 
@@ -29,9 +29,9 @@ foodId = IFRESULT
 
 # add food to recent if it doesn't already exist
 # by saving it, it will be at top of list when we get recents
-SaveFile(food, f"{storage}/Recents/Foods/{fileName}.json", overwrite=True)
+SaveFile(To='Shortcuts', food, f"{storage}/Recents/Foods/{fileName}.json", overwrite=True)
 
-dir_ = GetFile(f"{storage}/Recents/Foods")
+dir_ = GetFile(From='Shortcuts', f"{storage}/Recents/Foods")
 files = GetContentsOfFolder(dir_)
 files = FilterFiles(files, sortBy='Last Modified Date', order='Latest First')
 
