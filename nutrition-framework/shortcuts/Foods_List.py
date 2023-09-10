@@ -59,19 +59,24 @@ for _ in range(maxLoops):
             IFRESULT = f'''
             No foods selected
             '''
+        prompt = IFRESULT
+        
         # append our food notes if they are any
         if hasNotes == TRUE:
-            IFRESULT2 = f'''
+            prompt = f'''
                 {notes}
-                {IFRESULT}
+                {prompt}
             '''
-        else:
-            IFRESULT2 = IFRESULT
 
+        if params['inputPrompt'] is not None:
+            prompt = f'''
+            {params['inputPrompt']}
+            {prompt}
+            '''
 
         addMenuResult = TRUE
 
-        Menu(IFRESULT2):
+        Menu(prompt):
             case 'Done Selecting Foods':
                 addMenuResult = FALSE
 
@@ -181,7 +186,7 @@ for _ in range(maxLoops):
                 for delete in deletes:
                     listId = Contact(delete).Notes
                     # remove it from the list
-                    selectedIds = filter(selectedIds, where=['Name' != listId])
+                    selectedIds = FilterFiles(selectedIds, where=['Name' != listId])
 
         if addMenuResult == TRUE:
             # add the foods to our selected foods

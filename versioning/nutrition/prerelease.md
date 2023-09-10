@@ -38,7 +38,9 @@ Calculate Stats
 # v4.07
 ## Markdown
 - Foods List v1.04
-	- **&#x1F3AF; Improvement**: Renamed menu items to be correct. ([#24](https://github.com/iffy-pi/apple-shortcuts/issues/24))
+	- **&#x1F3AF; Improvement**: Renamed menu items to be correct ([#24](https://github.com/iffy-pi/apple-shortcuts/issues/24)).
+- Log Foods At Different Times v1.1
+	- **&#x0020;&#x1F525; Feature**: Rehaul of logging process to allow users to add foods, edit log time for food or remove foods from the list ([#25](https://github.com/iffy-pi/apple-shortcuts/issues/25)).
 - Log Foods At Time v1.02
 	- **&#x1F3AF; Improvement**: Added food notes to prompt when asking for date and time.
 - Nutrition Statistics v1.01
