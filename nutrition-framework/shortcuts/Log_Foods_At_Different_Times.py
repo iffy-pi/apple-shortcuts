@@ -50,20 +50,19 @@ for _ in range(30):
                 REPEATRESULTS.append(text)
 
             contacts = macros.textToContacts(f'{REPEATRESULTS}')
-            contacts = FilterFiles(contacts, sortBy='Name, A-Z')
 
-            for contact in contacts:
+            for contact in FilterFiles(contacts, sortBy='Name', order='A to Z'):
                 listId = contact.Notes
                 food = foodsInfo[listId]
                 date = datesInfo[listId]
                 warning = ''
                 if date is not None:
-                    datePrompt = f' for {date.format(custom='h:mm a, MMM d')}'
+                    datePrompt = f' {date.format(custom='MMM d, h:mm a: ')}'
                 else:
                     warning = ' ⚠'
                     datePrompt = ''
 
-                REPEATRESULTS.append(f'{food['Servings']}x {food['Name']}{datePrompt}{warning}')
+                REPEATRESULTS.append(f'{datePrompt}{food['Servings']}x {food['Name']}{warning}')
 
             IFRESULT = f'''
                 Added Foods:
