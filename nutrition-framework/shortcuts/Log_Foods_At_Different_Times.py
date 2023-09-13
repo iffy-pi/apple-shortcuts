@@ -43,12 +43,12 @@ for _ in range(30):
                 date = datesInfo[listId]
                 warning = ''
                 if date is not None:
-                    datePrompt = f' for {date.format(custom='h:mm a, MMM d')}'
+                    datePrompt = f'{date.format(custom='MMM d, h:mm a')}: '
                 else:
                     warning = ' ⚠'
                     datePrompt = ''
 
-                REPEATRESULTS.append(f'{food['Servings']}x {food['Name']}{datePrompt}{warning}')
+                REPEATRESULTS.append(f'{datePrompt}{food['Servings']}x {food['Name']}{warning}')
 
             IFRESULT = f'''
                 Added Foods:
