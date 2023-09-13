@@ -39,6 +39,21 @@ for _ in range(30):
         # Generate a simple menu prompt listing all the foods added with their log times
         if Count(selectedIds) > 0:
             for listId in selectedIds:
+                date = datesInfo[listId]
+                text = f'''
+                        BEGIN:VCARD
+                        VERSION:3.0
+                        N;CHARSET=UTF-8:{date.format(custom='yyyyMMddHHmm')}
+                        NOTE;CHARSET=UTF-8:{listId}
+                        END:VCARD
+                    '''
+                REPEATRESULTS.append(text)
+
+            contacts = macros.textToContacts(f'{REPEATRESULTS}')
+            contacts = FilterFiles(contacts, sortBy='Name, A-Z')
+
+            for contact in contacts:
+                listId = contact.Notes
                 food = foodsInfo[listId]
                 date = datesInfo[listId]
                 warning = ''
