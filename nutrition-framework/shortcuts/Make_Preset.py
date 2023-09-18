@@ -127,19 +127,19 @@ for _ in Count(selectedIds):
             name = AskForInput(Input.Text, prompt="What is the name of this preset?", default=defaultName)
 
             if Count(presetNames) > 0:
-                breakLoop = FALSE
+                breakNameLoop = FALSE
                 for _ in range(10):
-                    if breakLoop == FALSE:
+                    if breakNameLoop == FALSE:
                         res = FilterFiles(presetNames, where['Name' == name])
                         if res is not None:
                             Menu(f'Preset "{name}" already exists'):
                                 case 'Select a different name':
                                     name = AskForInput(Input.Text, prompt=f'"{name}" already exists, please select a new name', default=name)
                                 case 'Keep both with same name':
-                                    breakLoop = TRUE
+                                    breakNameLoop = TRUE
                         else:
                             presetNames.append(name)
-                            breakLoop = TRUE
+                            breakNameLoop = TRUE
 
             servingSize = AskForInput(Input.Text, prompt="What is the serving size of this preset?", default=defaultSize)
 
