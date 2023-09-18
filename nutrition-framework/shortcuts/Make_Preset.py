@@ -68,7 +68,7 @@ for _ in Count(selectedIds):
             '''
             REPEATRESULTS.append(text)
 
-        contacts = textToContacts(REPEATRESULTS)
+        contacts = macros.textToContacts(REPEATRESULTS)
 
         if confirmServings == TRUE:
             IFRESULT = f'Select Foods to be made into Preset\nYou can edit the servings of selected foods'
