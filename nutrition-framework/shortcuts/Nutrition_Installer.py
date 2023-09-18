@@ -102,28 +102,7 @@ if newInstall == TRUE:
     updateInfo['version'] = 0.0
 
     # reset child vers to 0
-    childVers = childVers = {
-        "5":0.0,
-        "6":0.0,
-        "7":0.0,
-        "8":0.0,
-        "9":0.0,
-        "10":0.0,
-        "11":0.0,
-        "12":0.0,
-        "13":0.0,
-        "14":0.0,
-        "15":0.0,
-        "16":0.0,
-        "17":0.0,
-        "18":0.0,
-        "19":0.0,
-        "20":0.0,
-        "21":0.0,
-        "22":0.0,
-        "23":0.0,
-        "24":0.0
-    }
+    childVers = {}
 
 updateRes = Dictionary(GetContentsOfURL(updateInfo['updateLink']))
 
@@ -157,7 +136,8 @@ if Number(updateRes['version']) > updateInfo['version']:
 
         for child in updateRes['children']:
             curVer = childVers[ child['id'] ]
-            if Number(child['version']) > curVer:
+            # using number action so if curver does not exist, then its evaluated to 0
+            if Number(child['version']) > Number(curVer):
                 updateText.append(f"- {child['name']}: v{curVer} {emojiUnicodes['arrow']} v{child['version']}")
                 updateLinks.append(f"- {child['name']} - [Download]({child['link']})")
 
