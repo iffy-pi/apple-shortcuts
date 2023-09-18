@@ -51,8 +51,9 @@ Calculate Stats
 - Search Algorithm v1.03
 	- **&#x1F3AF; Improvement**: Users no longer have to select a serving size for foods with only one available serving size ([#27](https://github.com/iffy-pi/apple-shortcuts/issues/27)).
 	- **&#x1F3AF; Improvement**: Users can cancel a search by entering an empty search query.
+	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where shortcut crashes during parsing of search results ([#29](https://github.com/iffy-pi/apple-shortcuts/issues/29)).
 - Make Preset v1.04
-	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where users could not create multiple presets from a given set of foods. ([#28](https://github.com/iffy-pi/apple-shortcuts/issues/28)).
+	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where users could not create multiple presets from a given set of foods ([#28](https://github.com/iffy-pi/apple-shortcuts/issues/28)).
 
 ## RoutineHub
 Saved and Search 1.01

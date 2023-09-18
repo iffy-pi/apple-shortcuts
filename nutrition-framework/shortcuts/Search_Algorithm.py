@@ -60,7 +60,7 @@ for _ in range (50):
             servingSize = f"{num} {dix['unit']}"
 
             if Count(sizes) > 1:
-                servingSize = f"{servingSize} (and more...)"
+                servingSize = f"{servingSize} (and more sizes)"
 
 
             if item['brand_name'] is not None:
@@ -68,10 +68,36 @@ for _ in range (50):
             else:
                 IFRESULT = f"{servingSize}"
 
-            # Note this is actually a literal \n, not a newline character
-            subtitle = f'''
-                {IFRESULT}\nCals: {item['nutritional_contents.energy.value']} ⸱ Carbs: {item['nutritional_contents.carbohydrates']}g ⸱ Fat: {item['nutritional_contents.fat']}g ⸱ Protein: {item['nutritional_contents.protein']}g
-            '''
+            subtitle = IFRESULT
+
+            dix = item['nutritional_contents']
+            
+            # if a food has no energy dictionary, add a zeroed out dictionary
+            # avoids key errors when accessing nested value key for missing energy dictionary
+            if item['nutritional_contents.energy'] is None:
+                dix['energy'] = {
+                    "unit": "calories",
+                    "value": 0
+                },
+
+                item['nutritional_contents'] = dix
+                searchItems[itemId] = item
+
+            # only add the subtitle if all the relevant keys exist in the food
+            res = FilterFiles(dix.keys, whereAny=[
+                    'Name' == 'energy',
+                    'Name' == 'carbohydrates',
+                    'Name' == 'fat',
+                    'Name' == 'protein'
+                ])
+
+            if Count(res) == 4:
+                # In shortcuts, you can access nested keys using dot notation
+                # so item['a.b.c'] is equivalent to python item['a']['b']['c']
+                # Note this is actually a literal \n, not a newline character
+                subtitle = f'''
+                    {subtitle}\nCals: {item['nutritional_contents.energy.value']} ⸱ Carbs: {item['nutritional_contents.carbohydrates']}g ⸱ Fat: {item['nutritional_contents.fat']}g ⸱ Protein: {item['nutritional_contents.protein']}g
+                '''
 
             # Add verifIcon if it is a best match
             files = FilterFiles(tags, whereAny=['Name' == 'canonical', 'Name' == 'best_match'])
@@ -222,15 +248,31 @@ for _ in range (50):
                 selectedItem = item
                 selectedServingSize = Text(chosenSize.Name)
                 multiplier = Number(chosenSize.Notes)
-
+                nutrInfo = Dictionary(selectedItem['nutritional_contents'])
 
                 outputFood = {
-                    # that special dictionary that has all the values
-                    # set Calories to item['nutritional_contents.energy.value']
-                    # set serving size to selectedServingSize 
-                    # set name to name
-                    # set id to res
+                    "Name":            item['description'],
+                    "Barcode":         "",
+                    "Serving Size":    selectedServingSize,
+                    "Calories":        nutrInfo['energy.value'],
+                    "Carbs":           nutrInfo['carbohydatrates'],
+                    "Sugar":           nutrInfo['sugar'],
+                    "Fiber":           nutrInfo['fiber'],
+                    "Protein":         nutrInfo['protein'],
+                    "Fat":             nutrInfo['fat'],
+                    "Monounsaturated": nutrInfo['monounsaturated_fat'],
+                    "Polyunsaturated": nutrInfo['polyunsaturated_fat'],
+                    "Saturated":       nutrInfo['saturated_fat'],
+                    "Trans":           0,
+                    "Sodium":          nutrInfo['sodium'],
+                    "Cholesterol":     nutrInfo['cholesterol'],
+                    "Potassium":       nutrInfo['potassium'],
+                    "VitA":            nutrInfo['vitamin_a'],
+                    "VitC":            nutrInfo['vitamin_c'],
+                    "Calcium":         nutrInfo['calcium'],
+                    "Iron":            nutrInfo['iron']
                 }
+
 
                 # apply servings multiplier on nutrients
                 file = GetFile(From='Shortcuts', 'FLS/Other/nutriKeys.txt')
