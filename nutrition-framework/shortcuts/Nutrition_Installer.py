@@ -187,5 +187,12 @@ if Number(updateRes['version']) > updateInfo['version']:
             {updateRes['rhub']}/changelog
         """
         richText = MakeRichTextFromMarkdown(text)
-        note = CreateNote(richText, openNote=True)
+        CopyToClipboard(richText)
+
+        warningText = '''
+            Instructions
+            Paste the contents of your clipboard into this note to see the instructions!
+        '''
+        
+        note = CreateNote(warningText, openNote=True)
 
