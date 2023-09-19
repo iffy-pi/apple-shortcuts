@@ -40,7 +40,7 @@ Calculate Stats
 
 
 ARE THESE INSTRUCTIONS NOT PROPERLY FORMATTED? 
-VISIT https://routinehub.co/shortcut/5177/ TO DOWNLOAD THE LATEST VERSION TO FIX THIS BUG INTRODUCED WITH IOS 17
+DOWNLOAD PATCHED INSTALLER: https://www.icloud.com/shortcuts/99d2f0aac4364ef3a62561fb79e4230b <==== HERE!!!
 
 
 - Nutrition Installer
