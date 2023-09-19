@@ -37,6 +37,12 @@ Calculate Stats
 
 # v4.07
 ## Markdown
+
+
+ARE THESE INSTRUCTIONS NOT PROPERLY FORMATTED? 
+VISIT https://routinehub.co/shortcut/5177/ TO DOWNLOAD THE LATEST VERSION TO FIX THIS BUG INTRODUCED WITH IOS 17
+
+
 - Nutrition Installer
 	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where "Log Nutrients to Health" was not being shown as a valid shortcut.
 	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed issue where installation/update instructions are not being generated properly.
