@@ -1,7 +1,7 @@
 '''
 Framework: Nutrition (id = 4)
 ID:  6 
-Ver: 1.03
+Ver: 1.03 # make sure to keep this version in parity with foods list!!!
 '''
 
 # Select one or more foods from the different available foods sources
