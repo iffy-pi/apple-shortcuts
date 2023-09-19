@@ -187,12 +187,21 @@ if Number(updateRes['version']) > updateInfo['version']:
             {updateRes['rhub']}/changelog
         """
         richText = MakeRichTextFromMarkdown(text)
-        CopyToClipboard(richText)
 
-        warningText = '''
-            Instructions
-            Paste the contents of your clipboard into this note to see the instructions!
-        '''
-        
-        note = CreateNote(warningText, openNote=True)
+        sysVers = GetDeviceDetails('System Version')
+
+        # for now bug affects 17.0 and onwards
+        if sysVers >= 17.0:
+            # use the patch
+            CopyToClipboard(richText)
+
+            warningText = '''
+                Instructions
+                Paste the contents of your clipboard into this note to see the instructions!
+                This is a patch to a rich text issue introduced with iOS 17.0.
+            '''
+            
+            CreateNote(warningText, openNote=True)
+        else:
+            CreateNote(richText, openNote=True)
 
