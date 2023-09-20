@@ -1,6 +1,13 @@
 # Using Nutrition
 *You can access this tutorial in the future from Clear and Other Settings > Tutorial*
 
+## Allowing Health Access
+For the shortcut to work properly, you must give it access to your Health data. To do this:
+1. Open the shortcut "Log Nutrients To Health"
+2. Scroll down to the Health Sample Action and Click "Allow Access"
+3. Select "Allow All" and then "Allow"
+4. Repeat this process for each Health Sample action.
+
 ## The Main Menu
 The main shortcut is **Nutrition**. Once started, you are provided with a main menu for all relevant actions:
 

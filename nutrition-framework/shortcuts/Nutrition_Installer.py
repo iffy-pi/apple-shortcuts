@@ -151,6 +151,8 @@ if Number(updateRes['version']) > updateInfo['version']:
                 &nbsp;
                 After installation, the main shortcut to run is Nutrition. Not sure where to start? Check out the [tutorial](https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/data/tutorial.html).
                 &nbsp;
+                Note: Make sure to give the shortcut access to read and write Health data, refer to Allowing Health Access in the tutorial.
+                &nbsp;
                 Note: If you wish to use Nutrition Statistics, you must install [Charty](https://apps.apple.com/ca/app/charty-for-shortcuts/id1494386093).
                 &nbsp;
                 If you run into any errors or issues, please contact developer. (See developer contact below)
