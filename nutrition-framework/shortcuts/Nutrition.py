@@ -1,7 +1,7 @@
 '''
 Framework: Nutrition (id = 4)
 ID:  5 
-Ver: 1.03
+Ver: 1.04
 '''
 
 # Main shortcut

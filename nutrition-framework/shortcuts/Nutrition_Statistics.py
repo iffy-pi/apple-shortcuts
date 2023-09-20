@@ -1,7 +1,7 @@
 '''
 Framework: Nutrition (id = 4)
 ID:  23
-Ver: 1.0
+Ver: 1.01
 '''
 
 # Calculate statsistics for nutrients
