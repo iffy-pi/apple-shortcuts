@@ -5,19 +5,23 @@ import Button from "./Button"
 const ShortcutInfo = ({ shortcuts, selectedShortcuts, setShortcuts, index, onRemove }) => {
     const [ version, setVersion ] = useState('')
 
+    const updateShortcutInList = (newObject) => {
+        setShortcuts([...(selectedShortcuts.slice(0, index)), newObject, ...(selectedShortcuts.slice(index+1))]);
+    }
+
     const updateVersion = (newVersion) => {
         const newObject = { ...selectedShortcuts[index], version:newVersion}
-        setShortcuts([...(selectedShortcuts.filter((x, i) => i != index )), newObject])
+        updateShortcutInList(newObject);
     }
 
     const updateLink = (newLink) => {
         const newObject = { ...selectedShortcuts[index], link:newLink}
-        setShortcuts([...(selectedShortcuts.filter((x, i) => i != index)), newObject])
+        updateShortcutInList(newObject);
     }
 
     const updateId = (selectedIndex) => {
         const newObject = { ...selectedShortcuts[index], id:shortcuts[selectedIndex].id, version:shortcuts[selectedIndex].version}
-        setShortcuts([...(selectedShortcuts.filter((x,i) => i != index )), newObject])
+        updateShortcutInList(newObject);
         setVersion(shortcuts[selectedIndex].version)
     }
 
