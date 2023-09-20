@@ -1,7 +1,7 @@
 '''
 Framework: Nutrition (id = 4)
 ID:  6 
-Ver: 1.03
+Ver: 1.03 # make sure to keep this version in parity with foods list!!!
 '''
 
 # Select one or more foods from the different available foods sources
@@ -190,17 +190,25 @@ for _ in range(maxLoops):
 
         if addMenuResult == TRUE:
             # add the foods to our selected foods
+            menuFoods = []
+
             for food in MENURESULT:
                 text = Text(food)
                 SaveFile(To='Shortcuts', text, f'{storage}/Other/tempNutrientsDix.txt', overwrite=True)
                 food = Dictionary( Text(GetFile(From='Shortcuts', f'{storage}/Other/tempNutrientsDix.txt')) )
 
+                menuFoods.append(food)
+
                 # Ask for the servings
                 servings = AskForInput(Input.Number, f'How many servings of {food['Name']}? (1 serving = {food['Serving Size']})', allowDecimals=True, allowNegatives=False)
                 food['Servings'] = servings
-                RunShortcut(nutrDix['Add Recent'], input=food)
 
                 # generate list Id for the item
                 foodsDix[nextId] = food
                 selectedIds.append(nextId)
                 nextId = nextId + 1
+
+                REPEATRESULTS.append(GetVariable(food))
+
+            for food in REPEATRESULTS:
+                RunShortcut(nutrDix['Add Recent'], input=food)
