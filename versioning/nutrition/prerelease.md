@@ -35,33 +35,4 @@ Calculate Stats
 	- Emoji: Hammer + Wrench - `&#x0020;&#x1F6E0;&#xFE0F;`
 
 
-# v4.07
-## Markdown
-
-===================> ARE THESE INSTRUCTIONS NOT PROPERLY FORMATTED? 
-DOWNLOAD PATCHED INSTALLER: https://www.icloud.com/shortcuts/99d2f0aac4364ef3a62561fb79e4230b <=============
-
-- Nutrition Installer
-	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where "Log Nutrients to Health" was not being shown as a valid shortcut.
-	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed issue where installation/update instructions are not being generated properly ([#31](https://github.com/iffy-pi/apple-shortcuts/issues/31)).
-- Foods List v1.04
-	- **&#x1F3AF; Improvement**: Renamed menu items to be correct ([#24](https://github.com/iffy-pi/apple-shortcuts/issues/24)).
-	- **&#x1F3AF; Improvement**: Reduced number of permission prompts when selecting new foods ([#26](https://github.com/iffy-pi/apple-shortcuts/issues/26)).
-- Log Foods At Different Times v1.1
-	- **&#x0020;&#x1F525; Feature**: Rehaul of logging process to allow users to add foods, edit log time for food or remove foods from the list ([#25](https://github.com/iffy-pi/apple-shortcuts/issues/25)).
-- Log Foods At Time v1.02
-	- **&#x1F3AF; Improvement**: Added food notes to prompt when asking for date and time.
-- Nutrition Statistics v1.01
-	- **&#x1F3AF; Improvement**: Changed calorie plot units.
-- Nutrition v1.04
-	- **&#x1F3AF; Improvement**: Updated shortcut to handle errors if the storage folder cannot be found.
-- Search Algorithm v1.03
-	- **&#x1F3AF; Improvement**: Users no longer have to select a serving size for foods with only one available serving size ([#27](https://github.com/iffy-pi/apple-shortcuts/issues/27)).
-	- **&#x1F3AF; Improvement**: Users can cancel a search by entering an empty search query.
-	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where shortcut crashes during parsing of search results ([#29](https://github.com/iffy-pi/apple-shortcuts/issues/29)).
-- Make Preset v1.04
-	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where users could not create multiple presets from a given set of foods ([#28](https://github.com/iffy-pi/apple-shortcuts/issues/28)).
-
-## RoutineHub
-Saved and Search 1.01
-- 🛠️ Bug Fix: Fixed bug where Barcoded Foods could not be edited, and instead immediately went back to main menu.
+# v4.08
