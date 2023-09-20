@@ -203,7 +203,10 @@ if Number(updateRes['version']) > updateInfo['version']:
                 This is a patch to a rich text issue introduced with iOS 17.0.
             '''
             
-            CreateNote(warningText, openNote=True)
+            IFRESULT = CreateNote(warningText)
         else:
-            CreateNote(richText, openNote=True)
+            IFRESULT = CreateNote(richText)
+
+        OpenNote(IFRESULT)
+
 
