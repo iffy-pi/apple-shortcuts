@@ -210,8 +210,13 @@ for repeatIndex in range(repeats):
             # we can use the index to get the appropriate nutrient because values also omits the value for calories
             # and curSet[keys] is a list with a defined order
             item = values.getItemAtIndex(index)
-            num = (item / dayTotal) * 100
-            num = RoundNumber(num, hundredths)
+
+            if dayTotal > 0:
+                IFRESULT = (item / dayTotal) * 100
+            else:
+                IFRESULT = 0
+            
+            num = RoundNumber(IFRESULT, hundredths)
             labels.append(f'{curNutrKey} ({num}%)')
             
             # get the label color for the nutrient
@@ -241,7 +246,13 @@ if averageBreakdown == TRUE:
 
             # calculates the percentage of the current nutrient in the sample range
             # will be same percentage for averaged nutrient value since average divides by constant number
-            curPercent = RoundNumber((totalNutrDix[curNutrKey] / nutrTotal) * 100, hundredths)
+
+            if nutrTotal > 0:
+                IFRESULT = (totalNutrDix[curNutrKey] / nutrTotal) * 100
+            else:
+                IFRESULT = 0
+
+            curPercent = RoundNumber(IFRESULT, hundredths)
 
             # Calculate the average nutrient value for the plot, by dividing the total nutrient by the number of dates sampled
             averageNutr = totalNutrDix[curNutrKey] / repeats
