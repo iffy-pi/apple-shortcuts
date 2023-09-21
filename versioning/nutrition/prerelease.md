@@ -35,4 +35,6 @@ Calculate Stats
 	- Emoji: Hammer + Wrench - `&#x0020;&#x1F6E0;&#xFE0F;`
 
 
-# v4.08
+# v4.08 - Due Friday Oct 6
+- Calculate Stats v1.01
+	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where Calculate Stats did not work for days were no foods were eaten.
