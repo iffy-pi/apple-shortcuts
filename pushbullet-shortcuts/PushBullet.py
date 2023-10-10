@@ -270,7 +270,8 @@ for repeatItem in contents:
                     }
                 )
 
-                text = res['error']
+                dix = Dictionary(res)
+                text = GetDictionaryValue(dix, 'error)
 
                 if text is not None:
                     itemErrorCode = 6
