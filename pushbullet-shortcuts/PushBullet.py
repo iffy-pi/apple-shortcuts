@@ -258,7 +258,7 @@ for repeatItem in contents:
                 itemErrorMsg = text
 
             else
-                GetContentsOfURL(
+                res = GetContentsOfURL(
                     uploadResponse['upload_url'],
                     method='POST',
                     headers={
@@ -270,10 +270,17 @@ for repeatItem in contents:
                     }
                 )
 
-                itemPushBody['type'] = 'file'
-                itemPushBody['file_name'] = uploadResponse['file_name']
-                itemPushBody['file_type'] = uploadResponse['file_type']
-                itemPushBody['file_url'] = uploadResponse['file_url']
+                dix = Dictionary(res)
+                text = GetDictionaryValue(dix, 'error)
+
+                if text is not None:
+                    itemErrorCode = 6
+                    itemErrorMsg = text
+                else:
+                    itemPushBody['type'] = 'file'
+                    itemPushBody['file_name'] = uploadResponse['file_name']
+                    itemPushBody['file_type'] = uploadResponse['file_type']
+                    itemPushBody['file_url'] = uploadResponse['file_url']
 
     # push the item
     if itemErrorCode == 0:
