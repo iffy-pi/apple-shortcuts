@@ -13,14 +13,14 @@ proceedWithUpdates = FALSE
 
 updateInfo = {
     'updateLink' : 'https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json',
-    'version':'4.07'
+    'version':'4.08'
 }
 
 # also now includes information about the children
 childVers = {
     "19":"1.01",      # Add Recent
     "20":"1.01",      # Barcode Search
-    "24":"1.0",      # Calculate Stats
+    "24":"1.01",      # Calculate Stats
     "14":"1.01",      # Clear Cache And Backlog
     "10":"1.01",     # Display Food Item
     "15":"1.0",      # Edit Saved Food

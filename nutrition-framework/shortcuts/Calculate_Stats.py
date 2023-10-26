@@ -1,7 +1,7 @@
 '''
 Framework: Nutrition (id = 4)
 ID:  24
-Ver: 1.0
+Ver: 1.01
 '''
 
 # Generate graph data for charty nutrient plots

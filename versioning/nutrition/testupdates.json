@@ -5,10 +5,10 @@
     "rhub": "https://routinehub.co/shortcut/5177",
     "updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json",
     "pyfile": "nutrition-framework/shortcuts/Nutrition_Installer.py",
-    "version": "4.07",
-    "link": "https://www.icloud.com/shortcuts/68804d2963364d6eb0280b9d6e39c074",
-    "releaseNotes": "\n===================> ARE THESE INSTRUCTIONS NOT PROPERLY FORMATTED? \nDOWNLOAD PATCHED INSTALLER: https://www.icloud.com/shortcuts/3d0fd30e71524438835748f0fa045a3e <=============\n\n- Nutrition Installer\n\t- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where \"Log Nutrients to Health\" was not being shown as a valid shortcut.\n\t- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed issue where installation/update instructions are not being generated properly ([#31](https://github.com/iffy-pi/apple-shortcuts/issues/31)).\n- Foods List v1.04\n\t- **&#x1F3AF; Improvement**: Renamed menu items to be correct ([#24](https://github.com/iffy-pi/apple-shortcuts/issues/24)).\n\t- **&#x1F3AF; Improvement**: Reduced number of permission prompts when selecting new foods ([#26](https://github.com/iffy-pi/apple-shortcuts/issues/26)).\n- Log Foods At Different Times v1.1\n\t- **&#x0020;&#x1F525; Feature**: Rehaul of logging process to allow users to add foods, edit log time for food or remove foods from the list ([#25](https://github.com/iffy-pi/apple-shortcuts/issues/25)).\n- Log Foods At Time v1.02\n\t- **&#x1F3AF; Improvement**: Added food notes to prompt when asking for date and time.\n- Nutrition Statistics v1.01\n\t- **&#x1F3AF; Improvement**: Changed calorie plot units.\n- Nutrition v1.04\n\t- **&#x1F3AF; Improvement**: Updated shortcut to handle errors if the storage folder cannot be found.\n- Search Algorithm v1.03\n\t- **&#x1F3AF; Improvement**: Users no longer have to select a serving size for foods with only one available serving size ([#27](https://github.com/iffy-pi/apple-shortcuts/issues/27)).\n\t- **&#x1F3AF; Improvement**: Users can cancel a search by entering an empty search query.\n\t- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where shortcut crashes during parsing of search results ([#29](https://github.com/iffy-pi/apple-shortcuts/issues/29)).\n- Make Preset v1.04\n\t- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where users could not create multiple presets from a given set of foods ([#28](https://github.com/iffy-pi/apple-shortcuts/issues/28)).",
-    "releaseTime": "2023-09-19",
+    "version": "4.08",
+    "link": "https://www.icloud.com/shortcuts/c856a15c6db648ca9d6e2d2adb677519",
+    "releaseNotes": "- Calculate Stats v1.01\n\t- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where Calculate Stats did not work for days were no foods were eaten ([#35](https://github.com/iffy-pi/apple-shortcuts/issues/35)).",
+    "releaseTime": "2023-10-25",
     "children": [
         {
             "id": 19,
@@ -31,8 +31,8 @@
             "name": "Calculate Stats",
             "type": "child",
             "pyfile": "nutrition-framework/shortcuts/Calculate_Stats.py",
-            "version": "1.0",
-            "link": "https://www.icloud.com/shortcuts/de206221a5cb4864bb9be9d56510f580"
+            "version": "1.01",
+            "link": "https://www.icloud.com/shortcuts/0726b06dbe0541d9ab560576b401475d"
         },
         {
             "id": 14,
