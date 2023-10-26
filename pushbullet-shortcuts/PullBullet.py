@@ -5,6 +5,8 @@ accessToken = '...'
 TRUE = 1
 FALSE = 0
 
+returnContent = FALSE
+
 updateInfo = {
 	'updateLink': '...',
 	'version': 1.1
@@ -16,6 +18,9 @@ params = {
 }
 
 url = f"https://api.pushbullet.com/v2/pushes?active={active}&limit={limit}"
+
+if Dictionary(ShortcutInput)['returnContent'] is not None:
+	returnContent = TRUE
 
 dixOut = GetContentsOfURL(
 		url,
@@ -76,8 +81,7 @@ if filterContents is not None:
 
 
 		if copyContent is not None:
-			CopyToClipboard(copyContent)
-			Notification(fullURL, title="Most recent push has been copied to your clipboard")
+			itemForClipboard = copyContent
 
 	else:
 		if item['title'] is not None:
@@ -88,8 +92,7 @@ if filterContents is not None:
 		else:
 			IFRESULT = f"{item['body']}"
 
-		CopyToClipboard(IFRESULT)
-		Notification(IFRESULT, title="Most recent push has been copied to your clipboard")
+		itemForClipboard = IFRESULT
 
 else:
 	# it is a file
@@ -98,13 +101,20 @@ else:
 
 	if item['file_name'] == 'Pushed Text.txt':
 		# was text that overflowed
-		CopyToClipboard(urlContents)
-		Notification(urlContents, title="Most recent push has been copied to your clipboard")
+		itemForClipboard = urlContents
+		
 	else:
-		# _type = GetType(renamedItem)
-		# files = filter(_type, whereAny=['Name' == 'Image', 'Name' == 'Media'])
-		# if files has any va
-		Share(renamedItem)
+		if returnContent == FALSE:
+			Share(renamedItem)
+		
+		StopShortcut(output=renamedItem)
+
+# Copy the item to clipboard
+if returnContent == TRUE:
+	StopShortcut(output=itemForClipboard)
+else:
+	CopyToClipboard(itemForClipboard)
+	Notification(itemForClipboard, title="Most recent push has been copied to your clipboard")
 
 # Check for updates
 UpdateRes = GetContentsOfURL(UpdateInfo['updateLink'])

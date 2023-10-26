@@ -271,7 +271,7 @@ for repeatItem in contents:
                 )
 
                 dix = Dictionary(res)
-                text = GetDictionaryValue(dix, 'error)
+                text = GetDictionaryValue(dix, 'error')
 
                 if text is not None:
                     itemErrorCode = 6
@@ -299,6 +299,15 @@ for repeatItem in contents:
         if text is not None:
             itemErrorCode = 6
             itemErrorMsg = text
+        else:
+            text = ChangeCase(itemPushBody['type'], casing='Capitalize Every Sentence')
+            text = f'{text} pushed successfully'
+
+            title = dix[ itemPushBody['type'] ]
+            if Text(itemPushBody['type']) == 'file':
+                Notification('', title=title, attachment=item)
+            else:
+                Notification(item, title=title, attachment=item)
 
 
     if itemErrorCode != 0:
