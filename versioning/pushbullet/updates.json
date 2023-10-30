@@ -5,8 +5,8 @@
 	"rhub": "https://routinehub.co/shortcut/15515",
 	"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/updates.json",
 
-	"version": 1.51,
-	"link": "https://www.icloud.com/shortcuts/cf5f8ce0735a42458cd831acd907e91f",
-	"releaseNotes": "- Improved options for user selected types",
-	"releaseTime": "2023-07-23"
+	"version": 1.52,
+	"link": "https://www.icloud.com/shortcuts/a2e0c46b06d248d38300591f49542d62",
+	"releaseNotes": "- Added notification for pushed items",
+	"releaseTime": "2023-10-30"
 }

@@ -6,6 +6,18 @@
 		"rhub": "https://routinehub.co/shortcut/15516",
 		"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/pullbullet/updates.json",
 
+		"version": 1.1,
+		"link": "https://www.icloud.com/shortcuts/e66c679e364440aa9448744838205657",
+		"releaseNotes": "- Supports pushing text larger than 1 MB\\n- Improved push type inferencing\\n- Added user choice menu for shortcut updates",
+		"releaseTime": "2023-07-23"
+	},
+	{
+		"id": 2,
+		"name": "PullBullet",
+		"type": "independent",
+		"rhub": "https://routinehub.co/shortcut/15516",
+		"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/pullbullet/updates.json",
+
 		"version": 1.02,
 		"link": "https://www.icloud.com/shortcuts/c6b821fe23f44354a6f1c4a61034b113",
 		"releaseNotes": "- Update checks now happen at the end of shortcut action rather than beginning\\n-Fixed update bug",
