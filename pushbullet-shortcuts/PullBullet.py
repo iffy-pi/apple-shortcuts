@@ -70,7 +70,7 @@ if filterContents is not None:
 			BEGIN:VCARD
 	        VERSION:3.0
 	        N;CHARSET=utf-8:Open Link
-	        ORG:Open the link in your default browser
+	        ORG:Open link in your default browser
 	        NOTE;CHARSET=UTF-8:open-link
 	        {openLinkIcon}
 	        END:VCARD
@@ -78,7 +78,7 @@ if filterContents is not None:
 	        BEGIN:VCARD
 	        VERSION:3.0
 	        N;CHARSET=utf-8:Copy Link
-	        ORG:Copy the link to your clipboard
+	        ORG:Copy link to your clipboard
 	        NOTE;CHARSET=UTF-8:copy-link
 	        {copyIcon}
 	        END:VCARD
@@ -116,7 +116,7 @@ if filterContents is not None:
 				{foundLink}
 			''')
 
-        option = Contact(chosen).Notes
+        option = GetDetailsOfContacts(chosen, 'Notes')
 
         if option == 'open-link':
 			OpenURL(foundLink)
@@ -163,8 +163,9 @@ else:
 if returnContent == TRUE:
 	StopShortcut(output=itemForClipboard)
 else:
-	CopyToClipboard(itemForClipboard)
-	Notification(itemForClipboard, title="Most recent push has been copied to your clipboard")
+	if itemForClipboard is not None:
+		CopyToClipboard(itemForClipboard)
+		Notification(itemForClipboard, title="Most recent push has been copied to your clipboard")
 
 # Check for updates
 UpdateRes = GetContentsOfURL(UpdateInfo['updateLink'])
