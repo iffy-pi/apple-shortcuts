@@ -17,6 +17,9 @@ params = {
 	'active': True
 }
 
+openLinkIcon = ... # openLinkIcon.txt
+copyIcon = ... # copyIcon.txt
+
 url = f"https://api.pushbullet.com/v2/pushes?active={active}&limit={limit}"
 
 if Dictionary(ShortcutInput)['returnContent'] is not None:
@@ -62,23 +65,70 @@ if filterContents is not None:
 	if foundLink is not None:
 		if bodyIsLink == TRUE:
 			item['body'] = ''
-		
-		Menu(prompt=f'''
+
+		optionsVcard = f'''
+			BEGIN:VCARD
+	        VERSION:3.0
+	        N;CHARSET=utf-8:Open Link
+	        ORG:Open the link in your default browser
+	        NOTE;CHARSET=UTF-8:open-link
+	        {openLinkIcon}
+	        END:VCARD
+
+	        BEGIN:VCARD
+	        VERSION:3.0
+	        N;CHARSET=utf-8:Copy Link
+	        ORG:Copy the link to your clipboard
+	        NOTE;CHARSET=UTF-8:copy-link
+	        {copyIcon}
+	        END:VCARD
+        '''
+
+        if Text(item['title']) != '':
+        	optionsVcard = f'''
+        		{optionsVcard}
+        		BEGIN:VCARD
+		        VERSION:3.0
+		        N;CHARSET=utf-8:Copy Title
+		        ORG:{item['title']}
+		        NOTE;CHARSET=UTF-8:copy-title
+		        {copyIcon}
+		        END:VCARD
+        	'''
+
+        if Text(item['body']) != '':
+        	optionsVcard = f'''
+        		{optionsVcard}
+        		BEGIN:VCARD
+		        VERSION:3.0
+		        N;CHARSET=utf-8:Copy Message
+		        ORG:{item['body']}
+		        NOTE;CHARSET=UTF-8:copy-message
+		        {copyIcon}
+		        END:VCARD
+        	'''
+
+        renamedItem = SetName(optionsVcard, 'vcard.vcf')
+        contacts = GetContacts(renamedItem)
+
+        chosen = ChooseFrom(contacts, prompt=f'''
 				Link:
 				{foundLink}
-			'''):
-		case "Open Link":
+			''')
+
+        option = Contact(chosen).Notes
+
+        if option == 'open-link':
 			OpenURL(foundLink)
 
-		case "Copy Link":
-			copyContent = foundLink
-
-		case f"Copy Title: {item['title']}":
-			copyContent = item['title']
-
-		case f"Copy Message ({item['body']})":
+        if option == 'copy-link':
+        	copyContent = foundLink
+        
+        if option == 'copy-title':
+        	copyContent = item['title']
+        
+        if option == 'copy-message':
 			copyContent = item['body']
-
 
 		if copyContent is not None:
 			itemForClipboard = copyContent
