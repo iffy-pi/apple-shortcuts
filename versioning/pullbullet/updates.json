@@ -6,7 +6,7 @@
 	"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/pullbullet/updates.json",
 
 	"version": 1.2,
-	"link": "https://www.icloud.com/shortcuts/7b61fb2dda0d4adda4a7928361e62e38",
+	"link": "https://www.icloud.com/shortcuts/f10ffdc857dd404093da250e20e8b2ef",
 	"releaseNotes": "- Added the new behaviour when { returnContent: true } is passed as shortcut input, shortcut returns pulled content rather than opening in share sheet or copying to clipboard",
 	"releaseTime": "2023-07-23"
 }
