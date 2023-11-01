@@ -1,9 +1,24 @@
-# v1.1 https://www.icloud.com/shortcuts/5d150871e03c4d30a217ca92fe8096dd
-@SETUP("Paste access token here")
-accessToken = '...'
-
+# v1.2
 TRUE = 1
 FALSE = 0
+
+accessTokenPath = 'PushBullet/AccessToken.txt'
+file = GetFile(From='Shortcuts', accessTokenPath)
+if file is None:
+	Menu('Your access token is required to use this shortcut'):
+		case 'I have my access token':
+			text = AskForInput(Input.Text, prompt="Enter Access Token Below:", allowMultipleLines=False)
+			SaveFile(To='Shortcuts', accessTokenPath, overwrite=True)
+			ShowAlert(f'Access Token has been saved to {accessTokenPath}')
+			IFRESULT = text
+
+		case "I don't have my access token":
+			ShowAlert("Get an access token from your PushBullet Account > Settings > Access Tokens")
+			StopShortcut()
+else:
+	IFRESULT = Text(file)
+
+accessToken = IFRESULT
 
 returnContent = FALSE
 

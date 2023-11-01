@@ -1,21 +1,37 @@
 '''
-v1.51 (https://www.icloud.com/shortcuts/99bf20d3538240ada2dacaca8245d486)
+v1.52
 ShortcutInput = any, default = clipboard
 '''
+
+TRUE = 1
+FALSE = 0
+
+accessTokenPath = 'PushBullet/AccessToken.txt'
+file = GetFile(From='Shortcuts', accessTokenPath)
+if file is None:
+    Menu('Your access token is required to use this shortcut'):
+        case 'I have my access token':
+            text = AskForInput(Input.Text, prompt="Enter Access Token Below:", allowMultipleLines=False)
+            SaveFile(To='Shortcuts', accessTokenPath, overwrite=True)
+            ShowAlert(f'Access Token has been saved to {accessTokenPath}')
+            IFRESULT = text
+
+        case "I don't have my access token":
+            ShowAlert("Get an access token from your PushBullet Account > Settings > Access Tokens")
+            StopShortcut()
+else:
+    IFRESULT = Text(file)
+
+accessToken = IFRESULT
 
 UpdateInfo = {
     'updateLink': 'https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/updates.json'
     'version': 1.41,
 }
 
-@SETUP('Paste Your Access Token Here')
-accessToken = '...'
-
 @SETUP('Enter 1 If You Have PushBullet Premium')
 pushbulletPremium = 0
 
-TRUE = 1
-FALSE = 0
 
 remoteFiles = {
     'mime' : 'https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/data/ext_to_mime.json',
