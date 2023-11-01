@@ -63,8 +63,15 @@ if filterContents is not None:
 					bodyIsLink = TRUE
 
 	if foundLink is not None:
+		# if we are returning content, then just stop and output the link immediately
+		if returnContent == TRUE:
+			StopShortcut(output=foundLink)
+
 		if bodyIsLink == TRUE:
 			item['body'] = ''
+
+		# Otherwise, create user selection to either open link, copy link,
+		# copy title (if available) and copy message (if available)
 
 		optionsVcard = f'''
 			BEGIN:VCARD
@@ -154,12 +161,15 @@ else:
 		itemForClipboard = urlContents
 		
 	else:
-		if returnContent == FALSE:
+		# If we are returning content then just output the file and exit
+		# Otherwise open share sheet (will run update script after)
+		if returnContent == TRUE:
+			StopShortcut(output=renamedItem)
+		else:
 			Share(renamedItem)
-		
-		StopShortcut(output=renamedItem)
+	
 
-# Copy the item to clipboard
+# If we are returning content then just output the text, otherwise copy the item to the clipboard.
 if returnContent == TRUE:
 	StopShortcut(output=itemForClipboard)
 else:
