@@ -8,6 +8,11 @@ ShortcutInput = any, default = clipboard
 TRUE = 1
 FALSE = 0
 
+UpdateInfo = {
+    'updateLink': 'https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/updates.json'
+    'version': 1.6,
+}
+
 maxNonPremiumFileSizeMB = 25
 premiumPath = 'PushBullet/HasPremium.txt'
 accessTokenPath = 'PushBullet/AccessToken.txt'
@@ -43,12 +48,6 @@ else:
     IFRESULT = file
 
 pushbulletPremium = Number(IFRESULT)
-
-UpdateInfo = {
-    'updateLink': 'https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/updates.json'
-    'version': 1.41,
-}
-
 
 remoteFiles = {
     'mime' : 'https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/data/ext_to_mime.json',

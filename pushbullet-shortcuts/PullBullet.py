@@ -2,6 +2,11 @@
 TRUE = 1
 FALSE = 0
 
+updateInfo = {
+	'updateLink': '...',
+	'version': 1.3
+}
+
 accessTokenPath = 'PushBullet/AccessToken.txt'
 file = GetFile(From='Shortcuts', accessTokenPath, errorIfNotFound=False)
 if file is None:
@@ -22,10 +27,6 @@ accessToken = IFRESULT
 copiedLink = FALSE
 returnContent = FALSE
 
-updateInfo = {
-	'updateLink': '...',
-	'version': 1.1
-}
 
 params = {
 	'limit': 1,
