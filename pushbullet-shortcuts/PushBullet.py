@@ -1,36 +1,53 @@
 '''
-v1.52
+v1.53
 ShortcutInput = any, default = clipboard
+- Updated notifications
+- Shortcut now saves PushBullet Premium configuration to file rather than in set up.
 '''
 
 TRUE = 1
 FALSE = 0
 
+maxNonPremiumFileSizeMB = 25
+premiumPath = 'PushBullet/HasPremium.txt'
 accessTokenPath = 'PushBullet/AccessToken.txt'
-file = GetFile(From='Shortcuts', accessTokenPath)
+
+file = GetFile(From='Shortcuts', accessTokenPath, errorIfNotFound=False)
 if file is None:
     Menu('Your access token is required to use this shortcut'):
         case 'I have my access token':
             text = AskForInput(Input.Text, prompt="Enter Access Token Below:", allowMultipleLines=False)
-            SaveFile(To='Shortcuts', accessTokenPath, overwrite=True)
-            ShowAlert(f'Access Token has been saved to {accessTokenPath}')
+            SaveFile(To='Shortcuts', text, accessTokenPath, overwrite=True)
+            ShowAlert(f'Access Token has been saved to {accessTokenPath}. If your access token changes, delete this file and run the shortcut to save the new token.', showCancel=False)
             IFRESULT = text
 
         case "I don't have my access token":
-            ShowAlert("Get an access token from your PushBullet Account > Settings > Access Tokens")
+            ShowAlert("Get an access token from your PushBullet Account > Settings > Access Tokens.")
             StopShortcut()
 else:
     IFRESULT = Text(file)
 
 accessToken = IFRESULT
 
+file = GetFile(From='Shortcuts', premiumPath, errorIfNotFound=False)
+if file is None:
+    Menu('Do you have PushBullet Premium?'):
+        case 'Yes':
+            MENURESULT = TRUE
+        case 'No':
+            MENURESULT = FALSE
+    SaveFile(To='Shortcuts', MENURESULT, premiumPath, overwrite=True)
+    Alert('Your premium status has been saved to PremiumPath. If your premium status changes, delete this file to re-trigger this selection.', showCancel=False)
+    IFRESULT = MENURESULT
+else:
+    IFRESULT = file
+
+pushbulletPremium = Number(IFRESULT)
+
 UpdateInfo = {
     'updateLink': 'https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/updates.json'
     'version': 1.41,
 }
-
-@SETUP('Enter 1 If You Have PushBullet Premium')
-pushbulletPremium = 0
 
 
 remoteFiles = {
@@ -236,8 +253,8 @@ for repeatItem in contents:
         goodFileSize = TRUE
 
         size = GetDetailsOfFiles("File Size", item)
-        if SetSizeUnits(size, 'MB') > 25:
-            if pushbulletPremium != 1:
+        if SetSizeUnits(size, 'MB') > maxNonPremiumFileSizeMB:
+            if pushbulletPremium == FALSE:
                 goodFileSize = FALSE
 
         if goodFileSize is FALSE:
@@ -316,20 +333,25 @@ for repeatItem in contents:
             itemErrorCode = 6
             itemErrorMsg = text
         else:
-            text = ChangeCase(itemPushBody['type'], casing='Capitalize Every Sentence')
-            text = f'{text} pushed successfully'
+            # Successful push so notify user
+            typ = ChangeCase(itemPushBody['type'], 'lowercase')
+            
+            if typ == 'note':
+                Notification(f'"{item}"', title='Text pushed successfully', attachment=item)
 
-            title = dix[ itemPushBody['type'] ]
-            if Text(itemPushBody['type']) == 'file':
-                Notification('', title=title, attachment=item)
-            else:
-                Notification(item, title=title, attachment=item)
+            if typ == 'link':
+                Notification(item, title='Link pushed successfully', attachment=item)
 
+            if typ == 'file':
+                generalType = ReplaceText(GetTypeOf(item), 'Text', 'Text File')
+                Notification(itemPushBody['file_name'], title=f'{generalType} pushed successfully', attachment=item)
 
+    # Report and collate errors
     if itemErrorCode != 0:
         text = f'Item Name: {itemFname}, Error Code: {itemErrorCode}, Message: "{itemErrorMsg}"'
         failedPushes.append(text)
 
+# Open all failed items in a note
 if Count("Items", failedPushes) > 0:
     res = GetContentsOfURL(remoteFiles['errorCodesInfo'])
     errorCodes = Text(res)

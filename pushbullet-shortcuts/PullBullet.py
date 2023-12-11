@@ -3,13 +3,13 @@ TRUE = 1
 FALSE = 0
 
 accessTokenPath = 'PushBullet/AccessToken.txt'
-file = GetFile(From='Shortcuts', accessTokenPath)
+file = GetFile(From='Shortcuts', accessTokenPath, errorIfNotFound=False)
 if file is None:
 	Menu('Your access token is required to use this shortcut'):
 		case 'I have my access token':
 			text = AskForInput(Input.Text, prompt="Enter Access Token Below:", allowMultipleLines=False)
-			SaveFile(To='Shortcuts', accessTokenPath, overwrite=True)
-			ShowAlert(f'Access Token has been saved to {accessTokenPath}')
+			SaveFile(To='Shortcuts', text, accessTokenPath, overwrite=True)
+			ShowAlert(f'Access Token has been saved to {accessTokenPath}. If your access token changes, delete this file and run the shortcut to save the new token.', showCancel=False)
 			IFRESULT = text
 
 		case "I don't have my access token":
@@ -19,7 +19,7 @@ else:
 	IFRESULT = Text(file)
 
 accessToken = IFRESULT
-
+copiedLink = FALSE
 returnContent = FALSE
 
 updateInfo = {
@@ -144,6 +144,7 @@ if filterContents is not None:
 			OpenURL(foundLink)
 
         if option == 'copy-link':
+        	copiedLink = TRUE
         	copyContent = foundLink
         
         if option == 'copy-title':
@@ -190,7 +191,12 @@ if returnContent == TRUE:
 else:
 	if itemForClipboard is not None:
 		CopyToClipboard(itemForClipboard)
-		Notification(itemForClipboard, title="Most recent push has been copied to your clipboard")
+		if copiedLink == TRUE:
+			IFRESULT = 'Link'
+		else:
+			IFRESULT = 'Text'
+			
+		Notification(itemForClipboard, title=f"{IFRESULT} copied to clipboard", attachment=itemForClipboard)
 
 # Check for updates
 UpdateRes = GetContentsOfURL(UpdateInfo['updateLink'])
