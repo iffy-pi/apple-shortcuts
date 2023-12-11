@@ -6,6 +6,18 @@
 		"rhub": "https://routinehub.co/shortcut/15515",
 		"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/updates.json",
 
+		"version": 1.52,
+		"link": "https://www.icloud.com/shortcuts/32b7bd8407f14337ae361234d0b9f3e0",
+		"releaseNotes": "- Added notification for pushed items",
+		"releaseTime": "2023-10-30"
+	},
+	{
+		"id": 1,
+		"name": "PushBullet",
+		"type": "independent",
+		"rhub": "https://routinehub.co/shortcut/15515",
+		"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/updates.json",
+
 		"version": 1.51,
 		"link": "https://www.icloud.com/shortcuts/cf5f8ce0735a42458cd831acd907e91f",
 		"releaseNotes": "- Improved options for user selected types",
