@@ -23,7 +23,7 @@ Menu("Saved And Search"):
             postSearchMenu = Menu(["Log Entry", "Make Preset", "Exit"])
             Menu():
                 case "Log Entry":
-                    date = AskForInput("Date:", Input.DateAndTime, default=Date.CurrentDate)
+                    date = AskForInput("What date and time?", Input.DateAndTime, default=Date.CurrentDate)
 
                     dix = {
                         'Date': str(date)
