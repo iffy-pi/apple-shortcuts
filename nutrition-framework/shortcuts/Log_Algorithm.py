@@ -32,7 +32,16 @@ loggingDate = Date(res['Date'])
 foodDix = Dictionary(res['Food'])
 
 # set servings in food dictionary
-servings = Number(foodDix['Servings'])
+if foodDix['Servings'] is not None:
+    IFRESULT = Number(foodDix['Servings'])
+else:
+    IFRESULT = AskForInput(InputTypes.Number, f'How many servings of {foodDix['Name']}? (1 serving = {foodDix['Serving Size']})', allowNegatives=False, allowDecimals=True)
+
+num = Number(IFRESULT)
+foodDix['Servings'] = num
+servings = num
+
+
 
 # get health app environment var
 dix = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/env.json"))
