@@ -1,4 +1,4 @@
-# Prerelease Notes
+Hello, World!# Prerelease Notes
 Prerelease notes are used to keep track of changes we are doing to the shortcuts, so we have release notes for the next version
 
 ## Shortcut Order
@@ -40,3 +40,5 @@ Calculate Stats
 	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug foods were logged with zero nutrients when logging through Saved And Search > Search and View > Log Entry ([#41](https://github.com/iffy-pi/apple-shortcuts/issues/41)).
 - Saved And Search v1.02
 	- **&#x1F3AF; Improvement**: More user friendly message when asking for date to log a food([#41](https://github.com/iffy-pi/apple-shortcuts/issues/41)).
+- Nutrition v1.05
+	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where exit after quick log was not working([#44](https://github.com/iffy-pi/apple-shortcuts/issues/44)).
