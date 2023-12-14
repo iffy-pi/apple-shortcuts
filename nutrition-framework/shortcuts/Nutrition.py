@@ -154,7 +154,7 @@ Menu(prompt):
             })
             RunShortcut(shortcutNames["Log Algorithm"], input=food)
 
-        if exitAfterQuickLog == TRUE:
+        if Number(exitAfterQuickLog) == TRUE:
             StopShortcut()
 
     case "Log Foods At Time...":
