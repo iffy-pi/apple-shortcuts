@@ -1,7 +1,7 @@
 '''
 Framework: Nutrition (id = 4)
 ID:  13
-Ver: 1.01
+Ver: 1.02
 '''
 
 # View, Make, Edit and Remove Presets and/or Barcodes, view Recents and do Search items
