@@ -5,8 +5,8 @@
 	"rhub": "https://routinehub.co/shortcut/15516",
 	"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/pullbullet/updates.json",
 
-	"version": 1.3,
-	"link": "https://www.icloud.com/shortcuts/50b32f29fd234ffd8f0243d13a7e66f2",
-	"releaseNotes": "- Access Tokens are now saved to your files to make update process easier.",
+	"version": 1.31,
+	"link": "https://www.icloud.com/shortcuts/869e9508e0294c929f97da67cbc5882a",
+	"releaseNotes": "- Access Tokens are now saved to your files to make update process easier.\n- Also fixed bug where update was downloading PushBullet shortcut",
 	"releaseTime": "2023-12-11"
 }
