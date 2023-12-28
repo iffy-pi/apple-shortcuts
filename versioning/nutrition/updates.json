@@ -5,10 +5,10 @@
     "rhub": "https://routinehub.co/shortcut/5177",
     "updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json",
     "pyfile": "nutrition-framework/shortcuts/Nutrition_Installer.py",
-    "version": "4.08",
-    "link": "https://www.icloud.com/shortcuts/c856a15c6db648ca9d6e2d2adb677519",
-    "releaseNotes": "- Calculate Stats v1.01\n\t- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where Calculate Stats did not work for days were no foods were eaten ([#35](https://github.com/iffy-pi/apple-shortcuts/issues/35)).",
-    "releaseTime": "2023-10-25",
+    "version": "4.09",
+    "link": "https://www.icloud.com/shortcuts/37d001ce54464719adc1cc6b96a1b6f4",
+    "releaseNotes": "- Log Algorithm v1.11\n\t- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug foods were logged with zero nutrients when logging through Saved And Search > Search and View > Log Entry ([#41](https://github.com/iffy-pi/apple-shortcuts/issues/41)).\n- Saved And Search v1.02\n\t- **&#x1F3AF; Improvement**: More user friendly message when asking for date to log a food([#41](https://github.com/iffy-pi/apple-shortcuts/issues/41)).\n- Nutrition v1.05\n\t- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed bug where exit after quick log was not working([#44](https://github.com/iffy-pi/apple-shortcuts/issues/44)).",
+    "releaseTime": "2023-12-27",
     "children": [
         {
             "id": 19,
@@ -95,8 +95,8 @@
             "name": "Log Algorithm",
             "type": "child",
             "pyfile": "nutrition-framework/shortcuts/Log_Algorithm.py",
-            "version": "1.1",
-            "link": "https://www.icloud.com/shortcuts/fa47fee730664137a579eb806e4ed56d"
+            "version": "1.11",
+            "link": "https://www.icloud.com/shortcuts/da9bfc941a024df68edce5259bd790b4"
         },
         {
             "id": 12,
@@ -143,8 +143,8 @@
             "name": "Nutrition",
             "type": "child",
             "pyfile": "nutrition-framework/shortcuts/Nutrition.py",
-            "version": "1.04",
-            "link": "https://www.icloud.com/shortcuts/547aaf9f20ee48e18fa3c5eddd9c251b"
+            "version": "1.05",
+            "link": "https://www.icloud.com/shortcuts/9d78007376f14b84bcb4330b430d45f4"
         },
         {
             "id": 23,
@@ -159,8 +159,8 @@
             "name": "Saved And Search",
             "type": "child",
             "pyfile": "nutrition-framework/shortcuts/Saved_And_Search.py",
-            "version": "1.01",
-            "link": "https://www.icloud.com/shortcuts/d9bb711952474e858aad14133b343362"
+            "version": "1.02",
+            "link": "https://www.icloud.com/shortcuts/018de26f55214ccf9ab1f0a09232f43d"
         },
         {
             "id": 8,
