@@ -325,7 +325,15 @@ vitDix = {
 
 for item in vitDix.keys():
     # fractional value
-    num = (outputFood[item] / 100) * vitDix[item]
+    percentageVal = outputFood[item]
+    vitFullVal = vitDix[item]
+
+
+    # Issue #1
+    # Have to use calculate actions rather than calculate expression
+    # To support different number formats
+    num = Calculate(percentageVal /  100)
+    num = Calculate(num * vitFullVal)
     outputFood[item] = RoundNumber(num, hundredths)
 
 StopShortcut(output = outputFood)
