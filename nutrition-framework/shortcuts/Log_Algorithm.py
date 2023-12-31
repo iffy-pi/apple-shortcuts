@@ -71,12 +71,12 @@ if hasHealthApp == FALSE:
     # add it to the backlog
     dix = {
         'Date': Text(loggingDate),
-        'Food': Text(foodDix)
+        'Food': Dictionary(foodDix)
     }
     backlog.append(dix)
 
     # save file
-    dix = { 'backlog': backlog }
+    dix = { 'backlog': List(backlog) }
     SaveFile(To='Shortcuts', dix, f"{storage}/Other/backlog.json", overwrite=True)
 
     StopShortcut(output = foodDix)
