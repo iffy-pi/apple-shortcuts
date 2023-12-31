@@ -107,14 +107,15 @@ for _ in Count(selectedIds):
                 else:
                     IFRESULT = curFood['Servings']
                 
-                servings = IFRESULT
+                servings = Number(IFRESULT)
 
                 # For each selected food, multiply food value by servings and add to preset Food
                 for nutr in nutriKeys:
                     curFoodValue = Number(curFood[nutr])
                     presetValue = Number(presetFood[nutr])
-                    num = (curFoodValue*servings) + presetValue
-                    num = RoundNumber(num, hundredths)
+                    calcResult = Calculate(curFoodValue * servings)
+                    calcResult = Calculate(calcResult + presetValue)
+                    num = RoundNumber(calcResult, hundredths)
                     presetFood[nutr] = num
 
 
