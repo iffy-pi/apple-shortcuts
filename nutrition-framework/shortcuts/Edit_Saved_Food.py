@@ -45,7 +45,7 @@ for item in selectedFoods:
             if mult != 1:
                 for item in nutriKeys:
                     num = Number(oldFood[item])
-                    num = num * mult
+                    num = Calculate(num * mult)
                     num = RoundNumber(num, hundredths)
                     oldFood[item] = num
 
