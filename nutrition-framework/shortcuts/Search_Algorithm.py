@@ -31,7 +31,7 @@ text = f'''
     To cancel, enter an empty search query.
 '''
 
-query = AskForInput(Input.Text, prompt="What Food/Drink?")
+query = AskForInput(Input.Text, prompt=text)
 
 updatedText = query.ReplaceText(' ', '')
 if updatedText is None:
@@ -42,7 +42,7 @@ for _ in range (50):
         searchItems = {}
 
         # make the query and savethe items
-        url = URL(f"https://api.myfitnesspal.com/public/nutrition?q={query}&page={pageNo}&per_page={noSearchResults}")
+        url = URL(f"https://api.myfitnesspal.com/public/nutrition?q={query}&page={pageNo}&per_page={resCount}")
         res = Dictionary(GetContentsOfURL(URL))
 
         for repeatItem in res['items']:
