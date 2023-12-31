@@ -19,9 +19,13 @@ exactValDix = {
 foodDix = RunShortcut(nutrDix['Display Food Item'])
 
 # If there are any vitamins or minerals, we ask if the value is Exact Values or Daily Percentages
-num = foodDix['VitA'] + foodDix['VitC'] + foodDix['Calcium'] + foodDix['Iron']
 
-if num > 0:
+for key in exactValDix:
+    REPEATRESULTS.append(Number(foodDix[key]))
+
+calcResult = CalculateStatistics('Sum', REPEATRESULTS)
+
+if calcResult > 0:
     Menu('Vitamins and Minerals are in'):
         case 'Exact Values':
             MENURESULT = 0
@@ -33,8 +37,8 @@ else:
 
 if IFRESULT == 1:
     for vitKey in exactValDix.keys():
-        num = foodDix[vitKey] / 100
-        num = num * exactValDix[vitKey]
+        num = Calculate(foodDix[vitKey] / 100)
+        num = Calculate(num * exactValDix[vitKey])
         num = RoundNumber(num)
         foodDix[vitKey] = num
 
