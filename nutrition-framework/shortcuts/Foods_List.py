@@ -200,7 +200,7 @@ for _ in range(maxLoops):
                 menuFoods.append(food)
 
                 # Ask for the servings
-                servings = AskForInput(Input.Number, f'How many servings of {food['Name']}? (1 serving = {food['Serving Size']})', allowDecimals=True, allowNegatives=False)
+                servings = Number(AskForInput(Input.Number, f'How many servings of {food['Name']}? (1 serving = {food['Serving Size']})', allowDecimals=True, allowNegatives=False))
                 food['Servings'] = servings
 
                 # generate list Id for the item
