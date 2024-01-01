@@ -111,7 +111,9 @@ else:
             ],
             Unit=cal
         )
-    _sum = CalculateStatistics(healthSamples, "Sum")
+
+    REPEATRESULTS = [ Number(healthSample.Value) for healthSample in healthSamples ]
+    _sum = CalculateStatistics("Sum", REPEATRESULTS)
     calsToday = Round (_sum, "hundredths")
 
     file = GetFile(From='Shortcuts', f"{storage}/Other/backlog.json", errorIfNotFound=False)
