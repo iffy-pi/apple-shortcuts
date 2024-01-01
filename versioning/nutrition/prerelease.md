@@ -67,9 +67,9 @@ Calculate Stats
 - Nutrition Statistics v1.02
 	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Updated to support PTCD numbering format ([#1](https://github.com/iffy-pi/apple-shortcuts/issues/1)).
 
-- Log Foods At Different Times v1.12
+- Log Foods At Different Times v1.11
 	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Updated to support PTCD numbering format ([#1](https://github.com/iffy-pi/apple-shortcuts/issues/1)).
 	- **&#x1F3AF; Improvement**: Updated to include more descriptive menu options and usage instructions ([#49](https://github.com/iffy-pi/apple-shortcuts/issues/49)).
 
-- Nutrition v1.04
+- Nutrition v1.06
 	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Updated to support PTCD numbering format ([#1](https://github.com/iffy-pi/apple-shortcuts/issues/1)).
