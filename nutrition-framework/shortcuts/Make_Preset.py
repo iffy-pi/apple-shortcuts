@@ -1,7 +1,7 @@
 '''
 Framework: Nutrition (id = 4)
 ID:  17
-Ver: 1.04
+Ver: 1.05
 '''
 
 # Make a preset with passed in foods or a new list of foods

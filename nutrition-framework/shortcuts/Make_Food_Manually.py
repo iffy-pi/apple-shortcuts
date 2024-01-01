@@ -1,7 +1,7 @@
 '''
 Framework: Nutrition (id = 4)
 ID:  21
-Ver: 1.0
+Ver: 1.01
 '''
 
 # Create a food by manually filling in the nutrient fieldds
