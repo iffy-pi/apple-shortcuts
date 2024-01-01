@@ -137,17 +137,15 @@ Menu(prompt):
         # Log food from Recent and exit immediately
         for item in  RunShortcut(shortcutNames['Get Recent']):
             curFood = item
-
-            RunShortcut(shortcutNames["Add Recent"], input=curFood)
-
             text = f"How many servings of {curFood['Name']}\n(1 serving = {curFood['Serving Size']})"
             
             # translates to set dictionary value in curFood and then set dictionary
-            curFood['Servings'] = AskForInput(text, Input.Number, default=1, allowDecimalNumbers=True, allowNegativeNumbers=False)
+            curFood['Servings'] = Number(AskForInput(text, Input.Number, default=1, allowDecimalNumbers=True, allowNegativeNumbers=False))
             REPEATRESULTS.append(curFood)
 
         # we log foods in different iteration to fast track user input
-        for food in REPEATRESULTS:
+        for food in RunShortcut(shortcutNames['Get Recent']):
+            RunShortcut(shortcutNames["Add Recent"], input=food)
             dix = Text({
                 'Date': str(Date.CurrentDate)
                 'Food': dix(food)
@@ -223,6 +221,9 @@ Menu(prompt):
                 SaveFile(To='Shortcuts', storage, "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
 
         case 'Tutorial':
+            OpenURL("https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/data/tutorial.html")
+
+    case 'How To Use':
             OpenURL("https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/data/tutorial.html")
 
 
