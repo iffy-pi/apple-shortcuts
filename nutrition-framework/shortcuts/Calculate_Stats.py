@@ -181,8 +181,10 @@ for repeatIndex in range(repeats):
             unit = nutrUnits[curNutrKey]
             results = FindHealthSamples(type=sampleType, startDateIsOn=curDate, unit=unit)
             
+            REPEATRESULTS = [ healthSample.Value for healthSample in results]
+            
             # sum health samples tot tal
-            num = Number( CalculateStatistics("Sum", results.Value))
+            num = Number( CalculateStatistics("Sum", REPEATRESULTS))
             daySum = RoundNumber(num, hundredths)
 
             if curNutrKey == 'Calories':
@@ -212,7 +214,9 @@ for repeatIndex in range(repeats):
             item = values.getItemAtIndex(index)
 
             if dayTotal > 0:
-                IFRESULT = (item / dayTotal) * 100
+                # Cant use calculate expression due to Issue #1
+                calcResult = Calculate(item / dayTotal)
+                IFRESULT = Calculate(calcResult * 100)
             else:
                 IFRESULT = 0
             
@@ -248,14 +252,16 @@ if averageBreakdown == TRUE:
             # will be same percentage for averaged nutrient value since average divides by constant number
 
             if nutrTotal > 0:
-                IFRESULT = (totalNutrDix[curNutrKey] / nutrTotal) * 100
+                # Cant use calculate expression due to Issue #1
+                calcResult = Calculate(totalNutrDix[curNutrKey] / nutrTotal)
+                IFRESULT = Calculate(calcResult * 100)
             else:
                 IFRESULT = 0
 
             curPercent = RoundNumber(IFRESULT, hundredths)
 
             # Calculate the average nutrient value for the plot, by dividing the total nutrient by the number of dates sampled
-            averageNutr = totalNutrDix[curNutrKey] / repeats
+            averageNutr = Calculate(totalNutrDix[curNutrKey] / repeats)
 
             averageValues.append(averageNutr)
             averageLabels.append(f'{curNutrKey} ({curPercent}%)')

@@ -23,7 +23,7 @@ Menu("Statistics"):
     case 'Nutrient Breakdown For Date...':
         getDateRange = FALSE
 
-    case 'Nutrient Breakdown For Dates...':
+    case 'Nutrient Breakdown Between Dates...':
         pass
     
     case 'Average Nutrient Breakdown Between Dates...':
