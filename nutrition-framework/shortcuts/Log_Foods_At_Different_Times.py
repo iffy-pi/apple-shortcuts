@@ -34,6 +34,19 @@ selectedIds = []
 breakLoop = FALSE
 nextId = 0
 
+instructions = '''
+            To log foods at different times:
+            1. Tap "Add Foods To Log List" to and add all the foods you wish to log for a given time.
+            
+            2. Tap "Done Selecting Foods".
+            
+            3. Select the foods from the list and apply the time you wish to log them at.
+            
+            4. Repeat Steps 1-3 for foods at the other log times.
+            
+            5. Tap "Log Foods in Log List" to log the foods at their assigned times.
+            '''
+
 for _ in range(30):
     if breakLoop == FALSE:
         # Generate a simple menu prompt listing all the foods added with their log times
@@ -65,11 +78,13 @@ for _ in range(30):
                 REPEATRESULTS.append(f'{datePrompt}{food['Servings']}x {food['Name']}{warning}')
 
             IFRESULT = f'''
-                Added Foods:
+                Food Log List:
+                Foods with ⚠ have no log time.
+
                 {REPEATRESULTS}
             '''
         else:
-            IFRESULT = 'No Foods Added'
+            IFRESULT = GetVariable(instructions)
 
         prompt = IFRESULT
 
@@ -79,21 +94,16 @@ for _ in range(30):
 
                 {prompt}
             '''
-        text = f'''
-            Foods with ⚠ have no log time.
-
-            {prompt}
-        '''
         
         setLogTimes = FALSE
         fromEditOption = FALSE
 
-        Menu(text):
-            case 'Log Added Foods':
+        Menu(prompt):
+            case 'Log Foods In Log List':
                 # breaks loop, foods are logged outside of loop
                 breakLoop = TRUE
 
-            case 'Add Foods':
+            case 'Add Foods To Log List':
                 # unset Ids tracks the list ids of foods that dont have a log time since they were just added
                 # it is used later on
                 unsetIds = []
@@ -108,14 +118,14 @@ for _ in range(30):
                 # run set log time interface
                 setLogTimes = TRUE
 
-            case 'Set/Edit Log Time For Foods...':
+            case 'Set/Edit Log Time For Foods In Log List':
                 setLogTimes = TRUE
                 # since user is requesting to edit the items
                 # we make all the foods changeable by setting unsetIds to the full selectedIds list
                 unsetIds = selectedIds
                 fromEditOption = TRUE
 
-            case 'Remove Added Food...':
+            case 'Remove Food in Log List':
                 # use contact vcards to get the list ids of the foods the user wants to remove
                 for listId in selectedIds:
                     food = foodsInfo[listId]
@@ -145,6 +155,9 @@ for _ in range(30):
                 for contact in selectedContacts:
                     listId = contact.Notes
                     selectedIds = FilterFiles(selectedIds, where=['Name' != listId])
+
+            case 'How To Use':
+                ShowAlert(instructions, title='Instructions', showCancel=False)
 
             case 'Cancel and Exit':
                 StopShortcut()
