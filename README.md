@@ -270,5 +270,5 @@ if Number(UpdateRes['version']) > updateInfo['version']:
 # Other Information
 ## Action Pipeline
 - Shortcut versions are stored in versioning folder
-- Configured static HTML github workflow to deploy on changes to contents of versioning folder
+- Configured static HTML github workflow to deploy on changes to contents of versioning folder (as well as public folder)
 - Versioning folder contains JSONs

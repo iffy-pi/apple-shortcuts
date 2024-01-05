@@ -1,0 +1,7 @@
+{
+	"nutr.storage.notfound": "Storage Folder Could Not Be Found!",
+	"nutr.storage.select": "Select Storage Folder From Folders In iCloud/Shortcuts",
+	"nutr.storage.create": "Create Storage Folder in iCloud/Shortcuts",
+	"nutr.storage.input": "Enter folder name to store saved foods and configuration files",
+	"nutr.storage.exists": ""
+}
