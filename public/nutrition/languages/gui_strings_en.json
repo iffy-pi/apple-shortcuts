@@ -73,6 +73,7 @@
 	"nutr.monofat": "Monounsaturated Fat",
 	"nutr.polyfat": "Polyunsaturated Fat",
 	"nutr.saturfat": "Saturated Fat",
+	"nutr.transfat": "Trans Fat",
 	"nutr.sodium": "Sodium",
 	"nutr.cholesterol" : "Cholesterol",
 	"nutr.potassium": "Potassium",
@@ -111,6 +112,24 @@
 	"barcodes.add": "Add to Personal Database",
 	"barcodes.edit": "Edit Foods in Personal Database",
 	"barcodes.remove": "Remove Food From Personal Database",
+
+
+	"stats.breakdown": "Breakdown",
+	"stats.avg" : "Average",
+	"stats.minerals.breakdown": "Minerals Breakdown",
+	"stats.minerals.avg": "Minerals Average",
+
+	"stats.menu.breakdown.ondate": "Nutrient Breakdown For Date",
+	"stats.menu.breakdown.between": "Nutrient Breakdown Between Dates...",
+	"stats.menu.breakdown.average": "Average Nutrient Breakdown Between Dates...",
+	"stats.menu.cals.breakdown": "Calories Breakdown Between Dates...",
+	"stats.select.start": "Select Start Date",
+	"stats.select.end": "Select End Date",
+	"stats.graph.cals.title": "$start - $end Calories Breakdown",
+	"stats.graph.nutr": "Nutrient Breakdown",
+	"stats.graph.cals.daily": "Daily Calories",
+	"stats.graph.cals.avg": "Daily Average",
+	"stats.graph.dates" : "Dates",
 
 
 	"savechanges": "Save changes to \"$item\"?",	
