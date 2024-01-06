@@ -87,6 +87,16 @@
 	"search.item.prevvalues": "No, use previous values",
 	"search.item.backtosearch": "No, back to search",
 
+	
+	"savedfoods.prompt.all" : "Presets and Barcoded Foods",
+	"savedfoods.none": "No Selection",
+	"savedfoods.none.desc": "No foods will be selected",
+	"savedfoods.select.prompt": "Select $folder",
+	"savedfoods.select.prompt.delete": "Select $folder to delete",
+	"savedfoods.delete.notif": "$folder \"$name\" has been deleted!",
+
+	"barcodes": "Barcoded Foods",
+	"presets": "Presets",
 	"opts.yes": "Yes",
 	"opts.no": "No",
 	"foodnotes": "Food Notes",
