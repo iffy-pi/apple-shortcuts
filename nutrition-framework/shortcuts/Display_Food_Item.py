@@ -121,10 +121,8 @@ else:
         # If this is a nutrient, convert the value in the display dix to a number
         res = FilterFiles(nutriKeys, where=['Name' == key])
         if res is not None:
-            # replacing comma with dot to convert european decimals to standard decimals
-            text = displayDix[field].replace(',', '.')
-            num = Number(text)
-            IFRESULT = RoundNumber(IFRESULT, hundredths)
+            num = Number(displayDix[field])
+            IFRESULT = RoundNumber(num, hundredths)
         else:
             IFRESULT = displayDix[field]
 
