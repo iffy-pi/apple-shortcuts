@@ -6,7 +6,9 @@ with open('gui_strings_en.json', 'r') as file:
 
 
 for k in dix.keys():
-	dix[k] = '*{}'.format(dix[k])
+	dix[k] = '__{}'.format(dix[k])
 
 
-print(json.dumps(dix, indent=4))
+print('Done')
+with open('temp.json', 'w') as file:
+	json.dump(dix, file, indent=4)
