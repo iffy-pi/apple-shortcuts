@@ -46,6 +46,49 @@
 
 	"nutr.history.backlog.nonempty" : "There are items in the backlog, food history will not be accurate until backlog is cleared",
 
+	"search.query.instr": "Enter Food/Drink search query.\nTo cancel, enter an empty search query.",
+	"search.moresizes": "and more sizes",
+
+	"search.opts.next": "Next Page",
+	"search.opts.prev": "Previous Page",
+	"search.page": "Page",
+	"search.opts.search": "New Search",
+	"search.opts.search.desc": "Try a different query",
+	"search.opts.cancel" : "Cancel Search",
+	"search.opts.cancel.desc": "No foods will be selected",
+	"search.opts.back": "Back",
+	"search.opts.back.desc": "Back To Search",
+
+	"search.results": "Search Results",
+	"search.bestmatches": "Verified Best Matches",
+	"search.warning.firstpage": "This is the first page of the search!",
+	"search.select.servingsize": "Select a serving size.\nThe number in brackets is the multiplication factor applied to the food nutrients for that serving size.",
+
+	"nutr.cals" : "Calories",
+	"nutr.carbs" : "Carbs",
+	"nutr.fat": "Fat",
+	"nutr.protein": "Protein",
+	"nutr.sugar": "Sugar",
+	"nutr.fiber": "Fiber",
+	"nutr.monofat": "Monounsaturated Fat",
+	"nutr.polyfat": "Polyunsaturated Fat",
+	"nutr.saturfat": "Saturated Fat",
+	"nutr.sodium": "Sodium",
+	"nutr.cholesterol" : "Cholesterol",
+	"nutr.potassium": "Potassium",
+	"nutr.vita": "Vitamin A",
+	"nutr.vitc": "Vitamin C",
+	"nutr.calcium": "Calcium",
+	"nutr.iron": "Iron",
+
+	"search.item.accept": "Accept Result",
+	"search.item.edit": "Edit Result",
+	"search.item.save": "Save changes",
+	"search.item.prevvalues": "No, use previous values",
+	"search.item.backtosearch": "No, back to search",
+
+	"opts.yes": "Yes",
+	"opts.no": "No",
 	"foodnotes": "Food Notes",
 	"ask.for.servings": "How many servings of $name? (1 serving = $size)"
 }
