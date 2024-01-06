@@ -95,6 +95,8 @@
 	"savedfoods.select.prompt.delete": "Select $folder to delete",
 	"savedfoods.delete.notif": "$folder \"$name\" has been deleted!",
 
+	"recents.select": "Select Food(s)",
+
 	"barcodes": "Barcoded Foods",
 	"presets": "Presets",
 	"opts.yes": "Yes",
