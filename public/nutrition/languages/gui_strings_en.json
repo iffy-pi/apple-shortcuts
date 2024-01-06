@@ -3,5 +3,49 @@
 	"nutr.storage.select": "Select Storage Folder From Folders In iCloud/Shortcuts",
 	"nutr.storage.create": "Create Storage Folder in iCloud/Shortcuts",
 	"nutr.storage.input": "Enter folder name to store saved foods and configuration files",
-	"nutr.storage.exists": ""
+	"nutr.storage.exists": "Folder \"$storage\" already exists in iCloud/Shortcuts",
+	"nutr.storage.newname": "Select A Different Name",
+	"nutr.storage.use": "Use Folder As Storage Folder",
+
+	"nutr.healthperms.instr": "Your Apple Health permissions may have not been fully set, the shortcut will fast track through sample logging permissions. You can do this again by going to $othersettings > $healthperms.",
+	"nutr.healthperms.warning.msg": "Your Apple Health permissions may have not been fully set, the shortcut will fast track through sample logging permissions",
+	"nutr.healthperms.warning.title": "Health Sample Permissions",
+
+	"nutr.backlog.notif": "Foods logged on $device will be added to backlog",
+
+	"nutr.backlog.nonempty": "There are foods in your backlog",
+	"nutr.backlog.clearing": "Logging foods in backlog...",
+	
+	"nutr.calorie.summary": "You've eaten $cals calories today.",
+
+
+	"nutr.menu.quicklog": "Quick Log",
+	"nutr.menu.logattime": "Log Foods At Time",
+	"nutr.menu.logdifferent": "Log Foods At Different Times",
+	"nutr.menu.makenote": "Make Food Note",
+	"nutr.menu.othersettings": "Clear... and Other Settings",
+	"nutr.menu.healthperms": "Fast Track Health Permissions",
+	"nutr.menu.savedsearch": "Saved and Search",
+	"nutr.menu.historystats": "History and Stats",
+	"nutr.menu.stats": "Statistics with Charty",
+	"nutr.menu.history": "Food History",
+	"nutr.menu.clearbacklog": "Clear Backlog",
+	"nutr.menu.clearfoodnotes": "Clear Food Notes",
+	"nutr.menu.healthperms": "Fast Track Health Permissions",
+	"nutr.menu.storage.view": "View Storage Folder",
+	"nutr.menu.storage.rename": "Rename Storage Folder",
+	"nutr.menu.tutorial": "Tutorial",
+	"nutr.menu.howtouse": "How To Use",
+	"nutr.menu.lang.change": "Change Language",
+
+	"nutr.foodnotes.name": "What is the name of the food you would like to note down?",
+	"nutr.foodnotes.time": "What is the date and time?",
+
+
+	"nutr.stats.nocharty": "Statistics require a device with a Health App",
+
+	"nutr.history.backlog.nonempty" : "There are items in the backlog, food history will not be accurate until backlog is cleared",
+
+	"foodnotes": "Food Notes",
+	"ask.for.servings": "How many servings of $name? (1 serving = $size)"
 }
