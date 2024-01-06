@@ -97,10 +97,30 @@
 
 	"recents.select": "Select Food(s)",
 
+	"savedsearch.view" : "Search and View",
+	"savedsearch.view.prompt": "What should be done with the search result?",
+
+	"savedsearch.logentry": "Log Entry",
+	"savedsearch.savepreset": "Save As Preset?",
+	"presets.make": "Make Preset",
+	"presets.view": "Edit/View Preset",
+	"presets.edit": "Edit Preset",
+	"presets.remove": "Remove Preset(s)",
+
+	"barcodes.view": "View/Edit Foods In Personal Database",
+	"barcodes.add": "Add to Personal Database",
+	"barcodes.edit": "Edit Foods in Personal Database",
+	"barcodes.remove": "Remove Food From Personal Database",
+
+
+	"savechanges": "Save changes to \"$item\"?",	
+	"input.logtime": "What date and time?",
 	"barcodes": "Barcoded Foods",
 	"presets": "Presets",
+	"recents": "Recent Foods",
 	"opts.yes": "Yes",
 	"opts.no": "No",
+	"opts.exit": "Exit",
 	"foodnotes": "Food Notes",
 	"ask.for.servings": "How many servings of $name? (1 serving = $size)"
 }
