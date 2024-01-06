@@ -38,10 +38,6 @@ if params['backlog'] is not None:
             file = GetFile(From='Shortcuts', f"{storage}/Other/backlog.json")
             DeleteFile(file, deleteImmediately=True)
 
-        else:
-            if reqBacklogClear == TRUE:
-                # if user req clear backlog let them no there was nothing to clear
-                ShowAlert("There are no foods in the backlog")
 
 if params['cache'] is not None:
     # clear the cache
