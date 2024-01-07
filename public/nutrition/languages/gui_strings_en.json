@@ -197,10 +197,10 @@
 	"logdiff.action.edit": "Set/Edit Log Time For Foods In Log List",
 	"logdiff.action.remove": "Remove Food in Log List",
 	"logdiff.exit": "Cancel and Exit",
-	"logdiff.notime.prompt": "$servingsx $name does not have a log time",
+	"logdiff.notime.prompt": "$servings $name does not have a log time",
 	"logdiff.notime.log": "Set Log Time",
 	"logdiff.notime.discard": "Do Not Log Food",
-	"logdiff.loglist.prompt": "Food Log List\n Foods with $warn have no log time.",
+	"logdiff.loglist.prompt": "Food Log List\nFoods with $warn have no log time.",
 	"logdiff.notime.warn": "No Log Time Added! $warn",
 	"logdiff.logtime": "Log Time: $date",
 	"logdiff.settime.instr": "Select foods to set/edit log time.\nSelect no foods to return to main menu.",
@@ -233,7 +233,7 @@
 	"installer.action.update": "Check For Updates",
 	"installer.action.config": "Configure Shortcut",
 
-	"installer.updating.new": "There is a new version $ver available for this shortcut.",
+	"installer.updating.new": "There is a new version available for this shortcut.",
 	"installer.updating.whatsnew": "What's New?",
 	"installer.updating.update": "Update",
 
