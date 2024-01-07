@@ -10,16 +10,17 @@ TRUE = 1
 FALSE = 0
 
 storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
+Strings = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.json"))
 
 res = GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json")
 shortcutNames = Dictionary(res)
 
-prompt = 'What date and time?'
+prompt = Strings['input.logtime']
 
 file = GetFile(From='Shortcuts', f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
 if file is not None:
     prompt = f'''
-        Food Notes:
+        {Strings['foodnotes']}:
         {file}
 
         {prompt}
@@ -39,10 +40,10 @@ for item in RunShortcut(shortcutNames["Foods List"]):
 
 file = GetFile(From='Shortcuts', f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
 if file is not None:
-    Menu('Clear food notes?'):
-        case 'Yes':
+    Menu(Strings['logt.clearnotes']):
+        case Strings['opts.yes']:
             DeleteFile(file, deleteImmediately=True)
-        case 'No':
+        case Strings['opts.no']:
             pass
 
 makePreset = TRUE
@@ -54,9 +55,9 @@ if Count(loggedFoods) == 1:
         makePreset = FALSE
 
 if makePreset == TRUE:
-    Menu("Make Preset?"):
-        case "Yes":
+    Menu(Strings['logt.makepreset']):
+        case Strings['opts.yes']:
             RunShortcut(shortcutNames["Make Preset"], input=loggedFoods)
-        case "No":
+        case Strings['opts.no']:
             pass
 

@@ -187,6 +187,9 @@
 	"makepreset.notif.title": "Preset Created",
 
 
+	"logt.clearnotes": "Clear food notes?",
+	"logt.makepreset": "Make Preset?",
+
 	"installer.storage.notfound": "Storage Folder Could Not Be Found!",
 	"installer.storage.select": "Select Storage Folder From Folders In iCloud/Shortcuts",
 	"installer.storage.create": "Create Storage Folder in iCloud/Shortcuts",
