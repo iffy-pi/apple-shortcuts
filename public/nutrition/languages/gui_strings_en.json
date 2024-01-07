@@ -190,6 +190,27 @@
 	"logt.clearnotes": "Clear food notes?",
 	"logt.makepreset": "Make Preset?",
 
+	"logdiff.instr": "To log foods at different times:\n1. Tap \"$addopt\" to and add all the foods you wish to log for a given time.\n\n2. Tap \"$donesel\".\n\n3. Select the foods from the list and apply the time you wish to log them at.\n\n4. Repeat Steps 1-3 for foods at the other log times.\n\n5. Tap \"$logopt\" to log the foods at their assigned times.",
+	"logdiff.instr.title": "Instructions",
+	"logdiff.action.log": "Log Foods In Log List",
+	"logdiff.action.add": "Add Foods To Log List",
+	"logdiff.action.edit": "Set/Edit Log Time For Foods In Log List",
+	"logdiff.action.remove": "Remove Food in Log List",
+	"logdiff.exit": "Cancel and Exit",
+	"logdiff.notime.prompt": "$servingsx $name does not have a log time",
+	"logdiff.notime.log": "Set Log Time",
+	"logdiff.notime.discard": "Do Not Log Food",
+	"logdiff.loglist.prompt": "Food Log List\n Foods with $warn have no log time.",
+	"logdiff.notime.warn": "No Log Time Added! $warn",
+	"logdiff.logtime": "Log Time: $date",
+	"logdiff.settime.instr": "Select foods to set/edit log time.\nSelect no foods to return to main menu.",
+	"logdiff.settime.select": "Select log time for:",
+
+
+
+
+
+
 	"installer.storage.notfound": "Storage Folder Could Not Be Found!",
 	"installer.storage.select": "Select Storage Folder From Folders In iCloud/Shortcuts",
 	"installer.storage.create": "Create Storage Folder in iCloud/Shortcuts",
