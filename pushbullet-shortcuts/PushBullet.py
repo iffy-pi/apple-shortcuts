@@ -115,16 +115,8 @@ for repeatItem in contents:
 
     # do link
     if pushType == -1:
-        files = FilterFiles(
-                    itemType, 
-                    whereAny=[
-                        "Name" is "URL",
-                        "Name" is "Safari Web Page",
-                    ],
-                    limit=1
-                )
-
-        if files is not None:
+        matches = MatchText("(url)|(safari web page)", itemType, caseSensitive=False)
+        if matches is not None:
             pushType = typeId['link']
 
     # do note
@@ -235,10 +227,13 @@ for repeatItem in contents:
     # ------------ HANDLE ITEM --------------
 
     if pushType == typeId['link']:
+        if ChangeCase(itemType, 'lowercase') == 'safari web page':
+            item = GetDetailsOfSafariWebPage('Page URL', item)
+
         itemPushBody['type'] = 'link'
         itemPushBody['url'] = item
 
-    # note handler
+    # note handlerz
     if pushType == typeId['note']:
         itemPushBody['type'] = 'note'
         itemPushBody['body'] = item
@@ -339,7 +334,7 @@ for repeatItem in contents:
                 Notification(f'"{item}"', title='Text pushed successfully', attachment=item)
 
             if typ == 'link':
-                Notification(item, title='Link pushed successfully', attachment=item)
+                Notification(item, title='Link pushed successfully')
 
             if typ == 'file':
                 generalType = ReplaceText(GetTypeOf(item), 'Text', 'Text File')
