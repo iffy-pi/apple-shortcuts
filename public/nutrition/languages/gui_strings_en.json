@@ -158,6 +158,15 @@
 	"loga.notif.logged": "$name has been logged to your meals",
 	"loga.notif.yummy": "Yummy!",
 
+	"editfood.action": "How would you like to edit $name?",
+	"editfood.opt.scale": "Scale Serving Size",
+	"editfood.opt.edit": "Edit Food Fields Manually",
+	"editfood.scale.input": "What is the scaling factor?",
+	"editfood.size.input": "What is the new serving size?",
+	"editfood.name.exists": "There is already a food named \"$name\". If you choose to continue with this name, it will not overwrite the existing food but it may be confusing to differentiate between them.",
+	"editfood.name.different": "Select a different name",
+	"editfood.name.keep": "Keep both foods with this name",
+	"editfood.name.new": "Enter new name",
 
 	"foods.remove.select": "Select foods to remove",
 	"food.servings": "$num servings",

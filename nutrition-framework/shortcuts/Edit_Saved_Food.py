@@ -9,6 +9,7 @@ Ver: 1.01
 TRUE = 1
 FALSE = 0
 storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
+Strings = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.json"))
 
 params = Dictionary(ShortcutInput)
 
@@ -39,9 +40,9 @@ for item in selectedFoods:
     
     foodId = food['id']
 
-    Menu(f"What type of editing would you like to do for {oldFood['Name']}?"):
-        case 'Scale Serving Size':
-            mult = AskForInput(Input.Number, prompt=f'What is the scaling factor?', default=1, allowDecimals=True)
+    Menu(Strings['editfood.action'].replace('$name', food['Name'])):
+        case Strings['editfood.opt.scale']:
+            mult = AskForInput(Input.Number, prompt=Strings['editfood.scale.input'], default=1, allowDecimals=True)
             if mult != 1:
                 for item in nutriKeys:
                     num = Number(oldFood[item])
@@ -49,11 +50,11 @@ for item in selectedFoods:
                     num = RoundNumber(num, hundredths)
                     oldFood[item] = num
 
-                oldFood['Serving Size'] = AskForInput(Input.Text, prompt="What is the new serving size?", default=f"{mult} of {oldFood['Serving Size']}")
+                oldFood['Serving Size'] = AskForInput(Input.Text, prompt=Strings['editfood.size.input'], default=f"{oldFood['Serving Size']}")
             
             MENURESULT = oldFood
 
-        case 'Edit Food Fields Manually':
+        case Strings['editfood.opt.edit']:
             # Edit foods with display food item
             MENURESULT = RunShortcut(nutrDix['Display Food Item'], input=oldFood)
 
@@ -73,10 +74,10 @@ for item in selectedFoods:
             if breakLoop == FALSE:
                 res = FilterFiles(foodNames, whereAll=['Name' == name, 'Name' != oldFood['Name']])
                 if res is not None:
-                    Menu(f'There is already a food named "{name}"'):
-                        case 'Select A Different Name':
-                            name = AskForInput(Input.Text, prompt=f'"{name}" already exists, please select a new name')
-                        case 'Keep both foods with this name':
+                    Menu(Strings['editfood.name.exists'].replace('$name', name)):
+                        case Strings['editfood.name.different']:
+                            name = AskForInput(Input.Text, prompt=Strings['editfood.name.new'])
+                        case Strings['editfood.name.keep']:
                             breakLoop = TRUE
                 else:
                     breakLoop = TRUE
