@@ -12,6 +12,8 @@ FALSE = 0
 storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
 nutrDix = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json"))
+Strings = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.json"))
+
 cancelIcon = #.. cancelIcon.txt
 
 foodsDix = {}
@@ -37,7 +39,7 @@ params = Dictionary(ShortcutInput)
 file = GetFile(From='Shortcuts', f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
 if file is not None:
     notes = f'''
-        Food Notes:
+        {Strings['foodnotes']}:
         {file}
 
     '''
@@ -52,12 +54,12 @@ for _ in range(maxLoops):
 
         if REPEATRESULTS is not None:
             IFRESULT = f'''
-            Current Selected Foods:
+            {Strings['foodslist.foods.selected']}:
             {REPEATRESULTS}
             '''
         else:
             IFRESULT = f'''
-            No foods selected
+            {Strings['foodslist.foods.empty']}
             '''
         prompt = IFRESULT
         
@@ -77,7 +79,7 @@ for _ in range(maxLoops):
         addMenuResult = TRUE
 
         Menu(prompt):
-            case 'Done Selecting Foods':
+            case Strings['foodslist.menu.done']:
                 addMenuResult = FALSE
 
                 if params['passToBulkEntry'] is not None:
@@ -92,33 +94,34 @@ for _ in range(maxLoops):
                         REPEATRESULTS.append(food)
                     StopShortcut(output = REPEATRESULTS)
 
-            case 'Search Food':
+            case Strings['foodslist.menu.search']:
                 MENURESULT = RunShortcut(nutrDix['Search Algorithm'])
 
-            case 'Get Preset(s) Or Barcoded Food(s)':
+            case Strings['foodslist.menu.saved']:
                 MENURESULT = RunShortcut(nutrDix['Select Saved Foods'], input={'type': 'all'})
 
-            case 'Get Recent Meals':
-                MENURESULT = RunShortcut(nutrDix['Get Recent'])
-
-            case 'Scan Barcode':
+            case Strings['foodslist.menu.scan']:
                 MENURESULT = RunShortcut(nutrDix['Barcode Search'], input={'getFood': True})
 
-            case 'Make Food Manually':
+            case Strings['foodslist.menu.recent']:
+                MENURESULT = RunShortcut(nutrDix['Get Recent'])
+
+            case Strings['foodslist.menu.manual']:
                 # TODO, make manual maker
                 MENURESULT = RunShortcut(nutrDix['Make Food Manually'])
 
-            case 'View/Edit Selected Foods':
+            case Strings['foodslist.menu.edit']:
                 addMenuResult = FALSE
                 
                 # generate contact cards or user to select food using list ID
                 for listId in selectedIds:
                     food = foodsDix[listId]
+                    updatedText = Strings['food.servings'].replace('$num', food['Servings'])
                     text = f'''
                         BEGIN:VCARD
                         VERSION:3.0
                         N;CHARSET=UTF-8:{food['Name']}
-                        ORG;CHARSET=UTF-8:{food['Servings']} servings
+                        ORG;CHARSET=UTF-8:{updatedText}
                         NOTE;CHARSET=UTF-8:{listId}
                         END:VCARD
                     '''
@@ -128,8 +131,8 @@ for _ in range(maxLoops):
                 text = f'''
                     BEGIN:VCARD
                     VERSION:3.0
-                    N;CHARSET=UTF-8:Cancel
-                    ORG;CHARSET=UTF-8:No foods will be selected
+                    N;CHARSET=UTF-8:{Strings['opts.cancel']}
+                    ORG;CHARSET=UTF-8:{Strings['savedfoods.none.desc']}
                     NOTE;CHARSET=UTF-8:Cancel
                     {cancelIcon}
                     END:VCARD
@@ -138,31 +141,35 @@ for _ in range(maxLoops):
                 renamedItem = SetName(text, 'vcard.vcf')
                 contacts = GetContacts(renamedItem)
 
-                edit = ChooseFrom(contacts, prompt='Select Food To View')
+                edit = ChooseFrom(contacts, prompt=Strings['foods.viewedit.select'])
 
                 listId = Contact(edit.Notes)
                 if listId != 'Cancel':
                     # get the food at the id
                     food = foodsDix[listId]
-                    Menu('Select an action'):
-                        case 'Edit Servings':
-                            res = AskForInput(Input.Number, f'How many servings? (1 serving = {food['Serving Size']})', allowNegatives=False)
-                            food['Servings'] = res
+                    Menu(Strings['foodslist.select.action']):
+                        case Strings['foodslist.edit.servings']:
+                            updatedText = Strings['ask.for.servings'].replace('$name', food['Name'])
+                            updatedText = updatedText.replace('$size', food['Serving Size'])
+
+                            res = AskForInput(Input.Number, updatedText, allowNegatives=False)
+                            food['Servings'] = Number(res)
                             foodsDix[listId] = food
                             RunShortcut(nutrDix['Add Recent'], input=food)
 
-                        case 'View/Edit Other Fields':
+                        case Strings['foodslist.edit.other']:
                             changedFood = RunShortcut(nutrDix['Display Food Item'], input=food)
-                            Menu(f'Save Changes to {changedFood['Name']}?'):
-                                case 'Yes':
+                            updatedText = Strings['foodslist.savechanges'].replace('$item', changedFood['Name'])
+                            Menu(updatedText):
+                                case Strings['opts.yes']:
                                     # if we edit a food, it is now different from its source food so generate a new food ID for it
                                     changedFood['id'] = RunShortcut(nutrDix['GFID'])
                                     foodsDix[listId] = changedFood
                                     RunShortcut(nutrDix['Add Recent'], input=changedFood)
-                                case 'No':
+                                case Strings['opts.no']:
                                     pass
 
-            case 'Remove Selected Foods':
+            case Strings['foodslist.menu.remove']:
                 addMenuResult = FALSE
                 # Remove selection
                 for listId in selectedIds:
@@ -181,7 +188,7 @@ for _ in range(maxLoops):
                 renamedItem = SetName(text, 'vcard.vcf')
                 contacts = GetContacts(renamedItem)
 
-                deletes = ChooseFrom(contacts, selectMultiple=True, prompt='Select foods to remove')
+                deletes = ChooseFrom(contacts, selectMultiple=True, prompt=Strings['foods.remove.select'])
 
                 for delete in deletes:
                     listId = Contact(delete).Notes
@@ -199,9 +206,12 @@ for _ in range(maxLoops):
 
                 menuFoods.append(food)
 
+                updatedText = Strings['ask.for.servings'].replace('$name', food['Name'])
+                updatedText = updatedText.replace('$size', food['Serving Size'])
+
                 # Ask for the servings
-                servings = Number(AskForInput(Input.Number, f'How many servings of {food['Name']}? (1 serving = {food['Serving Size']})', allowDecimals=True, allowNegatives=False))
-                food['Servings'] = servings
+                servings = Number(AskForInput(Input.Number, updatedText, allowDecimals=True, allowNegatives=False))
+                food['Servings'] = Number(servings)
 
                 # generate list Id for the item
                 foodsDix[nextId] = food

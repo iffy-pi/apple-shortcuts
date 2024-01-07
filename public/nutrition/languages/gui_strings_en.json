@@ -131,7 +131,27 @@
 	"stats.graph.cals.avg": "Daily Average",
 	"stats.graph.dates" : "Dates",
 
+	"foodslist.foods.selected": "Selected Foods",
+	"foodslist.foods.empty" : "No foods are selected",
 
+	"foodslist.menu.done": "Done Selecting Foods",
+	"foodslist.menu.search": "Search Food",
+	"foodslist.menu.saved": "Get Saved Food(s)",
+	"foodslist.menu.scan": "Scan Barcode",
+	"foodslist.menu.recent": "Get Recent Food(s)",
+	"foodslist.menu.manual": "Make Food Manually",
+	"foodslist.menu.edit": "View/Edit Selected Foods",
+	"foodslist.menu.remove": "Remove Foods",
+	"foodslist.select.action": "Select an action",
+	"foodslist.edit.servings": "Edit Servings",
+	"foodslist.edit.other": "View/Edit Other Fields",
+	"foodslist.savechanges": "Save edits to \"$item\" for this log? The saved food will not be edited",
+
+	"foods.viewedit.select": "Select Food To View/Edit",
+
+
+	"foods.remove.select": "Select foods to remove",
+	"food.servings": "$num servings",
 	"savechanges": "Save changes to \"$item\"?",	
 	"input.logtime": "What date and time?",
 	"barcodes": "Barcoded Foods",
@@ -140,6 +160,7 @@
 	"opts.yes": "Yes",
 	"opts.no": "No",
 	"opts.exit": "Exit",
+	"opts.cancel": "Cancel",
 	"foodnotes": "Food Notes",
 	"ask.for.servings": "How many servings of $name? (1 serving = $size)"
 }
