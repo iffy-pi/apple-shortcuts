@@ -161,6 +161,15 @@
 	"editfood.name.keep": "Keep both foods with this name",
 	"editfood.name.new": "Enter new name",
 
+
+	"manual.vtype.prompt" : "Vitamins and Minerals are in:",
+	"manual.vtype.exact": "Exact Values",
+	"manual.vtype.percentages": "Daily Percentages",
+	"manual.input.name": "What is the name of the food?",
+	"manual.input.size": "What is the serving size of the food?",
+
+
+
 	"installer.storage.notfound": "Storage Folder Could Not Be Found!",
 	"installer.storage.select": "Select Storage Folder From Folders In iCloud/Shortcuts",
 	"installer.storage.create": "Create Storage Folder in iCloud/Shortcuts",
