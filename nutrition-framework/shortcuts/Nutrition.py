@@ -23,31 +23,8 @@ else:
 
     Strings = Dictionary(GetContentsOfURL(f'https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/{selectedLang}'))
 
-
-    Menu(Strings['nutr.storage.notfound']):
-        case Strings['nutr.storage.select']:
-            folder = SelectFile(folders=True)
-            storage = f'{folder.Name}'
-        case Strings['nutr.storage.create']:
-            storage = AskForInput(Input.Text, prompt=Strings['nutr.storage.input'], default='Nutrition')
-
-            breakLoop = FALSE
-            for _ in range(10):
-                if breakLoop == FALSE:
-                    if GetFile(From='Shortcuts', storage, errorIfNotFound=False) is not None:
-
-                        text = Strings['nutr.storage.exists'].replace("$storage", storage)
-                        Menu(text):
-                            case Strings['nutr.storage.newname']:
-                                storage = AskForInput(Input.Text, prompt=Strings['nutr.storage.input'])
-                            case Strings['nutr.storage.use']:
-                                breakLoop = TRUE
-                    else:
-                        breakLoop = TRUE
-
-    SaveFile(To='Shortcuts', storage, "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
-
-    SaveFile(To='Shortcuts', Strings, f'{storage}/Other/gui_strings.json', overwrite=True)
+    Alert(Strings['nutr.setconfig'].replace('$config', Strings['installer.action.config']), showCancel=False)
+    StopShortcut()
 
 checkForUpdates = TRUE
 exitAfterQuickLog = TRUE
@@ -56,7 +33,7 @@ exitAfterQuickLog = TRUE
 res = GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json")
 shortcutNames = Dictionary(res)
 
-Strings = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.json", errorIfNotFound=False))
+Strings = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.json"))
 
 text = '''
     Calories

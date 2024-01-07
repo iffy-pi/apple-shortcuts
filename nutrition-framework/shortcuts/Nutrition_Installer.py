@@ -10,6 +10,8 @@ FALSE = 0
 
 newInstall = TRUE
 proceedWithUpdates = FALSE
+exitAfterConfig = FALSE
+freshConfig = FALSE
 
 updateInfo = {
     'updateLink' : 'https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json',
@@ -53,13 +55,71 @@ emojiUnicodes = {
 
 params = Dictionary(ShortcutInput)
 
+# Configure storage and language here
+# First get the storage if it exists
+file = GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt", errorIfNotFound=False)
+if file is not None:
+    storage = Text(file)
+    Strings = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.json"))
+else:
+    # If there is no storage we don't know the language, let the user select it here
+    langs = Dictionary(GetContentsOfURL('https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/language_options.json'))
+    selectedLang = ChooseFromList(langs.Keys)
+    Strings = Dictionary(GetContentsOfURL(f'https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/{selectedLang}'))
+
+    freshConfig = TRUE
+
+
 if params['updateCheck'] is not None:
     newInstall = FALSE
 else:
-    Menu('What are you doing?'):
-        case "Installing the Shortcut":
-        case "Checking For Updates":
+    Menu():
+        case Strings['installer.action.install']:
+        case Strings['installer.action.update']:
             newInstall = FALSE
+        case Strings['installer.action.config']:
+            newInstall = FALSE
+            exitAfterConfig = TRUE
+
+
+if freshConfig == TRUE:
+    blockIfFolderExists = TRUE
+
+    # If its a new install then let user enter folder
+    if newInstall == TRUE:
+        newStorage = AskForInput(Input.Text, prompt=Strings['installer.storage.input'], default='Nutrition')
+    else:
+        # Not new install means folder cannot be found, let user select it
+        Menu(Strings['installer.storage.notfound']):
+            case Strings['installer.storage.select']:
+                folder = SelectFile(folders=True)
+                newStorage = f'{folder.Name}'
+                blockIfFolderExists = FALSE
+            case Strings['installer.storage.create']:
+                newStorage = AskForInput(Input.Text, prompt=Strings['installer.storage.input'], default='Nutrition')
+
+    if blockIfFolderExists == TRUE:
+        breakLoop = FALSE
+        for _ in range(10):
+            if breakLoop == FALSE:
+                if GetFile(From='Shortcuts', newStorage, errorIfNotFound=False) is not None:
+                    updatedText = Strings['installer.storage.exists'].replace('$storage', newStorage)
+                    newStorage = AskForInput(Input.Text, prompt=updatedText)
+                else:
+                    breakLoop = TRUE
+
+    storage = newStorage
+
+    SaveFile(To='Shortcuts', storage, "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
+    SaveFile(To='Shortcuts', Strings, f'{storage}/Other/gui_strings.json', overwrite=True)
+
+    if newInstall == TRUE:
+        Alert(Strings['installer.storage.info'], showCancel=False)
+
+
+if exitAfterConfig == TRUE:
+    StopShortcut()
+
 
 if params['useTest'] is not None:
     updateInfo['updateLink'] = 'https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/testupdates.json'
@@ -67,31 +127,6 @@ if params['useTest'] is not None:
 if newInstall == TRUE:
     # If we are doing a new install, we have to save the shortcutNames
     # And also generate installation links for all the children files
-
-    # Let user select the storage folder 
-    file = GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt", errorIfNotFound=False)
-    if file is not None:
-        IFRESULT = file
-    
-    else:
-        newStorage = AskForInput(Input.Text, prompt="Enter folder name to store saved foods and configuration files", default='Nutrition')
-
-        breakLoop = FALSE
-        for _ in range(10):
-            if breakLoop == FALSE:
-                if GetFile(From='Shortcuts', newStorage, errorIfNotFound=False) is not None:
-                    newStorage = AskForInput(Input.Text, prompt=f'Folder "{newStorage}" already exists, please select a different name', default=text)
-                else:
-                    breakLoop = TRUE
-
-        Alert('The folder name is saved in Shortcuts/Nutrition_Shortcut_Storage_Folder_Name.txt. To change the folder name, rename the folder and edit the text file'
-            title=f'Shortcut files will be saved to Shortcuts/{newStorage}')
-
-        SaveFile(To='Shortcuts', newStorage, "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
-
-        IFRESULT = newStorage
-
-    storage = IFRESULT
 
     dix = Dictionary(...) # shortcutNames.json
     SaveFile(To='Shortcuts', dix, f"{storage}/Other/shortcutNames.json") # save shortcut names file
@@ -126,6 +161,10 @@ if Number(updateRes['version']) > updateInfo['version']:
 
 
     if proceedWithUpdates == TRUE:
+        # download the new gui strings
+        Strings = Dictionary(GetContentsOfURL(f'https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/{Strings['_string_lang_file']}'))
+        SaveFile(To='Shortcuts', Strings, f'{storage}/Other/gui_strings.json', overwrite=True)
+
         updateText = []
         updateLinks = []
 
