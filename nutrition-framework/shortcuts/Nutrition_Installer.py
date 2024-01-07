@@ -146,17 +146,23 @@ if Number(updateRes['version']) > updateInfo['version']:
         # ask the user
         for _ in range(5):
             if proceedWithUpdates == FALSE:
-                Menu(f'There is a new version ({updateRes['version']}) available for this shortcut'):
-                    case "What's New?":
+                text = f'''
+                    {Strings['installer.updating.new']}
+                    v{updateInfo['version']} => v{updateRes['version']}
+                '''
+                Menu(text):
+                    case Strings['installer.updating.whatsnew']:
                         text = f'''
-                        # What's New in v4.03:
+                        # In v{updateRes['version']}:
                         {updateRes['releaseNotes']}
                         '''
                         richText = MakeRichTextFromMarkdown(text)
                         QuickLook(richText)
-                    case 'Update':
+                    
+                    case Strings['installer.updating.update']:
                         proceedWithUpdates = TRUE
-                    case 'Exit':
+                    
+                    case Strings['opts.exit']:
                         StopShortcut()
 
 
@@ -183,51 +189,22 @@ if Number(updateRes['version']) > updateInfo['version']:
         date = Date(updateRes['releaseTime'])
 
         if newInstall == TRUE:
-            IFRESULT = f"""
-                #  Installing {updateRes['name']} Shortcut
-                ## &#x1F50E; Description:
-                The Nutrition Shortcut is made up of several helper shortcuts for its extensive functionality. Please install all the shortcuts listed in the Install section below.
-                &nbsp;
-                After installation, the main shortcut to run is Nutrition. Not sure where to start? Check out the [tutorial](https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/data/tutorial.html).
-                &nbsp;
-                Note: Make sure to give the shortcut access to read and write Health data, refer to Allowing Health Access in the tutorial.
-                &nbsp;
-                Note: If you wish to use Nutrition Statistics, you must install [Charty](https://apps.apple.com/ca/app/charty-for-shortcuts/id1494386093).
-                &nbsp;
-                If you run into any errors or issues, please contact developer. (See developer contact below)
-            """
+            IFRESULT = Strings['installer.docs.installmd'].replace('$name', updateRes['name'])
         else:
-            IFRESULT = f"""
-                # {updateRes['name']} Shortcut Update
-                ## Updates are available for shortcuts:
-                {updateText}
+            updatedText = Strings['installer.docs.updatemd']
+                            .replace('$name', updateRes['name'])
+                            .replace('$update', updateText)
+                            .replace('$date', date.format(date="long", time=None))
+            IFRESULT = updatedText
 
-                &nbsp;
-                ## &#x1F566; Released:
-                {date.format(date="long", time=None)}
-            """
 
-        text = f"""
-            {IFRESULT}
+        updatedText = Strings['installer.docs.othermd']
+                        .replace('$info', IFRESULT)
+                        .replace('$links', updateLinks)
+                        .replace('$notes', {updateRes['releaseNotes']})
+                        .replace('$rhublink', f'{updateRes['rhub']}/changelog')
 
-            &nbsp;
-            ## &#x2705; Install:
-            {updateLinks}
-
-            &nbsp;
-            ## &#x1F4DD; Release Notes:
-            {updateRes['releaseNotes']}
-
-            &nbsp;
-            ## &#x1F4EC; Developer Contact:
-            Reddit: [u/iffythegreat](https://www.reddit.com/user/iffythegreat)
-            RoutineHub: [iffy-pi](https://routinehub.co/user/iffy-pi)
-
-            &nbsp;
-            ## &#x1F4DA; Full Update History:
-            {updateRes['rhub']}/changelog
-        """
-        richText = MakeRichTextFromMarkdown(text)
+        richText = MakeRichTextFromMarkdown(updatedText)
 
         sysVers = GetDeviceDetails('System Version')
 
@@ -235,14 +212,7 @@ if Number(updateRes['version']) > updateInfo['version']:
         if sysVers >= 17.0:
             # use the patch
             CopyToClipboard(richText)
-
-            warningText = '''
-                Instructions
-                Paste the contents of your clipboard into this note to see the instructions!
-                This is a patch to a rich text issue introduced with iOS 17.0.
-            '''
-            
-            IFRESULT = CreateNote(warningText)
+            IFRESULT = CreateNote(Strings['installer.badmd.warning'])
         else:
             IFRESULT = CreateNote(richText)
 

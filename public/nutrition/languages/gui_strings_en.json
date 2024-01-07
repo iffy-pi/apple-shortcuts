@@ -1,12 +1,4 @@
 {
-	"nutr.storage.notfound": "Storage Folder Could Not Be Found!",
-	"nutr.storage.select": "Select Storage Folder From Folders In iCloud/Shortcuts",
-	"nutr.storage.create": "Create Storage Folder in iCloud/Shortcuts",
-	"nutr.storage.input": "Enter folder name to store saved foods and configuration files",
-	"nutr.storage.exists": "Folder \"$storage\" already exists in iCloud/Shortcuts",
-	"nutr.storage.newname": "Select A Different Name",
-	"nutr.storage.use": "Use Folder As Storage Folder",
-
 	"nutr.healthperms.instr": "Your Apple Health permissions may have not been fully set, the shortcut will fast track through sample logging permissions. You can do this again by going to $othersettings > $healthperms.",
 	"nutr.healthperms.warning.msg": "Your Apple Health permissions may have not been fully set, the shortcut will fast track through sample logging permissions",
 	"nutr.healthperms.warning.title": "Health Sample Permissions",
@@ -19,6 +11,7 @@
 	"nutr.calorie.summary": "You've eaten $cals calories today.",
 
 
+	"nutr.setconfig": "The shortcut has not been configured properly. Run Nutrition Installer > \"$config\" to fix this issue",
 	"nutr.menu.quicklog": "Quick Log",
 	"nutr.menu.logattime": "Log Foods At Time",
 	"nutr.menu.logdifferent": "Log Foods At Different Times",
@@ -168,6 +161,30 @@
 	"editfood.name.keep": "Keep both foods with this name",
 	"editfood.name.new": "Enter new name",
 
+	"installer.storage.notfound": "Storage Folder Could Not Be Found!",
+	"installer.storage.select": "Select Storage Folder From Folders In iCloud/Shortcuts",
+	"installer.storage.create": "Create Storage Folder in iCloud/Shortcuts",
+	"installer.storage.input": "Enter folder name to store saved foods and configuration files",
+	"installer.storage.exists": "Folder \"$storage\" already exists in iCloud/Shortcuts. Please select a different name.",
+	"installer.storage.newname": "Select A Different Name",
+	"installer.storage.use": "Use Folder As Storage Folder",
+	"installer.storage.info": "The folder name is saved in Shortcuts/Nutrition_Shortcut_Storage_Folder_Name.txt. To change the folder name, rename the folder and edit the text file",
+	"installer.action.install": "Install Shortcuts",
+	"installer.action.update": "Check For Updates",
+	"installer.action.config": "Configure Shortcut",
+
+	"installer.updating.new": "There is a new version $ver available for this shortcut.",
+	"installer.updating.whatsnew": "What's New?",
+	"installer.updating.update": "Update",
+
+	"installer.docs.installmd": "#  Installing $name Shortcut\n## &#x1F50E; Description:\nThe Nutrition Shortcut is made up of several helper shortcuts for its extensive functionality. Please install all the shortcuts listed in the Install section below.\n&nbsp;\nAfter installation, the main shortcut to run is Nutrition. Not sure where to start? Check out the [tutorial](https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/data/tutorial.html).\n&nbsp;\nNote: Make sure to give the shortcut access to read and write Health data, refer to Allowing Health Access in the tutorial.\n&nbsp;\nNote: If you wish to use Nutrition Statistics, you must install [Charty](https://apps.apple.com/ca/app/charty-for-shortcuts/id1494386093).\n&nbsp;\nIf you run into any errors or issues, please contact developer. (See developer contact below)",
+
+	"installer.docs.updatemd": "# $name Shortcut Update\n## Updates are available for shortcuts:\n$update\n\n&nbsp;\n## &#x1F566; Released:\n$date",
+
+	"installer.docs.othermd": "$info\n\n&nbsp;\n## &#x2705; Install:\n$links\n\n&nbsp;\n## &#x1F4DD; Release Notes:\n$notes\n\n&nbsp;\n## &#x1F4EC; Developer Contact:\nReddit: [u/iffythegreat](https://www.reddit.com/user/iffythegreat)\nRoutineHub: [iffy-pi](https://routinehub.co/user/iffy-pi)\n\n&nbsp;\n## &#x1F4DA; Full Update History:\n$rhublink",
+
+	"installer.badmd.warning": "Instructions\nPaste the contents of your clipboard into this note to see the instructions!\nThis is a patch to a rich text issue introduced with iOS 17.0.",
+
 	"foods.remove.select": "Select foods to remove",
 	"food.servings": "$num servings",
 	"savechanges": "Save changes to \"$item\"?",	
@@ -181,5 +198,5 @@
 	"opts.cancel": "Cancel",
 	"foodnotes": "Food Notes",
 	"ask.for.servings": "How many servings of $name? (1 serving = $size)",
-	"_selectedLang": "English"
+	"_string_lang_file": "gui_strings_en"
 }
