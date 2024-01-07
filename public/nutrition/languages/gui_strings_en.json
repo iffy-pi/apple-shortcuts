@@ -207,8 +207,18 @@
 	"logdiff.settime.select": "Select log time for:",
 
 
-
-
+	"history.foods.today": "Foods eaten today:",
+	"history.foods.today.none": "You have not eaten any foods today",
+	"history.menu.moreopts": "More History Options",
+	"history.query.day": "Foods Logged On Certain Day...",
+	"history.query.inlast": "Foods Logged in the last ...",
+	"history.query.between": "Foods Logged Between...",
+	"history.query.all": "Foods Logged All Time",
+	"history.day.date": "Get Foods Eaten On Day:",
+	"history.window.start": "Start Date For Time Window:",
+	"history.window.end": "End Date For Time Window:",
+	"history.nofoods": "There are no foods in your food history for the requested time.",
+	"history.nofoods.title": "No Foods Found",
 
 
 	"installer.storage.notfound": "Storage Folder Could Not Be Found!",
