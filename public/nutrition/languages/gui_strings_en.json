@@ -149,6 +149,15 @@
 
 	"foods.viewedit.select": "Select Food To View/Edit",
 
+	"loga.healthperms.title": "Health Sample Permissions",
+	"loga.healthperms.enable": "To enable permissions, just click 'Always Allow' when prompted",
+	"loga.healthperms.baddevice": "You must be on a device with Apple Health to run through permissions",
+	"loga.backlog.msg": "Food will be logged when next on iPhone",
+	"loga.backlog.title": "$name has been added to backlog",
+	"loga.healthperms.complete": "All nutrient permissions have been set!",
+	"loga.notif.logged": "$name has been logged to your meals",
+	"loga.notif.yummy": "Yummy!",
+
 
 	"foods.remove.select": "Select foods to remove",
 	"food.servings": "$num servings",
@@ -162,5 +171,6 @@
 	"opts.exit": "Exit",
 	"opts.cancel": "Cancel",
 	"foodnotes": "Food Notes",
-	"ask.for.servings": "How many servings of $name? (1 serving = $size)"
+	"ask.for.servings": "How many servings of $name? (1 serving = $size)",
+	"_selectedLang": "English"
 }
