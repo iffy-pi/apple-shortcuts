@@ -77,7 +77,7 @@
 
 	"search.item.accept": "Accept Result",
 	"search.item.edit": "Edit Result",
-	"search.item.save": "Save changes",
+	"search.item.save": "Save changes?",
 	"search.item.prevvalues": "No, use previous values",
 	"search.item.backtosearch": "No, back to search",
 
@@ -105,7 +105,17 @@
 	"barcodes.add": "Add to Personal Database",
 	"barcodes.edit": "Edit Foods in Personal Database",
 	"barcodes.remove": "Remove Food From Personal Database",
-
+	"barcodes.select": "Select food from Personal Database",
+	"barcodes.code.exists": "There is a food in your database with the barcode \"$barcode\"",
+	"barcodes.food.edit": "Edit Food",
+	"barcodes.food.remake": "Remake Food",
+	"barcodes.searchmanual" : "Search for food or make food manually",
+	"barcodes.nomatch.prompt": "There was no match found on OpenFoodFacts.org, what would you like to do?",
+	"barcodes.scan": "Scan and Search",
+	"barcodes.search.none": "Search had no results",
+	"barcodes.exit.withnone": "Exit with no selection",
+	"barcodes.created.notif.msg": "Barcoded Food \"$name\" ($barcode) has been added to your personal database allowing you to scan them for later!",
+	"barcodes.created.notif.title": "Barcoded Food Created",
 
 	"stats.breakdown": "Breakdown",
 	"stats.avg" : "Average",

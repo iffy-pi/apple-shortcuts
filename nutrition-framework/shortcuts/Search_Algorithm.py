@@ -299,7 +299,7 @@ for _ in range (50):
                     
                     case Strings['search.item.edit']:
                         res = RunShorctut(NutriDix['Display Food Item'], input=outputFood)
-                        Menu(f'{Strings['search.item.save']}?')
+                        Menu(Strings['search.item.save'])
                             case Strings['opts.yes']:
                                 searchExit = TRUE
                                 outputFood = res
