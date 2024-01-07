@@ -5,8 +5,8 @@
 	"rhub": "https://routinehub.co/shortcut/15515",
 	"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/updates.json",
 
-	"version": 1.6,
-	"link": "https://www.icloud.com/shortcuts/50b32f29fd234ffd8f0243d13a7e66f2",
-	"releaseNotes": "- Access Tokens are now saved to your files to make update process easier.",
-	"releaseTime": "2023-12-11"
+	"version": 1.61,
+	"link": "https://www.icloud.com/shortcuts/80e67a8498eb4bcb938a476614e848ba",
+	"releaseNotes": "- Fixed issue where Safari links were not being pushed correctly",
+	"releaseTime": "2024-01-06"
 }
