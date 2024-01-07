@@ -7,6 +7,7 @@ Ver: 1.05
 # Make a preset with passed in foods or a new list of foods
 
 storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
+Strings = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.json"))
 nutrDix = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json"))
 
 TRUE = 1
@@ -58,11 +59,12 @@ for _ in Count(selectedIds):
         # Generate food contact cards
         for listId in selectedIds
             food = foodsDix[listId]
+            updatedText = Strings['food.servings'].replace('$num', food['Servings'])
             text = f'''
             BEGIN:VCARD
             VERSION:3.0
             N;CHARSET=UTF-8:{food['Name']}
-            ORG;CHARSET=UTF-8:{food['Servings']} servings
+            ORG;CHARSET=UTF-8:{food['Serving Size']} ⸱ {updatedText}
             NOTE;CHARSET=UTF-8:{listId}
             END:VCARD
             '''
@@ -71,11 +73,17 @@ for _ in Count(selectedIds):
         contacts = macros.textToContacts(REPEATRESULTS)
 
         if confirmServings == TRUE:
-            IFRESULT = f'Select Foods to be made into Preset\nYou can edit the servings of selected foods'
+            IFRESULT = f'''
+            {Strings['makepreset.select.foods']}
+            {Strings['makepreset.servings.editable']}
+            '''
         else:
-            IFRESULT = "Select Foods to be made into Preset"
+            IFRESULT = Strings['makepreset.select.foods']
 
-        text = f'{IFRESULT}\nSelect no items if you wish to exit'
+        text = f'''
+            {IFRESULT}
+            {Strings['makepreset.howto.exit']}
+        '''
 
         chosenIds = ChooseFrom(contacts, selectMultiple=True, selectAll=True, prompt=text)
 
@@ -102,8 +110,11 @@ for _ in Count(selectedIds):
                     askForServings = TRUE
 
                 if askForServings == TRUE:
-                    IFRESULT = AskForInput(Input.Number, prompt=f'How many servings of "{defaultName}"? (1 serving = {defaultSize})',
-                                default=1, allowDecimals=True, allowNegatives=False)
+                    updatedText = Strings['ask.for.servings']
+                                    .replace('$name', defaultName)
+                                    .replace('$size', defaultSize)
+                    IFRESULT = AskForInput(Input.Number, prompt=updatedText,
+                                default=curFood['Servings'], allowDecimals=True, allowNegatives=False)
                 else:
                     IFRESULT = curFood['Servings']
                 
@@ -125,7 +136,7 @@ for _ in Count(selectedIds):
                 defaultName = ''
 
             # Check if the current name already exists as a preset, and prompt user if it does
-            name = AskForInput(Input.Text, prompt="What is the name of this preset?", default=defaultName)
+            name = AskForInput(Input.Text, prompt=Strings['makepreset.input.name'], default=defaultName)
 
             if Count(presetNames) > 0:
                 breakNameLoop = FALSE
@@ -133,16 +144,16 @@ for _ in Count(selectedIds):
                     if breakNameLoop == FALSE:
                         res = FilterFiles(presetNames, where['Name' == name])
                         if res is not None:
-                            Menu(f'Preset "{name}" already exists'):
-                                case 'Select a different name':
-                                    name = AskForInput(Input.Text, prompt=f'"{name}" already exists, please select a new name', default=name)
-                                case 'Keep both with same name':
+                            Menu(Strings['editfood.name.exists'].replace('$name', name)):
+                                case Strings['editfood.name.different']:
+                                    name = AskForInput(Input.Text, prompt=Strings['editfood.name.new'])
+                                case Strings['editfood.name.keep']:
                                     breakNameLoop = TRUE
                         else:
                             presetNames.append(name)
                             breakNameLoop = TRUE
 
-            servingSize = AskForInput(Input.Text, prompt="What is the serving size of this preset?", default=defaultSize)
+            servingSize = AskForInput(Input.Text, prompt=Strings['makepreset.input.size'], default=defaultSize)
 
             # then set in the food
             foodId = RunShortcut(nutrDix["GFID"])
@@ -152,6 +163,11 @@ for _ in Count(selectedIds):
 
             # save to file
             SaveFile(To='Shortcuts', presetFood, f"{storage}/Presets/Foods/food_{foodId}.json", overwrite=True)
+
+            Notification(
+                Strings['makepreset.notif.msg'].replace('$name', presetFood['Name']),
+                title=Strings['makepreset.notif.title']
+                )
 
         else:
             breakLoop = TRUE

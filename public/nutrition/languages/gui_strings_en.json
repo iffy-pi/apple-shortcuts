@@ -168,6 +168,13 @@
 	"manual.input.name": "What is the name of the food?",
 	"manual.input.size": "What is the serving size of the food?",
 
+	"makepreset.select.foods" : "Select foods to be made into the preset",
+	"makepreset.servings.editable": "You will be allowed to change the servings for each food",
+	"makepreset.howto.exit": "Select no foods if you wish to exit",
+	"makepreset.input.name": "What is the name of this preset?",
+	"makepreset.input.size": "What is the serving size of this preset?",
+	"makepreset.notif.msg": "Preset \"$name\" has been created successfully!",
+	"makepreset.notif.title": "Preset Created",
 
 
 	"installer.storage.notfound": "Storage Folder Could Not Be Found!",
