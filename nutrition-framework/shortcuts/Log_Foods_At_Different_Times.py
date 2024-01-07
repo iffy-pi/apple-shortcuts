@@ -249,8 +249,8 @@ for listId in selectedIds:
     date = datesInfo[listId]
     logFood = TRUE
     if date is None:
-        updatedText = Strings['logdiff.food.notime']
-                        .replace('$servings', food['Servings'])
+        updatedText = Strings['logdiff.notime.prompt']
+                        .replace('$servings', f'food['Servings']x')
                         .replace('$name', food['Name'])
         Menu(updatedText):
             case Strings['logdiff.notime.log']:
