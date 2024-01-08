@@ -10,6 +10,7 @@ TRUE = 1
 FALSE = 0
 
 storageExists = FALSE
+tutorialLink = 'https://iffy-pi.github.io/apple-shortcuts/public/nutrition/tutorial/index.html'
 
 file = GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt", errorIfNotFound=False)
 
@@ -32,7 +33,6 @@ exitAfterQuickLog = TRUE
 # load names of the shortcuts
 res = GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json")
 shortcutNames = Dictionary(res)
-
 Strings = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.json"))
 
 text = '''
@@ -230,10 +230,10 @@ Menu(prompt):
                 SaveFile(To='Shortcuts', Strings, f'{storage}/Other/gui_strings.json', overwrite=True)
 
             case Strings['nutr.menu.tutorial']:
-                OpenURL("https://iffy-pi.github.io/apple-shortcuts/public/nutrition/tutorial/index.html")
+                OpenURL(tutorialLink)
 
     case Strings['nutr.menu.howtouse']::
-            OpenURL("https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/data/tutorial.html")
+            OpenURL(tutorialLink)
 
 
 RunShortcut(shortcutNames['Clear Cache and Backlog'])
