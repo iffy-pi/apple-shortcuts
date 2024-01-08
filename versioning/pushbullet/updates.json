@@ -4,7 +4,7 @@
 	"type": "independent",
 	"rhub": "https://routinehub.co/shortcut/15515",
 	"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/updates.json",
-	"pyfile": "src/pushbullet-shortcuts/PushBullet.py",
+	"pyfile": "projects/pushbullet-shortcuts/PushBullet.py",
 
 	"version": 1.61,
 	"link": "https://www.icloud.com/shortcuts/b4cdf6a2ea0449459289151e94fdeeed",

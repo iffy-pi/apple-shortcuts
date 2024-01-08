@@ -4,7 +4,7 @@
 	"type": "independent",
 	"rhub": "https://routinehub.co/shortcut/15516",
 	"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/pullbullet/updates.json",
-	"pyfile": "src/pushbullet-shortcuts/PullBullet.py",
+	"pyfile": "projects/pushbullet-shortcuts/PullBullet.py",
 
 	"version": 1.31,
 	"link": "https://www.icloud.com/shortcuts/869e9508e0294c929f97da67cbc5882a",

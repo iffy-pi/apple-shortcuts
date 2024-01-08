@@ -4,7 +4,7 @@
     "type": "framework",
     "rhub": "https://routinehub.co/shortcut/5177",
     "updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json",
-    "pyfile": "src/nutrition-framework/shortcuts/Nutrition_Installer.py",
+    "pyfile": "projects/nutrition-framework/shortcuts/Nutrition_Installer.py",
     "version": "4.10",
     "link": "https://www.icloud.com/shortcuts/e9cb653ccc424c1cb41adcf890757c36",
     "releaseNotes": "- Search Algorithm v1.04\n\t- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Updated to support PTCD numbering format ([#1](https://github.com/iffy-pi/apple-shortcuts/issues/1)).\n\n- Foods List v1.05\n\t- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Updated to support PTCD numbering format ([#1](https://github.com/iffy-pi/apple-shortcuts/issues/1)).\n\n- Log Algorithm v1.12\n\t- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Updated to support PTCD numbering format ([#1](https://github.com/iffy-pi/apple-shortcuts/issues/1)).\n\n- Make Preset v1.05\n\t- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Updated to support PTCD numbering format ([#1](https://github.com/iffy-pi/apple-shortcuts/issues/1)).\n\n- Edit Saved Food v1.01\n\t- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Updated to support PTCD numbering format ([#1](https://github.com/iffy-pi/apple-shortcuts/issues/1)).\n\n- Make Food Manually v1.01\n\t- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Updated to support PTCD numbering format ([#1](https://github.com/iffy-pi/apple-shortcuts/issues/1)).\n\n- Calculate Stats v1.02\n\t- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Updated to support PTCD numbering format ([#1](https://github.com/iffy-pi/apple-shortcuts/issues/1)).\n\n- Nutrition Statistics v1.02\n\t- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Updated to support PTCD numbering format ([#1](https://github.com/iffy-pi/apple-shortcuts/issues/1)).\n\n- Log Foods At Different Times v1.11\n\t- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Updated to support PTCD numbering format ([#1](https://github.com/iffy-pi/apple-shortcuts/issues/1)).\n\t- **&#x1F3AF; Improvement**: Updated to include more descriptive menu options and usage instructions ([#49](https://github.com/iffy-pi/apple-shortcuts/issues/49)).\n\n- Nutrition v1.06\n\t- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Updated to support PTCD numbering format ([#1](https://github.com/iffy-pi/apple-shortcuts/issues/1)).",
@@ -14,7 +14,7 @@
             "id": 19,
             "name": "Add Recent",
             "type": "child",
-            "pyfile": "src/nutrition-framework/shortcuts/Add_Recent.py",
+            "pyfile": "projects/nutrition-framework/shortcuts/Add_Recent.py",
             "version": "1.01",
             "link": "https://www.icloud.com/shortcuts/83acc40023dd4f31acf88cc8f81f8757"
         },
@@ -22,7 +22,7 @@
             "id": 20,
             "name": "Barcode Search",
             "type": "child",
-            "pyfile": "src/nutrition-framework/shortcuts/Barcode_Search.py",
+            "pyfile": "projects/nutrition-framework/shortcuts/Barcode_Search.py",
             "version": "1.02",
             "link": "dsdsdsdd"
         },
@@ -30,7 +30,7 @@
             "id": 24,
             "name": "Calculate Stats",
             "type": "child",
-            "pyfile": "src/nutrition-framework/shortcuts/Calculate_Stats.py",
+            "pyfile": "projects/nutrition-framework/shortcuts/Calculate_Stats.py",
             "version": "1.02",
             "link": "https://www.icloud.com/shortcuts/e581abd860f34b929058413d6536c23e"
         },
@@ -38,7 +38,7 @@
             "id": 14,
             "name": "Clear Cache And Backlog",
             "type": "child",
-            "pyfile": "src/nutrition-framework/shortcuts/Clear_Cache_And_Backlog.py",
+            "pyfile": "projects/nutrition-framework/shortcuts/Clear_Cache_And_Backlog.py",
             "version": "1.01",
             "link": "https://www.icloud.com/shortcuts/cdd0b24f5dc944dab22b6662f50fc2f1"
         },
@@ -46,7 +46,7 @@
             "id": 10,
             "name": "Display Food Item",
             "type": "child",
-            "pyfile": "src/nutrition-framework/shortcuts/Display_Food_Item.py",
+            "pyfile": "projects/nutrition-framework/shortcuts/Display_Food_Item.py",
             "version": "1.01",
             "link": "https://www.icloud.com/shortcuts/56eb5a0b0cb148f0a49f6457e150c8d6"
         },
@@ -54,7 +54,7 @@
             "id": 15,
             "name": "Edit Saved Food",
             "type": "child",
-            "pyfile": "src/nutrition-framework/shortcuts/Edit_Saved_Food.py",
+            "pyfile": "projects/nutrition-framework/shortcuts/Edit_Saved_Food.py",
             "version": "1.01",
             "link": "https://www.icloud.com/shortcuts/d85ed2cfceaa4938b485bcc7a16b4e26"
         },
@@ -62,7 +62,7 @@
             "id": 22,
             "name": "Food History",
             "type": "child",
-            "pyfile": "src/nutrition-framework/shortcuts/Food_History.py",
+            "pyfile": "projects/nutrition-framework/shortcuts/Food_History.py",
             "version": "1.01",
             "link": "https://www.icloud.com/shortcuts/6d7f46789a704a7a8c3f6009ddc277de"
         },
@@ -70,7 +70,7 @@
             "id": 6,
             "name": "Foods List",
             "type": "child",
-            "pyfile": "src/nutrition-framework/shortcuts/Foods_List.py",
+            "pyfile": "projects/nutrition-framework/shortcuts/Foods_List.py",
             "version": "1.05",
             "link": "https://www.icloud.com/shortcuts/a19cfd68cc204506896221e2f4d77796"
         },
@@ -78,7 +78,7 @@
             "id": 9,
             "name": "Generate Food ID",
             "type": "child",
-            "pyfile": "src/nutrition-framework/shortcuts/Generate_Food_ID.py",
+            "pyfile": "projects/nutrition-framework/shortcuts/Generate_Food_ID.py",
             "version": "1.0",
             "link": "https://www.icloud.com/shortcuts/f91b4e6228114de68c674113b480780c"
         },
@@ -86,7 +86,7 @@
             "id": 18,
             "name": "Get Recent",
             "type": "child",
-            "pyfile": "src/nutrition-framework/shortcuts/Get_Recent.py",
+            "pyfile": "projects/nutrition-framework/shortcuts/Get_Recent.py",
             "version": "1.0",
             "link": "https://www.icloud.com/shortcuts/01d81b56a845494a8155568094c14ad0"
         },
@@ -94,7 +94,7 @@
             "id": 7,
             "name": "Log Algorithm",
             "type": "child",
-            "pyfile": "src/nutrition-framework/shortcuts/Log_Algorithm.py",
+            "pyfile": "projects/nutrition-framework/shortcuts/Log_Algorithm.py",
             "version": "1.12",
             "link": "https://www.icloud.com/shortcuts/f9c3a63257534fdebd4aadc9d6cedbe9"
         },
@@ -102,7 +102,7 @@
             "id": 12,
             "name": "Log Foods At Different Times",
             "type": "child",
-            "pyfile": "src/nutrition-framework/shortcuts/Log_Foods_At_Different_Times.py",
+            "pyfile": "projects/nutrition-framework/shortcuts/Log_Foods_At_Different_Times.py",
             "version": "1.11",
             "link": "https://www.icloud.com/shortcuts/87fd97b105ee41f991cf55f037839308"
         },
@@ -110,7 +110,7 @@
             "id": 11,
             "name": "Log Foods At Time",
             "type": "child",
-            "pyfile": "src/nutrition-framework/shortcuts/Log_Foods_At_Time.py",
+            "pyfile": "projects/nutrition-framework/shortcuts/Log_Foods_At_Time.py",
             "version": "1.02",
             "link": "https://www.icloud.com/shortcuts/0d1a0e77f8b94b388119d112ab7538b7"
         },
@@ -118,7 +118,7 @@
             "id": 25,
             "name": "Log Nutrients To Health",
             "type": "child",
-            "pyfile": "src/nutrition-framework/shortcuts/Log_Nutrients_To_Health.py",
+            "pyfile": "projects/nutrition-framework/shortcuts/Log_Nutrients_To_Health.py",
             "version": "1.0",
             "link": "https://www.icloud.com/shortcuts/10ce3b6aa36e4cac96fe779a1d0dc281"
         },
@@ -126,7 +126,7 @@
             "id": 21,
             "name": "Make Food Manually",
             "type": "child",
-            "pyfile": "src/nutrition-framework/shortcuts/Make_Food_Manually.py",
+            "pyfile": "projects/nutrition-framework/shortcuts/Make_Food_Manually.py",
             "version": "1.01",
             "link": "https://www.icloud.com/shortcuts/33e2014fa6ed498da667530cbf2d16b8"
         },
@@ -134,7 +134,7 @@
             "id": 17,
             "name": "Make Preset",
             "type": "child",
-            "pyfile": "src/nutrition-framework/shortcuts/Make_Preset.py",
+            "pyfile": "projects/nutrition-framework/shortcuts/Make_Preset.py",
             "version": "1.05",
             "link": "https://www.icloud.com/shortcuts/6cee71b1d42448899a076b3f30521efe"
         },
@@ -142,7 +142,7 @@
             "id": 5,
             "name": "Nutrition",
             "type": "child",
-            "pyfile": "src/nutrition-framework/shortcuts/Nutrition.py",
+            "pyfile": "projects/nutrition-framework/shortcuts/Nutrition.py",
             "version": "1.06",
             "link": "https://www.icloud.com/shortcuts/2199bf9d239c47569c98abc6fc838fcb"
         },
@@ -150,7 +150,7 @@
             "id": 23,
             "name": "Nutrition Statistics",
             "type": "child",
-            "pyfile": "src/nutrition-framework/shortcuts/Nutrition_Statistics.py",
+            "pyfile": "projects/nutrition-framework/shortcuts/Nutrition_Statistics.py",
             "version": "1.02",
             "link": "https://www.icloud.com/shortcuts/f42bcd044bf64bf5846046c4eb6f0745"
         },
@@ -158,7 +158,7 @@
             "id": 13,
             "name": "Saved And Search",
             "type": "child",
-            "pyfile": "src/nutrition-framework/shortcuts/Saved_And_Search.py",
+            "pyfile": "projects/nutrition-framework/shortcuts/Saved_And_Search.py",
             "version": "1.02",
             "link": "https://www.icloud.com/shortcuts/018de26f55214ccf9ab1f0a09232f43d"
         },
@@ -166,7 +166,7 @@
             "id": 8,
             "name": "Search Algorithm",
             "type": "child",
-            "pyfile": "src/nutrition-framework/shortcuts/Search_Algorithm.py",
+            "pyfile": "projects/nutrition-framework/shortcuts/Search_Algorithm.py",
             "version": "1.04",
             "link": "https://www.icloud.com/shortcuts/659364e629fb4b33ba268e0aa2a99743"
         },
@@ -174,7 +174,7 @@
             "id": 16,
             "name": "Select Saved Foods",
             "type": "child",
-            "pyfile": "src/nutrition-framework/shortcuts/Select_Saved_Foods.py",
+            "pyfile": "projects/nutrition-framework/shortcuts/Select_Saved_Foods.py",
             "version": "1.01",
             "link": "https://www.icloud.com/shortcuts/a50cac2a1cbf4d27ab1cf2402f6cfca9"
         }
