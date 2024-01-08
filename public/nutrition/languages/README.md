@@ -81,6 +81,10 @@ The script will then check that:
 ### Do Some Testing
 Test that things look all right by using the language in your own shortcut (use Save GUI Strings shortcut).
 
+### For New Languages: Update Tutorial.md
+If you have a new language be sure to generate a new tutorial file for the language, named with the language code.
+Update the main tutorial file to add it as a language option.
+
 ### Add to language options
 **When you are sure everything works as expected, add the mapping for the language in language_options.json**.
 
