@@ -13,6 +13,14 @@ def hasAllVars(line:str, varList):
 	
 	return True
 
+def getMissingVars(line:str, varList:list):
+	missing = []
+	for v in varList:
+		if line.find(v) == -1:
+			missing.append(v)
+
+	return missing
+
 def hasVars(line:str):
 	return line.find('$') != -1
 
@@ -114,15 +122,25 @@ def checkTranslatedJSON(jsonFile, noKeyCheck = False):
 		if exit:
 			return 1
 
+	missingVars = False
 	# var check
 	for k in newGUIStrings:
 		if not hasVars(newGUIStrings[k]):
 			continue
 
-		if hasAllVars(newGUIStrings[k], varJSON.get(k)):
+		missing = getMissingVars(newGUIStrings[k], varJSON[k])
+
+		if len(missing) == 0:
 			continue
 
 		print(f'Missing variables for key: {k}')
+		for m in missing:
+			print(f'- {m}')
+
+		missingVars = True
+
+
+	if missingVars:
 		return 1
 
 	print('All checks passed!')
