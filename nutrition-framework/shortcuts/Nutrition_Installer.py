@@ -10,6 +10,8 @@ FALSE = 0
 
 newInstall = TRUE
 proceedWithUpdates = FALSE
+exitAfterConfig = FALSE
+freshConfig = FALSE
 
 updateInfo = {
     'updateLink' : 'https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json',
@@ -53,13 +55,71 @@ emojiUnicodes = {
 
 params = Dictionary(ShortcutInput)
 
+# Configure storage and language here
+# First get the storage if it exists
+file = GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt", errorIfNotFound=False)
+if file is not None:
+    storage = Text(file)
+    Strings = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.json"))
+else:
+    # If there is no storage we don't know the language, let the user select it here
+    langs = Dictionary(GetContentsOfURL('https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/language_options.json'))
+    selectedLang = ChooseFromList(langs.Keys)
+    Strings = Dictionary(GetContentsOfURL(f'https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/{selectedLang}'))
+
+    freshConfig = TRUE
+
+
 if params['updateCheck'] is not None:
     newInstall = FALSE
 else:
-    Menu('What are you doing?'):
-        case "Installing the Shortcut":
-        case "Checking For Updates":
+    Menu():
+        case Strings['installer.action.install']:
+        case Strings['installer.action.update']:
             newInstall = FALSE
+        case Strings['installer.action.config']:
+            newInstall = FALSE
+            exitAfterConfig = TRUE
+
+
+if freshConfig == TRUE:
+    blockIfFolderExists = TRUE
+
+    # If its a new install then let user enter folder
+    if newInstall == TRUE:
+        newStorage = AskForInput(Input.Text, prompt=Strings['installer.storage.input'], default='Nutrition')
+    else:
+        # Not new install means folder cannot be found, let user select it
+        Menu(Strings['installer.storage.notfound']):
+            case Strings['installer.storage.select']:
+                folder = SelectFile(folders=True)
+                newStorage = f'{folder.Name}'
+                blockIfFolderExists = FALSE
+            case Strings['installer.storage.create']:
+                newStorage = AskForInput(Input.Text, prompt=Strings['installer.storage.input'], default='Nutrition')
+
+    if blockIfFolderExists == TRUE:
+        breakLoop = FALSE
+        for _ in range(10):
+            if breakLoop == FALSE:
+                if GetFile(From='Shortcuts', newStorage, errorIfNotFound=False) is not None:
+                    updatedText = Strings['installer.storage.exists'].replace('$storage', newStorage)
+                    newStorage = AskForInput(Input.Text, prompt=updatedText)
+                else:
+                    breakLoop = TRUE
+
+    storage = newStorage
+
+    SaveFile(To='Shortcuts', storage, "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
+    SaveFile(To='Shortcuts', Strings, f'{storage}/Other/gui_strings.json', overwrite=True)
+
+    if newInstall == TRUE:
+        Alert(Strings['installer.storage.info'], showCancel=False)
+
+
+if exitAfterConfig == TRUE:
+    StopShortcut()
+
 
 if params['useTest'] is not None:
     updateInfo['updateLink'] = 'https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/testupdates.json'
@@ -67,31 +127,6 @@ if params['useTest'] is not None:
 if newInstall == TRUE:
     # If we are doing a new install, we have to save the shortcutNames
     # And also generate installation links for all the children files
-
-    # Let user select the storage folder 
-    file = GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt", errorIfNotFound=False)
-    if file is not None:
-        IFRESULT = file
-    
-    else:
-        newStorage = AskForInput(Input.Text, prompt="Enter folder name to store saved foods and configuration files", default='Nutrition')
-
-        breakLoop = FALSE
-        for _ in range(10):
-            if breakLoop == FALSE:
-                if GetFile(From='Shortcuts', newStorage, errorIfNotFound=False) is not None:
-                    newStorage = AskForInput(Input.Text, prompt=f'Folder "{newStorage}" already exists, please select a different name', default=text)
-                else:
-                    breakLoop = TRUE
-
-        Alert('The folder name is saved in Shortcuts/Nutrition_Shortcut_Storage_Folder_Name.txt. To change the folder name, rename the folder and edit the text file'
-            title=f'Shortcut files will be saved to Shortcuts/{newStorage}')
-
-        SaveFile(To='Shortcuts', newStorage, "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
-
-        IFRESULT = newStorage
-
-    storage = IFRESULT
 
     dix = Dictionary(...) # shortcutNames.json
     SaveFile(To='Shortcuts', dix, f"{storage}/Other/shortcutNames.json") # save shortcut names file
@@ -111,21 +146,31 @@ if Number(updateRes['version']) > updateInfo['version']:
         # ask the user
         for _ in range(5):
             if proceedWithUpdates == FALSE:
-                Menu(f'There is a new version ({updateRes['version']}) available for this shortcut'):
-                    case "What's New?":
+                text = f'''
+                    {Strings['installer.updating.new']}
+                    v{updateInfo['version']} => v{updateRes['version']}
+                '''
+                Menu(text):
+                    case Strings['installer.updating.whatsnew']:
                         text = f'''
-                        # What's New in v4.03:
+                        # In v{updateRes['version']}:
                         {updateRes['releaseNotes']}
                         '''
                         richText = MakeRichTextFromMarkdown(text)
                         QuickLook(richText)
-                    case 'Update':
+                    
+                    case Strings['installer.updating.update']:
                         proceedWithUpdates = TRUE
-                    case 'Exit':
+                    
+                    case Strings['opts.exit']:
                         StopShortcut()
 
 
     if proceedWithUpdates == TRUE:
+        # download the new gui strings
+        Strings = Dictionary(GetContentsOfURL(f'https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/{Strings['_string_lang_file']}'))
+        SaveFile(To='Shortcuts', Strings, f'{storage}/Other/gui_strings.json', overwrite=True)
+
         updateText = []
         updateLinks = []
 
@@ -144,51 +189,22 @@ if Number(updateRes['version']) > updateInfo['version']:
         date = Date(updateRes['releaseTime'])
 
         if newInstall == TRUE:
-            IFRESULT = f"""
-                #  Installing {updateRes['name']} Shortcut
-                ## &#x1F50E; Description:
-                The Nutrition Shortcut is made up of several helper shortcuts for its extensive functionality. Please install all the shortcuts listed in the Install section below.
-                &nbsp;
-                After installation, the main shortcut to run is Nutrition. Not sure where to start? Check out the [tutorial](https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/data/tutorial.html).
-                &nbsp;
-                Note: Make sure to give the shortcut access to read and write Health data, refer to Allowing Health Access in the tutorial.
-                &nbsp;
-                Note: If you wish to use Nutrition Statistics, you must install [Charty](https://apps.apple.com/ca/app/charty-for-shortcuts/id1494386093).
-                &nbsp;
-                If you run into any errors or issues, please contact developer. (See developer contact below)
-            """
+            IFRESULT = Strings['installer.docs.installmd'].replace('$name', updateRes['name'])
         else:
-            IFRESULT = f"""
-                # {updateRes['name']} Shortcut Update
-                ## Updates are available for shortcuts:
-                {updateText}
+            updatedText = Strings['installer.docs.updatemd']
+                            .replace('$name', updateRes['name'])
+                            .replace('$update', updateText)
+                            .replace('$date', date.format(date="long", time=None))
+            IFRESULT = updatedText
 
-                &nbsp;
-                ## &#x1F566; Released:
-                {date.format(date="long", time=None)}
-            """
 
-        text = f"""
-            {IFRESULT}
+        updatedText = Strings['installer.docs.othermd']
+                        .replace('$info', IFRESULT)
+                        .replace('$links', updateLinks)
+                        .replace('$notes', {updateRes['releaseNotes']})
+                        .replace('$rhublink', f'{updateRes['rhub']}/changelog')
 
-            &nbsp;
-            ## &#x2705; Install:
-            {updateLinks}
-
-            &nbsp;
-            ## &#x1F4DD; Release Notes:
-            {updateRes['releaseNotes']}
-
-            &nbsp;
-            ## &#x1F4EC; Developer Contact:
-            Reddit: [u/iffythegreat](https://www.reddit.com/user/iffythegreat)
-            RoutineHub: [iffy-pi](https://routinehub.co/user/iffy-pi)
-
-            &nbsp;
-            ## &#x1F4DA; Full Update History:
-            {updateRes['rhub']}/changelog
-        """
-        richText = MakeRichTextFromMarkdown(text)
+        richText = MakeRichTextFromMarkdown(updatedText)
 
         sysVers = GetDeviceDetails('System Version')
 
@@ -196,14 +212,7 @@ if Number(updateRes['version']) > updateInfo['version']:
         if sysVers >= 17.0:
             # use the patch
             CopyToClipboard(richText)
-
-            warningText = '''
-                Instructions
-                Paste the contents of your clipboard into this note to see the instructions!
-                This is a patch to a rich text issue introduced with iOS 17.0.
-            '''
-            
-            IFRESULT = CreateNote(warningText)
+            IFRESULT = CreateNote(Strings['installer.badmd.warning'])
         else:
             IFRESULT = CreateNote(richText)
 

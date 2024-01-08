@@ -10,6 +10,7 @@ TRUE = 1
 FALSE = 0
 
 storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
+Strings = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.json"))
 nutrDix = Dictionary(GetFile(From='Shortcuts', f'{storage}/Other/shortcutNames.json'))
 
 params = Dictionary(ShortcutInput)
@@ -23,14 +24,14 @@ showMenu = FALSE
 if params['getFood'] is not None:
     # we are getting a food from the database
     Menu("Get Food"):
-        case 'Select from Personal Database':
+        case Strings['barcodes.select']:
             # user selects one of the foods saved in the personal databse
             StopShortcut(output=RunShortcut(nutrDix['Get Saved Food'], input={'type': 'barcodes'}))
 
-        case 'Scan Barcode':
+        case Strings['barcodes.scan']:
             pass
 
-        case 'Cancel':
+        case Strings['opts.cancel']:
             StopShortcut()
 
 # scan the barcode
@@ -63,13 +64,14 @@ if barcodeCache[barcode] is not None:
     else:
         # we are adding a food to the personal database but there is already a food mapped to the barcode
         # ask user if they would like to edit the food, remake the food or cancel
-        Menu(f'There is a food in your database with the barcode "{barcode}"'):
-            case 'Edit Food':
+
+        Menu(Strings['barcodes.code.exists'].replace('$barcode', barcode)):
+            case Strings['barcodes.food.edit']:
                 RunShortcut(nutrDix['Edit Saved Food'], input={'type': 'barcodes', 'args': file})
                 StopShortcut()
-            case 'Remake Food':
+            case Strings['barcodes.food.remake']:
                 DeleteFile(file, deleteImmediately=True)
-            case 'Cancel'
+            case Strings['opts.cancel']:
                 StopShortcut()
 
 
@@ -125,39 +127,47 @@ if res['status'] == 1:
 
     # prompt user if they would like to accept the result, edit the result, or cancel
     prompt = f'''
-    Search Result:
-    {outputFood['Name']} ({outputFood['Serving Size']})
-    Cals: {outputFood['Calories']} ⸱ Carbs: {outputFood['Carbs']}g ⸱ Fat: {outputFood['Fat']}g ⸱ Protein: {outputFood['Protein']}g
-    Sugar: {outputFood['Sugar']}g ⸱ Fiber: {outputFood['Fiber']}g ⸱ Saturated Fat: {outputFood['Saturated']}g
-    Sodium: {outputFood['Sodium']}mg ⸱ Cholesterol: {outputFood['Cholesterol']}mg ⸱ Potassium: {outputFood['Potassium']}mg
-    VitA: {outputFood['VitA']}mcg ⸱ VitC: {outputFood['VitC']}mg ⸱ Calcium: {outputFood['Calcium']}mg ⸱ Iron: {outputFood['Iron']}mg
-    '''
+                Search Result:    
+                {outputFood['Name']}
+                {outputFood['Serving Size']}
+                {Strings['nutr.cals']}: {outputFood['Calories']}
+                {Strings['nutr.carbs']}: {outputFood['Carbs']}g ⸱ {Strings['nutr.fat']}: {outputFood['Fat']}g ⸱ {Strings['nutr.protein']}: {outputFood['Protein']}g
+                {Strings['nutr.sugar']}: {outputFood['Sugar']}g ⸱ {Strings['nutr.fiber']}: {outputFood['Fiber']}g 
+                {Strings['nutr.monofat']}: {outputFood['Monounsaturated']}g
+                {Strings['nutr.polyfat']}: {outputFood['Polyunsaturated']}g
+                {Strings['nutr.saturfat']}: {outputFood['Saturated']}g ⸱ {Strings['nutr.cholesterol']}: {outputFood['Cholesterol']}mg ⸱ {Strings['nutr.sodium']}: {outputFood['Sodium']}mg ⸱ {Strings['nutr.potassium']}: {outputFood['Potassium']}mg
+                {Strings['nutr.calcium']}: {outputFood['Calcium']}% ⸱ {Strings['nutr.iron']}: {outputFood['Iron']}% ⸱ {Strings['nutr.vita']}: {outputFood['VitA']}% ⸱ {Strings['nutr.vitc']}: {outputFood['VitC']}% 
+                '''
     Menu(prompt):
-        case 'Accept And Continue':
+        case Strings['search.item.accept']:
             foodResolved = TRUE
-        case 'Edit':
+        case Strings['search.item.edit']:
             res = RunShorctut(NutriDix['Display Food Item'], input=outputFood)
-            Menu('Save changes?')
-                case 'Yes':
+            Menu(Strings['search.item.save'])
+                case Strings['opts.yes']:
                     outputFood = res
                     foodResolved = TRUE
-                case 'No, use previous values':
+                
+                case Strings['search.item.prevvalues']:
                     foodResolved = TRUE
-                case 'No, search for food or make manually':
+                
+                case f'{Strings['opts.no'], Strings['barcode.searchmanual']}':
                     pass
-        case 'Search for food or make food manually':
+        
+        case Strings['barcodes.searchmanual']:
             pass
-        case 'Cancel':
+        
+        case Strings['opts.cancel']:
             StopShortcut()
 
 if foodResolved == FALSE:
     # no match in database or in search so we continue
-    Menu("There was no match found on OpenFoodFacts.org, what would you like to do?"):
-        case 'Search for Food':
+    Menu(Strings['barcodes.nomatch.prompt']):
+        case Strings['foodslist.menu.search']:
             doSearch = TRUE
-        case 'Make Food Manually':
+        case Strings['foodslist.menu.manual']:
             pass
-        case 'Cancel':
+        case Strings['opts.cancel']:
             StopShortcut()
 
 if doSearch == TRUE:
@@ -167,10 +177,10 @@ if doSearch == TRUE:
     if outputFood is not None:
         foodResolved = TRUE
         
-    Menu('Search had no results'):
-        case 'Exit with no selection':
+    Menu(Strings['barcodes.search.none']):
+        case Strings['barcodes.exit.withnone']:
             StopShortcut()
-        case 'Make Food Manually':
+        case Strings['foodslist.menu.manual']:
             pass
 
 if foodResolved == FALSE:
@@ -187,6 +197,9 @@ SaveFile(To='Shortcuts', outputFood, f'{storage}/Barcodes/Foods/food_{outputFood
 # delete the vcardCache for barcodes since we have added a new item
 DeleteFile(GetFile(From='Shortcuts', f"{storage}/Barcodes/vcardCache.txt", errorIfNotFound=False), deleteImmediately=True)
 
-Notification(title='Barcoded Food Created', f'Barcoded Food "{barcode}" has been added to your database allowing you to scan them for later!')
+updatedText = Strings['barcodes.created.notif.msg']
+                .replace('$name', outputFood['Name'])
+                .replace('$barcode', barcode)
+Notification(title=Strings['barcodes.created.notif.title'], updatedText)
 
 StopShortcut(output = outputFood)

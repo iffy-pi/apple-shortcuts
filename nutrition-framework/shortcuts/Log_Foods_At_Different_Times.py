@@ -10,7 +10,7 @@ TRUE = 1
 FALSE = 0
 
 storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
-
+Strings = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.json"))
 nutrDix = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json"))
 
 hasFoodNotes = FALSE
@@ -18,7 +18,7 @@ hasFoodNotes = FALSE
 file = GetFile(From='Shortcuts', f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
 if file is not None:
     notes = f'''
-        Food Notes:
+        {Strings['foodnotes']}:
         {file}
 
     '''
@@ -34,18 +34,10 @@ selectedIds = []
 breakLoop = FALSE
 nextId = 0
 
-instructions = '''
-            To log foods at different times:
-            1. Tap "Add Foods To Log List" to and add all the foods you wish to log for a given time.
-            
-            2. Tap "Done Selecting Foods".
-            
-            3. Select the foods from the list and apply the time you wish to log them at.
-            
-            4. Repeat Steps 1-3 for foods at the other log times.
-            
-            5. Tap "Log Foods in Log List" to log the foods at their assigned times.
-            '''
+instructions = Strings['logdiff.instr']
+                .replace('$addopt', Strings['logdiff.action.add'])
+                .replace('$donesel', Strings['foodslist.menu.done'])
+                .replace('$logopt', Strings['logdiff.action.log'])
 
 for _ in range(30):
     if breakLoop == FALSE:
@@ -77,9 +69,10 @@ for _ in range(30):
 
                 REPEATRESULTS.append(f'{datePrompt}{food['Servings']}x {food['Name']}{warning}')
 
+
+            updatedText = Strings['logdiff.loglist.prompt'].replace('$warn', '⚠')
             IFRESULT = f'''
-                Food Log List:
-                Foods with ⚠ have no log time.
+                {updatedText}
 
                 {REPEATRESULTS}
             '''
@@ -99,11 +92,11 @@ for _ in range(30):
         fromEditOption = FALSE
 
         Menu(prompt):
-            case 'Log Foods In Log List':
+            case Strings['logdiff.action.log']:
                 # breaks loop, foods are logged outside of loop
                 breakLoop = TRUE
 
-            case 'Add Foods To Log List':
+            case Strings['logdiff.action.add']:
                 # unset Ids tracks the list ids of foods that dont have a log time since they were just added
                 # it is used later on
                 unsetIds = []
@@ -118,30 +111,32 @@ for _ in range(30):
                 # run set log time interface
                 setLogTimes = TRUE
 
-            case 'Set/Edit Log Time For Foods In Log List':
+            case Strings['logdiff.action.edit']:
                 setLogTimes = TRUE
                 # since user is requesting to edit the items
                 # we make all the foods changeable by setting unsetIds to the full selectedIds list
                 unsetIds = selectedIds
                 fromEditOption = TRUE
 
-            case 'Remove Food in Log List':
+            case Strings['logdiff.action.remove']:
                 # use contact vcards to get the list ids of the foods the user wants to remove
                 for listId in selectedIds:
                     food = foodsInfo[listId]
                     date = datesInfo[listId]
 
                     if date is not None:
-                        datePrompt = f'Log Time: {date.format(custom='h:mm a, MMMM d')}'
-                        warning = ''
+                        updatedText = Strings['logdiff.logtime'].replace('$date', date.format(custom='h:mm a, MMMM d'))
+                        datePrompt = updatedText
                     else:
-                        datePrompt = 'No Log Time Added! ⚠'
+                        datePrompt = Strings['logdiff.notime.warn'].replace('$warn', '⚠')
+
+                    updatedText = Strings['food.servings'].replace('$num', food['Servings'])
 
                     text = f'''
                         BEGIN:VCARD
                         VERSION:3.0
                         N;CHARSET=UTF-8:{food['Name']}{warning}
-                        ORG;CHARSET=UTF-8:{food['Servings']} servings ⸱ {datePrompt}
+                        ORG;CHARSET=UTF-8:{updatedText} ⸱ {datePrompt}
                         NOTE;CHARSET=UTF-8:{listId}
                         END:VCARD
                     '''
@@ -149,17 +144,17 @@ for _ in range(30):
 
                 contacts = macros.textToContacts(REPEATRESULTS)
 
-                selectedContacts = ChooseFromList(contacts, prompt='Select Foods To Remove', selectMultiple=True)
+                selectedContacts = ChooseFromList(contacts, prompt=Strings['foods.remove.select'], selectMultiple=True)
                 
                 # remove them from the selected Ids list
                 for contact in selectedContacts:
                     listId = contact.Notes
                     selectedIds = FilterFiles(selectedIds, where=['Name' != listId])
 
-            case 'How To Use':
-                ShowAlert(instructions, title='Instructions', showCancel=False)
+            case Strings['nutr.menu.howtouse']:
+                ShowAlert(instructions, title=Strings['logdiff.instr.title'], showCancel=False)
 
-            case 'Cancel and Exit':
+            case Strings['logdiff.exit']:
                 StopShortcut()
 
         if setLogTimes == TRUE:
@@ -179,15 +174,19 @@ for _ in range(30):
                         warning = ''
 
                         if date is not None:
-                            datePrompt = f'Log Time: {date.format(custom='h:mm a, MMMM d')}'
+                            updatedText = Strings['logdiff.logtime'].replace('$date', date.format(custom='h:mm a, MMMM d'))
+                            datePrompt = updatedText
+                            warning = ''
                         else:
-                            datePrompt = 'No Log Time Added ⚠'
+                            datePrompt = Strings['logdiff.notime.warn'].replace('$warn', '⚠')
+
+                        updatedText = Strings['food.servings'].replace('$num', food['Servings'])
 
                         text = f'''
                             BEGIN:VCARD
                             VERSION:3.0
                             N;CHARSET=UTF-8:{food['Name']}{warning}
-                            ORG;CHARSET=UTF-8:{food['Servings']} servings ⸱ Log Time: {date.format(custom='h:mm a, MMMM d')}
+                            ORG;CHARSET=UTF-8:{updatedText} ⸱ {datePrompt}
                             NOTE;CHARSET=UTF-8:{listId}
                             END:VCARD
                         '''
@@ -195,10 +194,7 @@ for _ in range(30):
 
                     contacts = macros.textToContacts(REPEATRESULTS)
 
-                    prompt = '''
-                        Select foods to set/edit log time.
-                        Select no foods to return to main menu.
-                    '''
+                    prompt = Strings['logdiff.settime.instr']
 
                     if hasFoodNotes == TRUE:
                         prompt = f'''
@@ -218,7 +214,7 @@ for _ in range(30):
                             REPEATRESULTS.append(f'{food['Servings']}x {food['Name']}')
 
                         prompt = f'''
-                            Select log time for:
+                            {Strings['logdiff.settime.select']}
                             {REPEATRESULTS}
                         '''
 
@@ -253,10 +249,13 @@ for listId in selectedIds:
     date = datesInfo[listId]
     logFood = TRUE
     if date is None:
-        Menu(f'{food['Servings']}x {food['Name']} does not have a log time'):
-            case 'Set Log Time':
-                date = AskForInput(Input.DateAndTime, prompt='Enter Log Time')
-            case 'Do Not Log Food':
+        updatedText = Strings['logdiff.notime.prompt']
+                        .replace('$servings', f'food['Servings']x')
+                        .replace('$name', food['Name'])
+        Menu(updatedText):
+            case Strings['logdiff.notime.log']:
+                date = AskForInput(Input.DateAndTime, prompt=Strings['input.logtime'])
+            case Strings['logdiff.notime.discard']:
                 logFood = FALSE
     
     if logFood == TRUE:
@@ -265,15 +264,15 @@ for listId in selectedIds:
 
 # clearing foods notes and making preset
 if hasNotes == TRUE:
-    Menu('Clear food notes?'):
-        case 'Yes':
+    Menu(Strings['logt.clearnotes']):
+        case Strings['opts.yes']:
             file = GetFile(From='Shortcuts', f"{storage}/Other/foodNotes.txt")
             DeleteFile(file, deleteImmediately=True)
-        case 'No':
+        case Strings['opts.no']:
             pass
 
-Menu('Make Preset?'):
-    case 'Yes':
+Menu(Strings['logt.makepreset']):
+    case Strings['opts.yes']:
         RunShortcut(nutrDix['Make Preset'], input={ 'foodsInfo': foodsInfo })
-    case 'No':
+    case Strings['opts.no']:
         pass

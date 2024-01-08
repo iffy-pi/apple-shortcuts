@@ -7,6 +7,7 @@ Ver: 1.01
 # Create a food by manually filling in the nutrient fieldds
 
 storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
+Strings = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.json"))
 nutrDix = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json"))
 exactValDix = {
     'VitA': 1000,
@@ -26,16 +27,19 @@ for key in exactValDix:
 calcResult = CalculateStatistics('Sum', REPEATRESULTS)
 
 if calcResult > 0:
-    Menu('Vitamins and Minerals are in'):
-        case 'Exact Values':
+    Menu(Strings['manual.vtype.prompt']):
+        case Strings['manual.vtype.exact']:
+            # Is exact values
             MENURESULT = 0
-        case 'Daily Percentages':
+        case Strings['manual.vtype.percentages']:
+            # Is daily percentages
             MENURESULT = 1
     IFRESULT = MENURESULT
 else:
     IFRESULT = 0
 
 if IFRESULT == 1:
+    # Vitamins were in daily percentages convert to exact values
     for vitKey in exactValDix.keys():
         num = Calculate(foodDix[vitKey] / 100)
         num = Calculate(num * exactValDix[vitKey])
@@ -47,14 +51,14 @@ text = f'[{foodDix['Name']}]'
 if text != '[]':
     IFRESULT = foodDix['Name']
 else:
-    IFRESULT = AskForInput(Input.Text, 'What is the name of the food?', allowMultipleLines=False)
+    IFRESULT = AskForInput(Input.Text, Strings['manual.input.name'], allowMultipleLines=False)
 name = IFRESULT
 
 text = f'[{foodDix['Serving Size']}]'
 if text != '[]':
     IFRESULT = foodDix['Serving Size']
 else:
-    IFRESULT = AskForInput(Input.Text, 'What is the serving size of the food?', allowMultipleLines=False)
+    IFRESULT = AskForInput(Input.Text, Strings['manual.input.size'], allowMultipleLines=False)
 servingSize = IFRESULT
 
 # Generate food ID for food

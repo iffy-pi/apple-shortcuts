@@ -7,6 +7,7 @@ Ver: 1.0
 # Select one or more foods from recent
 
 storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
+Strings = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.json"))
 
 cancelIcon = # ... 
 
@@ -35,8 +36,8 @@ for item in files:
 text = f'''
     BEGIN:VCARD
     VERSION:3.0
-    N;CHARSET=UTF-8:No Selection
-    ORG;CHARSET=UTF-8:No foods will be selected
+    N;CHARSET=UTF-8:{Strings['savedfoods.none']}
+    ORG;CHARSET=UTF-8:{Strings['savedfoods.none.desc']}
     NOTE;CHARSET=UTF-8:Cancel
     {cancelIcon}
     END:VCARD
@@ -45,7 +46,7 @@ text = f'''
 contacts = SetName(text, 'vcard.vcf')
             .GetContactsFromInput()
 
-selectedItems = ChooseFrom(contacts, prompt="Select Recent Foods", selectMultiple=True)
+selectedItems = ChooseFrom(contacts, prompt=Strings['recents.select'], selectMultiple=True)
 
 for chosen in selectedItems:
     if chosen.Notes == 'Cancel':

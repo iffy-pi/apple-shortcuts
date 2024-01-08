@@ -12,12 +12,13 @@ FALSE = 0
 
 storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
+Strings = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.json"))
 nutrDix = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json"))
 
 setPerms = FALSE
 
 if ShortcutInput['setPerms'] is not None:
-    Alert("To enable permissions, just click 'Always Allow' when prompted", showCancel=False, Title="Permissions")
+    Alert(Strings['loga.healthperms.enable'], showCancel=False, Title=Strings['loga.healthperms.title'])
     setPerms = TRUE
     IFRESULT = {
         'Food': { 'Servings': 1 },
@@ -35,7 +36,8 @@ foodDix = Dictionary(res['Food'])
 if foodDix['Servings'] is not None:
     IFRESULT = Number(foodDix['Servings'])
 else:
-    IFRESULT = AskForInput(InputTypes.Number, f'How many servings of {foodDix['Name']}? (1 serving = {foodDix['Serving Size']})', allowNegatives=False, allowDecimals=True)
+    updatedText = Strings['ask.for.servings'].replace('$name', foodDix['Name']).replace('$size', foodDix['Serving Size'])
+    IFRESULT = AskForInput(InputTypes.Number, updatedText, allowNegatives=False, allowDecimals=True)
 
 num = Number(IFRESULT)
 foodDix['Servings'] = num
@@ -50,12 +52,13 @@ hasHelathApp = dix['hasHealthApp']
 # add to backlog and exit if we are not on a device with a health app
 if hasHealthApp == FALSE:
         if setPerms == TRUE:
-            Alert("You must be on a device with Apple Health to run through permissions", Title="Permissions")
+            Alert(Strings['loga.healthperms.baddevice'], Title=Strings['loga.healthperms.title'])
             StopShortcut()
     
+    updatedText = Strings['loga.backlog.title'].replace('$name', foodDix['Name'])
     Notification(
-        "Food will be logged when next on iPhone",
-        title=f'{foodDix['Name']} Has Been Added to Backlog',
+        Strings['loga.backlog.msg'],
+        title=updatedText,
     )
 
     # get the backlog file 
@@ -107,7 +110,7 @@ else:
         res['Date'] = CurrentDate()
         RunShortcut('Log Nutrients To Health', input=res)
 
-        Alert("All nutrient permissions have been set!", showCancel=False, Title="Permissions")
+        Alert(Strings['loga.healthperms.complete'], showCancel=False, Title=Strings['loga.healthperms.title'])
         StopShortcut()
 
 
@@ -136,9 +139,10 @@ for item in SplitText(file, ByNewLines):
 nutrients['Date'] = loggingDate
 RunShortcut("Log Nutrients To Health", input=Text(nutrients))
 
+updatedText = Strings['loga.notif.logged'].replace('$name', foodDix['Name'])
 Notification(
-    f'{foodDix['Name']} has been logged to your meals',
-    title='Yummy!'
+    updatedText,
+    title=Strings['loga.notif.yummy']
 )
 
 # make logging experience fast by logging to cache instead of bigger dictionary

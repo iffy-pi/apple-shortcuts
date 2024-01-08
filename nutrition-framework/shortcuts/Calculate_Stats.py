@@ -11,6 +11,10 @@ FALSE = 0
 
 emptyList = []
 
+storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
+Strings = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.json"))
+
+
 # averageBreakdown = FALSE
 # plotNutrients = TRUE
 
@@ -69,6 +73,28 @@ nutrUnits = {
     "Iron": "mg"
 }
 
+
+# maps each nutrient to their value in the native language
+langMap = {
+    "Calories": f'{Strings['nutr.cals']}',
+    "Carbs": f'{Strings['nutr.carbs']}',
+    "Fat": f'{Strings['nutr.fat']}',
+    "Protein": f'{Strings['nutr.protein']}',
+    "Sugar": f'{Strings['nutr.sugar']}',
+    "Fiber": f'{Strings['nutr.fiber']}',
+    "Monounsaturated": f'{Strings['nutr.monofat']}',
+    "Polyunsaturated": f'{Strings['nutr.polyfat']}',
+    "Saturated": f'{Strings['nutr.saturfat']}',
+    "Trans": f'{Strings['nutr.transfat']}',
+    "Sodium":  f'{Strings['nutr.sodium']}',
+    "Cholesterol":  f'{Strings['nutr.cholesterol']}',
+    "Potassium":  f'{Strings['nutr.potassium']}',
+    "VitA":  f'{Strings['nutr.vita']}',
+    "VitC":  f'{Strings['nutr.vitc']}',
+    "Calcium":  f'{Strings['nutr.calcium']}',
+    "Iron":  f'{Strings['nutr.iron']}'
+}
+
 # maps each nutrient key to a unique color in the generated pie chars
 labelColorMap = {
     "Carbs": "FF375F",
@@ -96,8 +122,8 @@ if plotNutrients == TRUE:
             "ds": [
                 {
                     "id": 0,
-                    "title": "Breakdown",
-                    "avgTitle": "Average",
+                    "title": "Strings['stats.breakdown']",
+                    "avgTitle": "Strings['stats.avg']",
                     "keys": [
                         "Calories",
                         "Carbs",
@@ -113,8 +139,8 @@ if plotNutrients == TRUE:
 
                 {
                     "id": 1,
-                    "title": "Minerals Breakdown",
-                    "avgTitle": "Minerals Average",
+                    "title": "Strings['stats.minerals.breakdown']",
+                    "avgTitle": "Strings['stats.minerals.avg']",
                     "keys": [
                         "Sodium",
                         "Cholesterol",
@@ -136,8 +162,8 @@ else:
             "ds": [
                 {
                     "id": 0,
-                    "title": "Breakdown",
-                    "avgTitle": "Average",
+                    "title": "Strings['stats.breakdown']",
+                    "avgTitle": "Strings['stats.avg']",
                     "keys": [
                         "Calories"
                     ]
@@ -145,8 +171,8 @@ else:
 
                 {
                     "id": 1,
-                    "title": "Minerals Breakdown",
-                    "avgTitle": "Minerals Average",
+                    "title": "Strings['stats.minerals.breakdown']",
+                    "avgTitle": "Strings['stats.minerals.avg']",
                     "keys": []
                 },
             ]
@@ -221,7 +247,8 @@ for repeatIndex in range(repeats):
                 IFRESULT = 0
             
             num = RoundNumber(IFRESULT, hundredths)
-            labels.append(f'{curNutrKey} ({num}%)')
+            langNutr = langMap[curNutrKey]
+            labels.append(f'{langNutr} ({num}%)')
             
             # get the label color for the nutrient
             labelColors.append(labelColorMap[curNutrKey])
@@ -264,7 +291,8 @@ if averageBreakdown == TRUE:
             averageNutr = Calculate(totalNutrDix[curNutrKey] / repeats)
 
             averageValues.append(averageNutr)
-            averageLabels.append(f'{curNutrKey} ({curPercent}%)')
+            langNutr = langMap[curNutrKey]
+            averageLabels.append(f'{langNutr} ({curPercent}%)')
 
             # appends the appropriate color for th esystem
             averageColors.append(labelColorMap[curNutrKey])

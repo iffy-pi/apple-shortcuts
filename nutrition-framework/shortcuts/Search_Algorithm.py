@@ -8,10 +8,12 @@ Ver: 1.04
 
 TRUE = 1
 FALSE = 0
+Strings = Dictionary()
 
 storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
 NutriDix = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json"))
+Strings = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.json"))
 
 # vcard base64 photo icons
 servingSizeIcon = # ... , see servingSizeIcon.txt
@@ -26,12 +28,8 @@ resCount = 6
 searchExit = FALSE
 pageNo = 1
 
-text = f'''
-    Enter Food/Drink search query.
-    To cancel, enter an empty search query.
-'''
 
-query = AskForInput(Input.Text, prompt=text)
+query = AskForInput(Input.Text, prompt=Strings['search.query.instr'])
 
 updatedText = query.ReplaceText(' ', '')
 if updatedText is None:
@@ -60,7 +58,7 @@ for _ in range (50):
             servingSize = f"{num} {dix['unit']}"
 
             if Count(sizes) > 1:
-                servingSize = f"{servingSize} (and more sizes)"
+                servingSize = f"{servingSize} ({Strings['search.moresizes']})"
 
 
             if item['brand_name'] is not None:
@@ -96,7 +94,7 @@ for _ in range (50):
                 # so item['a.b.c'] is equivalent to python item['a']['b']['c']
                 # Note this is actually a literal \n, not a newline character
                 subtitle = f'''
-                    {subtitle}\nCals: {item['nutritional_contents.energy.value']} ⸱ Carbs: {item['nutritional_contents.carbohydrates']}g ⸱ Fat: {item['nutritional_contents.fat']}g ⸱ Protein: {item['nutritional_contents.protein']}g
+                    {subtitle}\n{Strings['nutr.cals']}: {item['nutritional_contents.energy.value']} ⸱ {Strings['nutr.carbs']}: {item['nutritional_contents.carbohydrates']}g ⸱ {Strings['nutr.fat']}: {item['nutritional_contents.fat']}g ⸱ {Strings['nutr.protein']}: {item['nutritional_contents.protein']}g
                 '''
 
             # Add verifIcon if it is a best match
@@ -127,32 +125,32 @@ for _ in range (50):
 
             BEGIN:VCARD
             VERSION:3.0
-            N;CHARSET=utf-8:Next Page
-            ORG: Page {nextPage}
+            N;CHARSET=utf-8:{Strings['search.opts.next']}
+            ORG: {Strings['search.page']} {nextPage}
             NOTE;CHARSET=UTF-8:Next
             {forwardIcon}
             END:VCARD
 
             BEGIN:VCARD
             VERSION:3.0
-            N;CHARSET=utf-8:Previous Page
-            ORG: Page {prevPage}
+            N;CHARSET=utf-8:{Strings['search.opts.prev']}
+            ORG: {Strings['search.page']} {prevPage}
             NOTE;CHARSET=UTF-8:Prev
             {backwardIcon}
             END:VCARD
 
             BEGIN:VCARD
             VERSION:3.0
-            N;CHARSET=utf-8:New Search
-            ORG: Try a different query
+            N;CHARSET=utf-8:{Strings['search.opts.search']}
+            ORG: {Strings['search.opts.search.desc']}
             NOTE;CHARSET=UTF-8:New
             {searchIcon}
             END:VCARD
 
             BEGIN:VCARD
             VERSION:3.0
-            N;CHARSET=utf-8:Cancel Search
-            ORG:No food will be selected
+            N;CHARSET=utf-8:{Strings['search.opts.cancel']}
+            ORG:{Strings['search.opts.cancel.desc']}
             NOTE;CHARSET=UTF-8:Cancel
             {searchIcon}
             END:VCARD
@@ -162,8 +160,8 @@ for _ in range (50):
         contacts = GetContacts(renamedItem)
 
         text = f'''
-        "{query}" Search Results ⸱ Page {pageNo}
-        {verifIcon} - Verified Best Matches
+        "{query}" {Strings['search.results']} ⸱ {Strings['search.page']} {pageNo}
+        {verifIcon} - {Strings['search.bestmatches']}
         '''
 
         chosenItem = ChooseFrom(contacts, prompt=text)
@@ -177,7 +175,7 @@ for _ in range (50):
             isControlItem = TRUE
             pageNo = pageNo - 1
             if pageNo == 0:
-                Alert("This is the first page of the search!")
+                Alert(Strings['search.warning.firstpage'])
                 pageNo = pageNo + 1
 
         if chosenItem.Notes == 'New':
@@ -228,8 +226,8 @@ for _ in range (50):
                 text = f'''
                     BEGIN:VCARD
                     VERSION:3.0
-                    N;CHARSET=UTF-8:Back
-                    ORG;CHARSET=UTF-8:Go Back To Search
+                    N;CHARSET=UTF-8:{Strings['search.opts.back']}
+                    ORG;CHARSET=UTF-8:{Strings['search.opts.back.desc']}
                     {backwardIcon}
                     END:VCARD
                     {REPEATRESULTS}
@@ -238,7 +236,7 @@ for _ in range (50):
                 renamedItem = SetName(text, 'vcard.vcf')
                 contacts = GetContacts(renamedItem)
 
-                chosenSize = ChooseFrom(contacts, prompt="Which Serving Size?")
+                chosenSize = ChooseFrom(contacts, prompt=Strings['search.select.servingsize'])
 
 
             if chosenSize.Name != "Back"
@@ -284,30 +282,36 @@ for _ in range (50):
                     outputFood[item] = num
 
                 prompt = f'''
-                Search Result:
-                {outputFood['Name']} ({outputFood['Serving Size']})
-                Cals: {outputFood['Calories']} ⸱ Carbs: {outputFood['Carbs']}g ⸱ Fat: {outputFood['Fat']}g ⸱ Protein: {outputFood['Protein']}g
-                Sugar: {outputFood['Sugar']}g ⸱ Fiber: {outputFood['Fiber']}g ⸱ Saturated Fat: {outputFood['Saturated']}g
-                Sodium: {outputFood['Sodium']}mg ⸱ Cholesterol: {outputFood['Cholesterol']}mg ⸱ Potassium: {outputFood['Potassium']}mg
-                VitA: {outputFood['VitA']}% ⸱ VitC: {outputFood['VitC']}% ⸱ Calcium: {outputFood['Calcium']}% ⸱ Iron: {outputFood['Iron']}%
+                Search Result:    
+                {outputFood['Name']}
+                {outputFood['Serving Size']}
+                {Strings['nutr.cals']}: {outputFood['Calories']}
+                {Strings['nutr.carbs']}: {outputFood['Carbs']}g ⸱ {Strings['nutr.fat']}: {outputFood['Fat']}g ⸱ {Strings['nutr.protein']}: {outputFood['Protein']}g
+                {Strings['nutr.sugar']}: {outputFood['Sugar']}g ⸱ {Strings['nutr.fiber']}: {outputFood['Fiber']}g 
+                {Strings['nutr.monofat']}: {outputFood['Monounsaturated']}g
+                {Strings['nutr.polyfat']}: {outputFood['Polyunsaturated']}g
+                {Strings['nutr.saturfat']}: {outputFood['Saturated']}g ⸱ {Strings['nutr.cholesterol']}: {outputFood['Cholesterol']}mg ⸱ {Strings['nutr.sodium']}: {outputFood['Sodium']}mg ⸱ {Strings['nutr.potassium']}: {outputFood['Potassium']}mg
+                {Strings['nutr.calcium']}: {outputFood['Calcium']}% ⸱ {Strings['nutr.iron']}: {outputFood['Iron']}% ⸱ {Strings['nutr.vita']}: {outputFood['VitA']}% ⸱ {Strings['nutr.vitc']}: {outputFood['VitC']}% 
                 '''
                 Menu(prompt):
-                    case 'Accept':
+                    case Strings['search.item.accept']:
                         searchExit = TRUE
-                    case 'Edit':
+                    
+                    case Strings['search.item.edit']:
                         res = RunShorctut(NutriDix['Display Food Item'], input=outputFood)
-                        Menu('Save changes?')
-                            case 'Yes':
+                        Menu(Strings['search.item.save'])
+                            case Strings['opts.yes']:
                                 searchExit = TRUE
                                 outputFood = res
-                            case 'No, use previous values':
+                            case Strings['search.item.prevvalues']:
                                 searchExit = TRUE
-                            case 'No, back to search':
+                            case Strings['search.item.backtosearch']:
                                 pass
-                    case 'Back To Search':
+                    
+                    case Strings['search.opts.back.desc']:
                         pass
 
-                    case 'Cancel Search':
+                    case Strings['search.opts.cancel.desc']:
                         StopShortcut()
 
 

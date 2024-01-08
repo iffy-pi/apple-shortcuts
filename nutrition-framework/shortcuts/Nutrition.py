@@ -16,26 +16,15 @@ file = GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt", e
 if file is not None:
     storage = Text(file)
 else:
-    Menu('Storage Folder Could Not Be Found!'):
-        case 'Select Storage Folder From Folders In iCloud/Shortcuts':
-            folder = SelectFile(folders=True)
-            storage = f'{folder.Name}'
-        case 'Create Storage Folder in iCloud/Shortcuts':
-            storage = AskForInput(Input.Text, prompt="Enter folder name to store saved foods and configuration files", default='Nutrition')
+    # Let the user select a language
+    langs = Dictionary(GetContentsOfURL('https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/language_options.json'))
 
-            breakLoop = FALSE
-            for _ in range(10):
-                if breakLoop == FALSE:
-                    if GetFile(From='Shortcuts', storage, errorIfNotFound=False) is not None:
-                        Menu(f'Folder "{storage}" already exists in iCloud/Shortcuts'):
-                            case 'Select A Different Name':
-                                storage = AskForInput(Input.Text, prompt=f'Folder Name:')
-                            case 'Use Folder As Storage Folder':
-                                breakLoop = TRUE
-                    else:
-                        breakLoop = TRUE
+    selectedLang = ChooseFromList(langs.Keys)
 
-    SaveFile(To='Shortcuts', storage, "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
+    Strings = Dictionary(GetContentsOfURL(f'https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/{selectedLang}'))
+
+    Alert(Strings['nutr.setconfig'].replace('$config', Strings['installer.action.config']), showCancel=False)
+    StopShortcut()
 
 checkForUpdates = TRUE
 exitAfterQuickLog = TRUE
@@ -43,6 +32,8 @@ exitAfterQuickLog = TRUE
 # load names of the shortcuts
 res = GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json")
 shortcutNames = Dictionary(res)
+
+Strings = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.json"))
 
 text = '''
     Calories
@@ -87,19 +78,17 @@ SaveFile(To='Shortcuts', env, f"{storage}/Other/env.json", overwrite=True)
 if env['permsEnabled'] is None:
     if hasHealthApp == TRUE:
         # run log algorithm
-        text = '''
-            Your Apple Health permissions may have not been fully set, the shortcut will fast track through sample logging permissions.
-            You can do this again by going to Clear and Other Settings > Fast Track Health Permissions.
-        '''
-        Alert("Your Apple Health permissions may have not been fully set, the shortcut will fast track through sample logging permissions", title="Health Sample Permissions")
+        updatedText = Strings['nutr.healthperms.instr'].replace('$othersettings', Strings['nutr.menu.othersettings'])
+        updatedText =  updatedText.replace('$healthperms', Strings['nutr.menu.healthperms'])
+
+        Alert(updatedText)
         RunShortcut(shortcutNames['Log Algorithm'], input={'setPerms': True})
         env['permsEnabled'] = TRUE
         SaveFile(To='Shortcuts', env, f"{storage}/Other/env.json", overwrite=True)
 
 
 if hasHealthApp == FALSE:
-    text = f"Foods logged on {deviceModel} will be added to backlog"
-
+    IFRESULT = Strings['nutr.backlog.notif'].replace('$device', deviceModel)
 else:
     # if on health app, calculate total calories consumed today and show in menu prompt
     calsToday = 0
@@ -117,12 +106,16 @@ else:
     calsToday = Round (_sum, "hundredths")
 
     file = GetFile(From='Shortcuts', f"{storage}/Other/backlog.json", errorIfNotFound=False)
-    if file is not None:
-        IFRESULT = f"You've eaten {calsToday} calories today.\nThere are foods in your backlog."
-    else:
-        IFRESULT = f"You've eaten {calsToday} calories today."
 
-    IFRESULT = IFRESULT
+    prompt = Strings['nutr.calorie.summary'].replace('$cals', calsToday)
+
+    if file is not None:
+        prompt = f"""
+            {prompt}
+            {Strings['nutr.backlog.nonempty']}
+        """
+
+    IFRESULT = prompt
 
 prompt = IFRESULT
 
@@ -130,19 +123,20 @@ file = GetFile(From='Shortcuts', 'FLS/Other/foodNotes.txt', errorIfNotFound=Fals
 if file is not None:
     prompt = f'''
     {prompt}
-    Food Notes:
+    {Strings['foodnotes']}:
     {file}
     '''
 
 Menu(prompt):
-    case "Quick Log":
+    case Strings['nutr.menu.quicklog']:
         # Log food from Recent and exit immediately
         for item in  RunShortcut(shortcutNames['Get Recent']):
             curFood = item
-            text = f"How many servings of {curFood['Name']}\n(1 serving = {curFood['Serving Size']})"
-            
+
+            updatedText = Strings['ask.for.servings'].replace('$name', curFood['Name'])
+            updatedText = updatedText.replace('$size', curFood['Serving Size'])
             # translates to set dictionary value in curFood and then set dictionary
-            curFood['Servings'] = Number(AskForInput(text, Input.Number, default=1, allowDecimalNumbers=True, allowNegativeNumbers=False))
+            curFood['Servings'] = Number(AskForInput(updatedText, Input.Number, default=1, allowDecimalNumbers=True, allowNegativeNumbers=False))
             REPEATRESULTS.append(curFood)
 
         # we log foods in different iteration to fast track user input
@@ -157,75 +151,88 @@ Menu(prompt):
         if Number(exitAfterQuickLog) == TRUE:
             StopShortcut()
 
-    case "Log Foods At Time...":
+    case Strings['nutr.menu.logattime']:
         RunShortcut(shortcutNames["Log Foods At Time"])
-    case "Log Foods At Different Times":
+    
+    case Strings['nutr.menu.logdifferent']:
         RunShortcut(shortcutNames["Log Foods At Different Times"])
 
-    case "Make Food Note":
-        res = AskForInput(Input.Text, "What is the name of the food you would like to note down?", allowMultipleLines=False)
-        date = AskForInput(Input.DateAndTime, "What is the date and time?")
+    case Strings['nutr.menu.makenote']:
+        res = AskForInput(Input.Text, Strings['nutr.foodnotes.name'], allowMultipleLines=False)
+        date = AskForInput(Input.DateAndTime, Strings['nutr.foodnotes.time'])
         text = f'{res} @ {date.format(date="medium", time="short")}'
         AppendToFile(text, f"{storage}/Other/foodNotes.txt", makeNewLine=True)
         StopShortcut()
 
-    case 'Saved Foods and Search':
+    case Strings['nutr.menu.savedsearch']:
         RunShortcut(shortcutNames["Saved And Search"])
 
-    case 'History and Stats':
-        case "Statistics with Charty":
-            if hasHealthApp == FALSE:
-                Alert("Statistics require a device with a Health App")
-                StopShortcut()
+    case Strings['nutr.menu.historystats']:
+        Menu(Strings['nutr.menu.historystats']):
+            case Strings['nutr.menu.stats']:
+                if hasHealthApp == FALSE:
+                    Alert(Strings['nutr.stats.nocharty'])
+                    StopShortcut()
 
-            RunShortcut(shortcutNames["Health Statistics"])
+                RunShortcut(shortcutNames["Nutrition Statistics"])
 
-        case "Food History":
-            RunShortcut(shortcutNames["Clear Cache And Backlog"])
+            case Strings['nutr.menu.history']:
+                RunShortcut(shortcutNames["Clear Cache And Backlog"])
 
-            file = GetFile(From='Shortcuts', f"{storage}/Other/backlog.json", errorIfNotFound=False)
-            if file is not None
-                ShowAlert("There are items in the backlog, food history will not be accurate until backlog is cleared", showCancel=True)
-            
-            RunShortcut(shortcutNames["Food History"])
+                file = GetFile(From='Shortcuts', f"{storage}/Other/backlog.json", errorIfNotFound=False)
+                if file is not None
+                    ShowAlert(Strings['nutr.history.backlog.nonempty'], showCancel=True)
+                
+                RunShortcut(shortcutNames["Food History"])
 
-    case 'Clear... and Other Settings':
-        case "Clear Backlog":
-            Notification('Clearing backlog....')
-            RunShortcut(shortcutNames["Clear Cache And Backlog"])
+    case Strings['nutr.menu.othersettings']:
+        Menu(Strings['nutr.menu.othersettings']):
+            case Strings['nutr.menu.clearbacklog']:
+                Notification(Strings['nutr.backlog.clearing'])
+                RunShortcut(shortcutNames["Clear Cache And Backlog"])
 
-        case "Clear Food Notes":
-            file = GetFile(From='Shortcuts', f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
-            DeleteFile(file, deleteImmediately=True)
+            case Strings['nutr.menu.clearfoodnotes']:
+                file = GetFile(From='Shortcuts', f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
+                DeleteFile(file, deleteImmediately=True)
 
-        case "Fast Track Health Permissions":
-            Alert("Your Apple Health permissions may have not been fully set, the shortcut will fast track through sample logging permissions", title="Health Sample Permissions")
-            RunShortcut(shortcutNames['Log Algorithm'], input={'setPerms': True})
+            case Strings['nutr.menu.healthperms']:
+                Alert(Strings['nutr.healthperms.warning.msg'], title=Strings['nutr.healthperms.warning.title'])
+                RunShortcut(shortcutNames['Log Algorithm'], input={'setPerms': True})
 
-        case "View Storage Folder":
-            folder = GetFile(From='Shortcuts', storage)
-            OpenFile(folder)
-
-        case "Rename Storage Folder":
-            newStorage = AskForInput(Input.Text, "New folder name", default=storage)
-            if newStorage != storage:
-                breakLoop = FALSE
-                for _ in range(10):
-                    if breakLoop == FALSE:
-                        if GetFile(From='Shortcuts', newStorage, errorIfNotFound=False) is not None:
-                            newStorage = AskForInput(Input.Text, f'Folder "{newStorage}" already exists, please select a different name')
-                        else
-                            breakLoop = TRUE
-
+            case Strings['nutr.menu.storage.view']:
                 folder = GetFile(From='Shortcuts', storage)
-                RenameFile(folder, newStorage)
-                storage = newStorage
-                SaveFile(To='Shortcuts', storage, "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
+                OpenFile(folder)
 
-        case 'Tutorial':
-            OpenURL("https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/data/tutorial.html")
+            case Strings['nutr.menu.storage.rename']:
+                newStorage = AskForInput(Input.Text, Strings['nutr.storage.create'], default=storage)
+                if newStorage != storage:
+                    breakLoop = FALSE
+                    for _ in range(10):
+                        if breakLoop == FALSE:
+                            if GetFile(From='Shortcuts', newStorage, errorIfNotFound=False) is not None:
+                                updatedText = Strings['nutr.storage.exists'].replace("$storage", newStorage)
+                                newStorage = AskForInput(Input.Text, updatedText)
+                            else
+                                breakLoop = TRUE
 
-    case 'How To Use':
+                    folder = GetFile(From='Shortcuts', storage)
+                    RenameFile(folder, newStorage)
+                    storage = newStorage
+                    SaveFile(To='Shortcuts', storage, "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
+
+            case Strings['nutr.lang.change']:
+                langs = Dictionary(GetContentsOfURL('https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/language_options.json'))
+
+                selectedLang = ChooseFromList(langs.Keys)
+                
+                Strings = Dictionary(GetContentsOfURL(f'https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/{selectedLang}'))
+
+                SaveFile(To='Shortcuts', Strings, f'{storage}/Other/gui_strings.json', overwrite=True)
+
+            case Strings['nutr.menu.tutorial']:
+                OpenURL("https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/data/tutorial.html")
+
+    case Strings['nutr.menu.howtouse']::
             OpenURL("https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/data/tutorial.html")
 
 

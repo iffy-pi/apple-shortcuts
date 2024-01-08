@@ -9,16 +9,18 @@ Ver: 1.01
 
 TRUE = 1
 FALSE = 0
+
 storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
+Strings = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.json"))
 
 cancelIcon = Text() 
 
 deleteMode = FALSE
 
 savedInfo = {
-    'barcodes': { 'folder': 'Barcodes', 'prompt': 'Barcoded Foods'}
-    'presets': { 'folder': 'Presets', 'prompt': 'Presets'}
-    'all': { 'prompt' : 'Preset(s) and Barcoded Food(s)'}
+    'barcodes': { 'folder': 'Barcodes', 'prompt': Strings['barcodes']}
+    'presets': { 'folder': 'Presets', 'prompt': Strings['presets']}
+    'all': { 'prompt' : Strings['savedfoods.prompt.all']}
 }
 
 # Specify which source using the 'type' field in the parameters shortcut input
@@ -86,8 +88,8 @@ vcardCache = Text(REPEATRESULTS)
 text = f'''
     BEGIN:VCARD
     VERSION:3.0
-    N;CHARSET=UTF-8:No Selection
-    ORG;CHARSET=UTF-8:No foods will be selected
+    N;CHARSET=UTF-8:{Strings['savedfoods.none']}
+    ORG;CHARSET=UTF-8:{Strings['savedfoods.none.desc']}
     NOTE;CHARSET=UTF-8:Cancel
     {cancelIcon}
     END:VCARD
@@ -105,9 +107,9 @@ choices.append(files)
 
 
 if deleteMode == TRUE:
-    IFRESULT = f"Select {config['prompt']} to Delete"
+    IFRESULT = Strings['savedfoods.select.prompt.delete'].replace('$folder', config['prompt'])
 else:
-    IFRESULT = f"Select {config['prompt']}"
+    IFRESULT = Strings['savedfoods.select.prompt'].replace('$folder', config['prompt'])
 
 selectedItems = ChooseFrom(choices, prompt=IFRESULT, selectMultiple=True)
 for chosen in selectedItems:
@@ -127,7 +129,9 @@ for chosen in selectedItems:
         if deleteMode == TRUE:
             # delete the file
             DeleteFile(file, deleteImmediately=True)
-            Notification(f'{config['prompt']} {food['Name']} has been deleted!')
+            updatedText = Strings['savedfoods.delete.notif'].replace('$folder', {config['prompt']})
+            updatedText = updatedText.replace('$name', food['Name'])
+            Notification(updatedText)
     
         # add the food
         selectedFoods.append(food)

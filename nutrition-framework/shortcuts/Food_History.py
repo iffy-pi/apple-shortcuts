@@ -10,6 +10,7 @@ TRUE = 1
 FALSE = 0
 
 storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
+Strings = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.json"))
 
 file = GetFile(From='Shortcuts', f"{storage}/History/foodHistory.json")
 if file is not None:
@@ -34,40 +35,39 @@ if dayDix is not None:
 # Show foods logged today in menu prompt and then continue
 if Count(todaysLogs) > 0:
     IFRESULT = f'''
-        Foods eaten today:
+        {Strings['history.foods.today']}
         {todaysLogs}
     '''
 else:
-    IFRESULT = 'You have not eaten any foods today'
+    IFRESULT = Strings['history.foods.today.none']
 
 prompt = IFRESULT
 
-mainMenu = Menu(prompt=prompt, ['More History Options', 'Exit'])
-Menu(prompt=prompt, ['More History Options', 'Exit']):
-    case "More History Options":
-        Menu(prompt="History Options"):
-            case 'Foods Logged On Day':
-                start = AskForInput(Input.Date)
+Menu(prompt=prompt):
+    case Strings['history.menu.moreopts']:
+        Menu(prompt=Strings['history.menu.moreopts']):
+            case Strings['history.query.day']:
+                start = AskForInput(Input.Date, prompt=Strings['history.day.date'])
                 end = AddToDate(start, days=1)
 
-            case 'Foods Logged in the last ...':
+            case Strings['history.query.inlast']:
                 # allow the user to specify how much to subtract from the date
                 # Users can configure which options they would like
                 date = SubFromDate(today, days=AskEachTime())
                 start = AddToDate(date, days=1)
                 end = AddToDate(today, days=1)
 
-            case 'Foods Logged Between...':
-                start = AskForInput(Input.Date)
-                end = AddToDate(AskForInput(Input.Date), days=1)
+            case Strings['history.query.between']:
+                start = AskForInput(Input.Date, prompt=Strings['history.window.start'])
+                end = AddToDate(AskForInput(Input.Date), days=1, prompt=Strings['history.window.end'])
 
-            case 'Foods Logged All Time':
+            case Strings['history.query.all']:
                 useDateList = TRUE
                 # go through all the keys
                 # reverse because we want the latest ones first
                 dateList = FilterFiles(history.keys(), sortBy=(Name, ZtoA))
 
-            case subMenu.opt('Exit'):
+            case Strings['opts.exit']:
                 StopShortcut()
 
         if useDateList == TRUE
@@ -110,10 +110,12 @@ Menu(prompt=prompt, ['More History Options', 'Exit']):
                     ''')
 
         # show results of the search
-        text = f"{logResults}"
-        text = SetName(text, "Query Results")
-        QuickLook(text)
+        if logResults is None:
+            Alert(Strings['history.nofoods'], title=Strings['history.nofoods.title'], showCancel=False)
+            StopShortcut()
 
-    case "Exit":
+        QuickLook(logResults)
+
+    case Strings['opts.exit']:
         StopShortcut()
 
