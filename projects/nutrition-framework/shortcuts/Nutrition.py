@@ -20,8 +20,8 @@ else:
     # Let the user select a language
     langs = Dictionary(GetContentsOfURL('https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/language_options.json'))
 
-    selectedLang = ChooseFromList(langs.Keys)
-
+    item = ChooseFromList(langs.Keys)
+    selectedLang = langs[item]
     Strings = Dictionary(GetContentsOfURL(f'https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/{selectedLang}'))
 
     Alert(Strings['nutr.setconfig'].replace('$config', Strings['installer.action.config']), showCancel=False)
@@ -223,7 +223,8 @@ Menu(prompt):
             case Strings['nutr.lang.change']:
                 langs = Dictionary(GetContentsOfURL('https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/language_options.json'))
 
-                selectedLang = ChooseFromList(langs.Keys)
+                item = ChooseFromList(langs.Keys)
+                selectedLang = langs[item]
                 
                 Strings = Dictionary(GetContentsOfURL(f'https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/{selectedLang}'))
 

@@ -64,7 +64,8 @@ if file is not None:
 else:
     # If there is no storage we don't know the language, let the user select it here
     langs = Dictionary(GetContentsOfURL('https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/language_options.json'))
-    selectedLang = ChooseFromList(langs.Keys)
+    item = ChooseFromList(langs.Keys)
+    selectedLang = langs[item]
     Strings = Dictionary(GetContentsOfURL(f'https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/{selectedLang}'))
 
     freshConfig = TRUE
