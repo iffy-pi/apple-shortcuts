@@ -230,7 +230,7 @@ Menu(prompt):
                 SaveFile(To='Shortcuts', Strings, f'{storage}/Other/gui_strings.json', overwrite=True)
 
             case Strings['nutr.menu.tutorial']:
-                OpenURL("https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/data/tutorial.html")
+                OpenURL("https://iffy-pi.github.io/apple-shortcuts/public/nutrition/tutorial/index.html")
 
     case Strings['nutr.menu.howtouse']::
             OpenURL("https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/data/tutorial.html")
