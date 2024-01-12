@@ -6,7 +6,7 @@ maxDisplayLinkWidth = 160
 
 updateInfo = {
 	'updateLink': '...',
-	'version': 1.3
+	'version': 1.31
 }
 
 accessTokenPath = 'PushBullet/AccessToken.txt'

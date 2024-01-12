@@ -10,7 +10,7 @@ FALSE = 0
 
 UpdateInfo = {
     'updateLink': 'https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/updates.json'
-    'version': 1.6,
+    'version': 1.61,
 }
 
 maxNonPremiumFileSizeMB = 25
