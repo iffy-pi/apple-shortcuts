@@ -2,6 +2,8 @@
 TRUE = 1
 FALSE = 0
 
+maxDisplayLinkWidth = 160
+
 updateInfo = {
 	'updateLink': '...',
 	'version': 1.3
@@ -134,9 +136,19 @@ if filterContents is not None:
         renamedItem = SetName(optionsVcard, 'vcard.vcf')
         contacts = GetContacts(renamedItem)
 
+        displayedLink = foundLink
+
+        splitText = SplitText(displayedLink, everyCharacter=True)
+
+        if Count(splitText) > maxDisplayLinkWidth:
+        	items = splitText.getItemRange(1, maxDisplayLinkWidth)
+        	displayedLink = f'''
+        		{CombineText(items, '')}... (full link not shown)
+        		'''
+
         chosen = ChooseFrom(contacts, prompt=f'''
 				Link:
-				{foundLink}
+				{displayedLink}
 			''')
 
         option = GetDetailsOfContacts(chosen, 'Notes')
