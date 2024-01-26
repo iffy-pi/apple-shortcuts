@@ -13,41 +13,129 @@ UpdateInfo = {
     'version': 1.61,
 }
 
-maxNonPremiumFileSizeMB = 25
-premiumPath = 'PushBullet/HasPremium.txt'
-accessTokenPath = 'PushBullet/AccessToken.txt'
+filePaths = {
+    'premium': 'PushBullet/HasPremium.txt',
+    'token': 'PushBullet/AccessToken.txt',
+    'config': 'PushBullet/config.json'
+}
 
-file = GetFile(From='Shortcuts', accessTokenPath, errorIfNotFound=False)
-if file is None:
-    Menu('Your access token is required to use this shortcut'):
-        case 'I have my access token':
-            text = AskForInput(Input.Text, prompt="Enter Access Token Below:", allowMultipleLines=False)
-            SaveFile(To='Shortcuts', text, accessTokenPath, overwrite=True)
-            ShowAlert(f'Access Token has been saved to {accessTokenPath}. If your access token changes, delete this file and run the shortcut to save the new token.', showCancel=False)
-            IFRESULT = text
+openConfigMenu = FALSE
+exitAfterConfig = FALSE
 
-        case "I don't have my access token":
-            ShowAlert("Get an access token from your PushBullet Account > Settings > Access Tokens.")
-            StopShortcut()
+if ShortcutInput is None:
+    openConfigMenu = TRUE
+    exitAfterConfig = TRUE
+    contents = Clipboard
 else:
-    IFRESULT = Text(file)
+    contents = ShortcutInput
 
-accessToken = IFRESULT
 
-file = GetFile(From='Shortcuts', premiumPath, errorIfNotFound=False)
+file = GetFile(From='Shortcuts', filePaths['config'], errorIfNotFound=False)
 if file is None:
-    Menu('Do you have PushBullet Premium?'):
-        case 'Yes':
-            MENURESULT = TRUE
-        case 'No':
-            MENURESULT = FALSE
-    SaveFile(To='Shortcuts', MENURESULT, premiumPath, overwrite=True)
-    Alert('Your premium status has been saved to PremiumPath. If your premium status changes, delete this file to re-trigger this selection.', showCancel=False)
-    IFRESULT = MENURESULT
-else:
-    IFRESULT = file
+    openConfigMenu = TRUE
+    # Move over access token and premium state from legacy file structure
+    config = Dictionary()
+    file = GetFile(From='Shortcuts', filePaths['token'], errorIfNotFound=False)
+    if file is not None:
+        config['access_token'] = Text(file)
 
-pushbulletPremium = Number(IFRESULT)
+    file = GetFile(From='Shortcuts', filePaths['premium'], errorIfNotFound=False)
+    if file is not None:
+        config['premium'] = Number(file)
+else:
+    config = Dictionary(file)
+
+configPrompts = f'''
+    PushBullet Configuration
+    You can access this menu again by running the shortcut without any input.
+    '''
+
+if config.get('access_token') is None:
+    configPrompts.append('You need to configure your access token')
+if config.get('premium') is None:
+    configPrompts.append('You need to configure your premium status')
+
+
+if openConfigMenu == TRUE:
+    Menu(Text(configPrompts)):
+        case 'Set Access Token':
+            prompt = f'''
+            Enter Access Token Below
+            You can generate an access token from your PushBullet Account > Settings > Access Tokens.
+            '''
+            text = AskForInput(Input.Text, prompt=prompt, default=config.get('access_token') allowMultipleLines=False)
+            config['access_token'] = text
+
+        case 'Set Premium Status':
+            Menu('Do you have PushBullet Premium?'):
+            case 'Yes':
+                MENURESULT = TRUE
+            case 'No':
+                MENURESULT = FALSE
+            config['premium'] = MENURESULT
+
+        case 'Send pushes to device...':
+            if config.get('access_token') is None:
+                ShowAlert('Access Token has not been configured')
+                StopShortcut()
+            
+            # Get the list of devices
+            res = GetContentsOfURL('https://api.pushbullet.com/v2/devices', headers={'Access-Token': config['access_token']})
+            for dev in res['devices']:
+                text = f'''
+                    BEGIN:VCARD
+                    VERSION:3.0
+                    N;CHARSET=utf-8:{dev['nickname']}
+                    ORG: {dev['model']}
+                    NOTE;CHARSET=UTF-8:{dev['iden']}
+                    END:VCARD
+                '''
+                REPEATRESULTS.append(text)
+
+            text = f'''
+                {REPEATRESULTS}
+
+                BEGIN:VCARD
+                VERSION:3.0
+                N;CHARSET=utf-8:All devices
+                ORG:Push to all devices
+                NOTE;CHARSET=UTF-8:_all
+                END:VCARD
+            '''
+
+            renamedItem = SetName(REPEATRESULTS, 'vcard.vcf')
+            contacts = GetContacts(renamedItem)
+            selected = ChooseFrom(contacts, prompt='Select device option')
+
+            config['target_device'] = Contact(selected).Notes
+            config['target_device_name'] = Contact(selected).Name
+
+        case 'Push Item In Clipboard':
+            exitAfterConfig = FALSE
+
+    # Save the config file
+    SaveFile(config, To='Shortcuts', filePaths['config'], overwrite=True)
+
+    if exitAfterConfig == TRUE:
+        StopShortcut()
+
+if config.get('access_token') is None:
+    ShowAlert('''
+        Access Token has not been configured.
+        Run the shortcut without any input to configure.''')
+    StopShortcut()
+
+if config.get('premium') is None:
+    ShowAlert('''
+        Premium Status has not been configured.
+        Run the shortcut without any input to configure.''')
+    StopShortcut()
+
+
+targetIden = ''
+if config.get('target_device') is not None:
+    if Text(config['target_device']) != '_all':
+        targetIden = config['target_device']
 
 remoteFiles = {
     'mime' : 'https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/data/ext_to_mime.json',
@@ -57,12 +145,12 @@ remoteFiles = {
 res = GetContentsOfURL(remoteFiles['mime'])
 mime = Dictionary(res)
 
-pushCall = {
-    'push_url': 'https://api.pushbullet.com/v2/pushes',
-    'upload_req_url': 'https://api.pushbullet.com/v2/upload-request',
-    'method': 'POST',
-    'accesstoken': accessToken
-}
+failedPushes = []
+
+accessToken = config['access_token']
+pushbulletPremium = config['premium']
+
+maxNonPremiumFileSizeMB = 25
 
 pushBody = {
     'type': '',
@@ -71,16 +159,16 @@ pushBody = {
     'file_type': '',
     'file_name': '',
     'file_url': ''
+    'device_iden': targetIden
 }
 
-failedPushes = []
 
-if ShortcutInput is None:
-    ShowNotification("Nothing to Push!")
-    StopShortcut()
-
-
-contents = ShortcutInput
+pushCall = {
+    'push_url': 'https://api.pushbullet.com/v2/pushes',
+    'upload_req_url': 'https://api.pushbullet.com/v2/upload-request',
+    'method': 'POST',
+    'accesstoken': accessToken
+}
 
 typeId = {
     'link': 1,
@@ -318,7 +406,15 @@ for repeatItem in contents:
                     "Access-Token" : pushCall['accesstoken']
                 },
                 type='JSON',
-                body=itemPushBody
+                body={
+                    'type': itemPushBody['type'],
+                    'url': itemPushBody['url'],
+                    'body': itemPushBody['body'],
+                    'file_type': itemPushBody['file_type'],
+                    'file_name': itemPushBody['file_name'],
+                    'file_url': itemPushBody['file_url'],
+                    'device_iden': itemPushBody['device_iden']
+                }
             )
 
         text = res['error']
@@ -327,18 +423,24 @@ for repeatItem in contents:
             itemErrorCode = 6
             itemErrorMsg = text
         else:
+            if f'[{targetIden}]' != '[]':
+                IFRESULT = f' to {config['target_device_name']}'
+            else:
+                IFRESULT = ''
+            deviceAppend = IFRESULT
+
             # Successful push so notify user
             typ = ChangeCase(itemPushBody['type'], 'lowercase')
             
             if typ == 'note':
-                Notification(f'"{item}"', title='Text pushed successfully', attachment=item)
+                Notification(f'"{item}"', title=f'Text pushed successfully{deviceAppend}', attachment=item)
 
             if typ == 'link':
-                Notification(item, title='Link pushed successfully')
+                Notification(item, title=f'Link pushed successfully{deviceAppend}')
 
             if typ == 'file':
                 generalType = ReplaceText(GetTypeOf(item), 'Text', 'Text File')
-                Notification(itemPushBody['file_name'], title=f'{generalType} pushed successfully', attachment=item)
+                Notification(itemPushBody['file_name'], title=f'{generalType} pushed successfully{deviceAppend}', attachment=item)
 
     # Report and collate errors
     if itemErrorCode != 0:
