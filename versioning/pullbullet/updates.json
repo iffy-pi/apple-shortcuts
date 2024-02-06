@@ -6,8 +6,8 @@
 	"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/pullbullet/updates.json",
 	"pyfile": "projects/pushbullet-shortcuts/PullBullet.py",
 
-	"version": 1.31,
-	"link": "https://www.icloud.com/shortcuts/869e9508e0294c929f97da67cbc5882a",
-	"releaseNotes": "- Access Tokens are now saved to your files to make update process easier.\n- Also fixed bug where update was downloading PushBullet shortcut",
-	"releaseTime": "2023-12-11"
+	"version": 1.32,
+	"link": "https://www.icloud.com/shortcuts/405ecb9abf58431581f35759dc0c4746",
+	"releaseNotes": "- Long links are now truncated when displayed to the user.\n - Also fixed issue where safari links could not be pushed",
+	"releaseTime": "2024-02-06"
 }
