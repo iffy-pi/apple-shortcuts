@@ -7,7 +7,7 @@
 	"pyfile": "projects/pushbullet-shortcuts/PullBullet.py",
 
 	"version": 1.32,
-	"link": "https://www.icloud.com/shortcuts/405ecb9abf58431581f35759dc0c4746",
+	"link": "https://www.icloud.com/shortcuts/67912657ccb24eb48968dd654f9daa92",
 	"releaseNotes": "- Long links are now truncated when displayed to the user.\n - Also fixed issue where safari links could not be pushed",
 	"releaseTime": "2024-02-06"
 }
