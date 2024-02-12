@@ -42,34 +42,5 @@ Calculate Stats
 **&#x0020;&#x1F6E0;&#xFE0F ;Bug Fix**
 ```
 
-# 4.10
-- Search Algorithm v1.04
-	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Updated to support PTCD numbering format ([#1](https://github.com/iffy-pi/apple-shortcuts/issues/1)).
-
-- Foods List v1.05
-	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Updated to support PTCD numbering format ([#1](https://github.com/iffy-pi/apple-shortcuts/issues/1)).
-
-- Log Algorithm v1.12
-	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Updated to support PTCD numbering format ([#1](https://github.com/iffy-pi/apple-shortcuts/issues/1)).
-
-- Make Preset v1.05
-	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Updated to support PTCD numbering format ([#1](https://github.com/iffy-pi/apple-shortcuts/issues/1)).
-
-- Edit Saved Food v1.01
-	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Updated to support PTCD numbering format ([#1](https://github.com/iffy-pi/apple-shortcuts/issues/1)).
-
-- Make Food Manually v1.01
-	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Updated to support PTCD numbering format ([#1](https://github.com/iffy-pi/apple-shortcuts/issues/1)).
-
-- Calculate Stats v1.02
-	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Updated to support PTCD numbering format ([#1](https://github.com/iffy-pi/apple-shortcuts/issues/1)).
-
-- Nutrition Statistics v1.02
-	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Updated to support PTCD numbering format ([#1](https://github.com/iffy-pi/apple-shortcuts/issues/1)).
-
-- Log Foods At Different Times v1.11
-	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Updated to support PTCD numbering format ([#1](https://github.com/iffy-pi/apple-shortcuts/issues/1)).
-	- **&#x1F3AF; Improvement**: Updated to include more descriptive menu options and usage instructions ([#49](https://github.com/iffy-pi/apple-shortcuts/issues/49)).
-
-- Nutrition v1.06
-	- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Updated to support PTCD numbering format ([#1](https://github.com/iffy-pi/apple-shortcuts/issues/1)).
+# 4.11
+- **&#x0020;&#x1F525; Feature**: Updates to support different languages for the Nutrition Framework. Currently available languages are English and Portugese, with more coming soon. You can change your language by going to Clear and Other Settings > Change Language
