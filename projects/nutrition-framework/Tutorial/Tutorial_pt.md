@@ -1,6 +1,5 @@
 # Using Nutrition
-## Other Available Languages for Tutorial:
-- [Portugese](./Tutorial_pt.md)
+Go to [Main Tutorial](./Tutorial.md) for more language options.
 
 *You can access this tutorial in the future from Clear and Other Settings > Tutorial*
 

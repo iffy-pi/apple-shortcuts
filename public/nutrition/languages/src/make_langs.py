@@ -1,7 +1,7 @@
 import json
 import sys
 import os
-
+import re
 
 def hasAllVars(line:str, varList):
 	if varList is None:
@@ -147,13 +147,75 @@ def checkTranslatedJSON(jsonFile, noKeyCheck = False):
 	return 0
 
 
+def jsonifyString(text):
+	replacements = [
+		('\\', '\\\\'),
+		('"', '\\"'),
+		('\n', '\\n'),
+		('\t', '\\t'),
+		#('/', '\\/'),
+		('\r', ''),
+	]
+	for before, after in replacements:
+		text = text.replace(before, after)
+	return text
+
+
+
+
+def makeJSONKeysFromNewlsFile(newlsFile=None):
+	if newlsFile is None:
+		 newlsFile = 'newls.txt'
+
+	with open(newlsFile, 'r', encoding='utf-8') as file:
+		lines = file.readlines()
+
+	sep = '============================================================'
+
+	
+	keyset = []
+	
+	i = 0
+	lineCnt = len(lines)
+	while i < lineCnt:
+		if lines[i].strip() == sep:
+			key = lines[i+1].strip().replace('Key: ', '') 
+			
+			startLineIdx = i + 3
+			itr = startLineIdx
+			
+			while lines[itr].strip() != sep:
+				itr = itr + 1
+			
+			keyVal = ''.join(lines[startLineIdx: itr]).strip()
+			
+			keyset.append((key, keyVal))
+
+			# move past the entry
+			i = itr + 1
+
+	with open('temp.txt', 'w', encoding='utf-8') as file:
+		for key, val in keyset:
+			file.write('"{}": "{}",\n'.format(
+				key,
+				jsonifyString(val)
+			))
+
+	print(f'Generated from {newlsFile}')
+	print('Generated to temp.txt')
+			
+
 
 def testing(args):
-	with open('..\\gui_strings_pt.json', 'r') as file:
-		dix = json.load(file)
+	# with open('newls.txt', 'r', encoding='utf-8') as file:
+	# 	text = file.read()
+	
+	# text = jsonifyString(text)
 
-	for k in dix:
-		print(dix[k])
+	# with open('temp.txt', 'w', encoding='utf-8') as file:
+	# 	file.write(text)
+
+	makeJSONKeysFromNewlsFile()
 
 def main():
 	args = sys.argv[1:]
@@ -171,6 +233,11 @@ def main():
 		js = args[1]
 		noKeyCheck = argLen > 2 and args[2] == 'subset'
 		checkTranslatedJSON(js, noKeyCheck=noKeyCheck)
+		return 0
+
+	elif argLen>0 and args[0] == 'jnewls':
+		newlsFile = args[1]
+		makeJSONKeysFromNewlsFile(newlsFile = newlsFile)
 		return 0
 
 	elif argLen>0 and args[0] == 'format':

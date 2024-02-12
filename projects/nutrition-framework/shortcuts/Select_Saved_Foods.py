@@ -71,7 +71,7 @@ for curType in searchTypes:
                 BEGIN:VCARD
                 VERSION:3.0
                 N;CHARSET=UTF-8:{food['Name']}
-                ORG;CHARSET=UTF-8:{prompt} ⸱ {food['Serving Size']}
+                ORG;CHARSET=UTF-8:$folder ⸱ {food['Serving Size']}
                 NOTE;CHARSET=UTF-8:{dix}
                 END:VCARD
 
@@ -81,6 +81,8 @@ for curType in searchTypes:
         SaveFile(To='Shortcuts', Text(REPEATRESULTS), f"{storage}/{parentFolder}/vcardCache.txt", overwrite=True)
 
         IFRESULT = Text(REPEATRESULTS)
+
+    REPEATRESULTS.append(IFRESULT.replace('$folder', prompt))
 
 vcardCache = Text(REPEATRESULTS)
 

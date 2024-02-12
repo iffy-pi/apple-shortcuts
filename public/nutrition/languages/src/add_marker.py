@@ -1,7 +1,7 @@
 import json
 
 
-with open('gui_strings_en.json', 'r') as file:
+with open('..\\gui_strings_en.json', 'r') as file:
 	dix = json.load(file)
 
 
