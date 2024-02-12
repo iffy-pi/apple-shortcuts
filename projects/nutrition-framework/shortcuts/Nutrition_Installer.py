@@ -15,32 +15,32 @@ freshConfig = FALSE
 
 updateInfo = {
     'updateLink' : 'https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json',
-    'version':'4.10'
+    'version':'4.2'
 }
 
 # also now includes information about the children
 childVers = {
     "19":"1.01",      # Add Recent
-    "20":"1.01",      # Barcode Search
-    "24":"1.02",      # Calculate Stats
+    "20":"1.1",      # Barcode Search
+    "24":"1.1",      # Calculate Stats
     "14":"1.01",      # Clear Cache And Backlog
     "10":"1.01",     # Display Food Item
-    "15":"1.01",      # Edit Saved Food
-    "22":"1.01",      # Food History
-    "6":"1.05",      # Foods List
+    "15":"1.1",      # Edit Saved Food
+    "22":"1.1",      # Food History
+    "6":"1.1",      # Foods List
     "9":"1.0",       # Generate Food ID
-    "18":"1.0",      # Get Recent
-    "7":"1.12",       # Log Algorithm
-    "12":"1.11",     # Log Foods At Different Times
-    "11":"1.02",     # Log Foods At Time
+    "18":"1.1",      # Get Recent
+    "7":"1.2",       # Log Algorithm
+    "12":"1.2",     # Log Foods At Different Times
+    "11":"1.1",     # Log Foods At Time
     "25":"1.0",      # Log Nutrients to Health
-    "21":"1.01",      # Make Food Manually
-    "17":"1.05",     # Make Preset
-    "5":"1.06",       # Nutrition
-    "23":"1.02",      # Nutrition Statistics
-    "13":"1.02",      # Saved And Search
-    "8":"1.04",      # Search Algorithm
-    "16":"1.01",      # Select Saved Foods
+    "21":"1.1",      # Make Food Manually
+    "17":"1.1",     # Make Preset
+    "5":"1.1",       # Nutrition
+    "23":"1.1",      # Nutrition Statistics
+    "13":"1.1",      # Saved And Search
+    "8":"1.1",      # Search Algorithm
+    "16":"1.1",      # Select Saved Foods
 }
 
 emojiUnicodes = {
