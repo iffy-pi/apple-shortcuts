@@ -1,7 +1,7 @@
 '''
 Framework: Nutrition (id = 4)
 ID:  8
-Ver: 1.04
+Ver: 1.1
 '''
 
 # Search for food in MyFitnessPal Database

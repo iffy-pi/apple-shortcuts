@@ -1,7 +1,7 @@
 '''
 Framework: Nutrition (id = 4)
 ID:  16
-Ver: 1.01
+Ver: 1.1
 '''
 
 # Select foods from Presets or Barcodes

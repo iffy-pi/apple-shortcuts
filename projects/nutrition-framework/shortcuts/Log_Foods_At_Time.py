@@ -1,7 +1,7 @@
 '''
 Framework: Nutrition (id = 4)
 ID:  11
-Ver: 1.02
+Ver: 1.1
 '''
 
 # Log foods at a selected time

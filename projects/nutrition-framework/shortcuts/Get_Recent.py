@@ -1,7 +1,7 @@
 '''
 Framework: Nutrition (id = 4)
 ID:  18
-Ver: 1.0
+Ver: 1.1
 '''
 
 # Select one or more foods from recent

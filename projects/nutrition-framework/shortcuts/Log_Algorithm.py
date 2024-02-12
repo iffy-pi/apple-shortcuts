@@ -1,7 +1,7 @@
 '''
 Framework: Nutrition (id = 4)
 ID:  7
-Ver: 1.12
+Ver: 1.2
 '''
 
 # Takes { Food: ... , Date: ... } and logs the food at the given date

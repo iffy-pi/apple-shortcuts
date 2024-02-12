@@ -1,7 +1,7 @@
 '''
 Framework: Nutrition (id = 4)
 ID:  15
-Ver: 1.01
+Ver: 1.1
 '''
 
 # Used to edit saved foods, either preset or barcode

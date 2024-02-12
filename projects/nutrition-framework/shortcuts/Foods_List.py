@@ -1,7 +1,7 @@
 '''
 Framework: Nutrition (id = 4)
 ID:  6 
-Ver: 1.05
+Ver: 1.1
 '''
 
 # Select one or more foods from the different available foods sources

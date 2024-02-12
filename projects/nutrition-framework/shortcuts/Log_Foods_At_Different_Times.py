@@ -1,7 +1,7 @@
 '''
 Framework: Nutrition (id = 4)
 ID:  12
-Ver: 1.11
+Ver: 1.2
 '''
 
 # Select foods to log at different times
