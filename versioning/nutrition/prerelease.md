@@ -42,5 +42,7 @@ Calculate Stats
 **&#x0020;&#x1F6E0;&#xFE0F ;Bug Fix**
 ```
 
-# 4.2
-- **&#x0020;&#x1F525; Feature**: Updates to support different languages for the Nutrition Framework. Currently available languages are English and Portugese, with more coming soon. You can change your language by going to Clear and Other Settings > Change Language
+# 4.21
+- **&#x0020;&#x1F6E0;&#xFE0F ;Bug Fix**: Fixed failure that occurs if "gui_strings.json" file is missing [#58](https://github.com/iffy-pi/apple-shortcuts/issues/58). Applies to:
+	- Nutrition
+	- Nutrition Installer 
