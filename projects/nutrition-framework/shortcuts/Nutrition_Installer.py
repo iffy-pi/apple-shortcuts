@@ -55,19 +55,34 @@ emojiUnicodes = {
 
 params = Dictionary(ShortcutInput)
 
+
+Strings = {}
+
 # Configure storage and language here
 # First get the storage if it exists
-file = GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt", errorIfNotFound=False)
-if file is not None:
-    storage = Text(file)
-    Strings = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.json"))
-else:
+storageFile = GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt", errorIfNotFound=False)
+
+# Set the strings dictionary if it exists
+if storageFile is not None:
+    text = Text(storageFile)
+    stringsFile = GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.json", errorIfNotFound=False)
+    if stringsFile is not None:
+        Strings = Dictionary(stringsFile)
+
+
+# If the dictionary is empty then we go online to get the language
+if Count(Strings.keys) == 0:
     # If there is no storage we don't know the language, let the user select it here
     langs = Dictionary(GetContentsOfURL('https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/language_options.json'))
-    item = ChooseFromList(langs.Keys)
+    item = ChooseFromList(langs.Keys, prompt='Select a language')
     selectedLang = langs[item]
     Strings = Dictionary(GetContentsOfURL(f'https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/{selectedLang}'))
 
+
+if storageFile is not None:
+    storage = Text(storageFile)
+    SaveFile(To='Shortcuts', Strings, f"{storage}/Other/gui_strings.json", overwrite=True)
+else:
     freshConfig = TRUE
 
 
@@ -80,6 +95,7 @@ else:
             newInstall = FALSE
         case Strings['installer.action.config']:
             newInstall = FALSE
+            freshConfig = TRUE
             exitAfterConfig = TRUE
 
 

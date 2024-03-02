@@ -12,11 +12,18 @@ FALSE = 0
 storageExists = FALSE
 tutorialLink = 'https://iffy-pi.github.io/apple-shortcuts/public/nutrition/tutorial/index.html'
 
-file = GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt", errorIfNotFound=False)
+Strings = {}
+storageFile = GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt", errorIfNotFound=False)
 
-if file is not None:
-    storage = Text(file)
-else:
+# Set the strings dictionary if it exists
+if storageFile is not None:
+    text = Text(storageFile)
+    stringsFile = GetFile(From='Shortcuts', f"{text}/Other/shortcutNames.json", errorIfNotFound=False)
+    if stringsFile is not None:
+        Strings = Dictionary(stringsFile)
+
+# If the dictionary is empty then we go online to get the language
+if Count(Strings.keys) == 0:
     # Let the user select a language
     langs = Dictionary(GetContentsOfURL('https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/language_options.json'))
 
@@ -24,6 +31,11 @@ else:
     selectedLang = langs[item]
     Strings = Dictionary(GetContentsOfURL(f'https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/{selectedLang}'))
 
+
+if storageFile is not None:
+    storage = Text(storageFile)
+    SaveFile(To='Shortcuts', Strings, f"{storage}/Other/gui_strings.json", overwrite=True)
+else:
     Alert(Strings['nutr.setconfig'].replace('$config', Strings['installer.action.config']), showCancel=False)
     StopShortcut()
 
