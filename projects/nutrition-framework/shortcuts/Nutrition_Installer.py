@@ -15,7 +15,7 @@ freshConfig = FALSE
 
 updateInfo = {
     'updateLink' : 'https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json',
-    'version':'4.2'
+    'version':'4.21'
 }
 
 # also now includes information about the children
@@ -36,7 +36,7 @@ childVers = {
     "25":"1.0",      # Log Nutrients to Health
     "21":"1.1",      # Make Food Manually
     "17":"1.1",     # Make Preset
-    "5":"1.1",       # Nutrition
+    "5":"1.11",       # Nutrition
     "23":"1.1",      # Nutrition Statistics
     "13":"1.1",      # Saved And Search
     "8":"1.1",      # Search Algorithm

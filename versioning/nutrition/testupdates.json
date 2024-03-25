@@ -5,10 +5,10 @@
     "rhub": "https://routinehub.co/shortcut/5177",
     "updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json",
     "pyfile": "projects/nutrition-framework/shortcuts/Nutrition_Installer.py",
-    "version": "4.2",
-    "link": "https://www.icloud.com/shortcuts/d0a05df479d94b26a6a9faac215e1f1e",
-    "releaseNotes": "- **&#x0020;&#x1F525; Feature**: Updates to support different languages for the Nutrition Framework. Currently available languages are English and Portugese, with more coming soon. You can change your language by going to Clear and Other Settings > Change Language",
-    "releaseTime": "2024-02-12",
+    "version": "4.21",
+    "link": "https://www.icloud.com/shortcuts/8e555d293090455c8462138f8d782365",
+    "releaseNotes": "- **&#x0020;&#x1F6E0;&#xFE0F ;Bug Fix**: Fixed failure that occurs if \"gui_strings.json\" file is missing [#58](https://github.com/iffy-pi/apple-shortcuts/issues/58). Applies to:\n\t- Nutrition\n\t- Nutrition Installer ",
+    "releaseTime": "2024-03-25",
     "children": [
         {
             "id": 19,
@@ -143,8 +143,8 @@
             "name": "Nutrition",
             "type": "child",
             "pyfile": "projects/nutrition-framework/shortcuts/Nutrition.py",
-            "version": "1.1",
-            "link": "https://www.icloud.com/shortcuts/50f9829f700b438883852a2c361a4776"
+            "version": "1.11",
+            "link": "https://www.icloud.com/shortcuts/20aa58193e304236baf0886d4c712327"
         },
         {
             "id": 23,
