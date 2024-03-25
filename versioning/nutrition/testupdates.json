@@ -7,7 +7,7 @@
     "pyfile": "projects/nutrition-framework/shortcuts/Nutrition_Installer.py",
     "version": "4.21",
     "link": "https://www.icloud.com/shortcuts/8e555d293090455c8462138f8d782365",
-    "releaseNotes": "- **&#x0020;&#x1F6E0;&#xFE0F ;Bug Fix**: Fixed failure that occurs if \"gui_strings.json\" file is missing [#58](https://github.com/iffy-pi/apple-shortcuts/issues/58). Applies to:\n\t- Nutrition\n\t- Nutrition Installer ",
+    "releaseNotes": "- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed failure that occurs if \"gui_strings.json\" file is missing [#58](https://github.com/iffy-pi/apple-shortcuts/issues/58). Applies to:\n\t- Nutrition\n\t- Nutrition Installer ",
     "releaseTime": "2024-03-25",
     "children": [
         {

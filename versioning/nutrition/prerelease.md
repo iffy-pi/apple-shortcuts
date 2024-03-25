@@ -39,10 +39,10 @@ Calculate Stats
 ```
 **&#x0020;&#x1F525; Feature**
 **&#x1F3AF; Improvement**
-**&#x0020;&#x1F6E0;&#xFE0F ;Bug Fix**
+**&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**
 ```
 
 # 4.21
-- **&#x0020;&#x1F6E0;&#xFE0F ;Bug Fix**: Fixed failure that occurs if "gui_strings.json" file is missing [#58](https://github.com/iffy-pi/apple-shortcuts/issues/58). Applies to:
+- **&#x0020;&#x1F6E0;&#xFE0F;Bug Fix**: Fixed failure that occurs if "gui_strings.json" file is missing [#58](https://github.com/iffy-pi/apple-shortcuts/issues/58). Applies to:
 	- Nutrition
 	- Nutrition Installer 
