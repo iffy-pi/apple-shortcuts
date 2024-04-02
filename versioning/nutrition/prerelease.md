@@ -42,7 +42,6 @@ Calculate Stats
 **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**
 ```
 
-# 4.21
-- **&#x0020;&#x1F6E0;&#xFE0F;Bug Fix**: Fixed failure that occurs if "gui_strings.json" file is missing [#58](https://github.com/iffy-pi/apple-shortcuts/issues/58). Applies to:
-	- Nutrition
+# 4.22
+- **&#x0020;&#x1F6E0;&#xFE0F;Bug Fix**: Fixed error where empty note is opened when installing or updating shortcut ([#61](https://github.com/iffy-pi/apple-shortcuts/issues/61)). Applies to:
 	- Nutrition Installer 
