@@ -5,8 +5,8 @@
     "rhub": "https://routinehub.co/shortcut/5177",
     "updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json",
     "pyfile": "projects/nutrition-framework/shortcuts/Nutrition_Installer.py",
-    "version": "4.22",
-    "link": "https://www.icloud.com/shortcuts/f4e98babcd3846c484f115e4a5599973",
+    "version": "4.23",
+    "link": "https://www.icloud.com/shortcuts/b9b8499937034e1dbab9e88a5eee46f9",
     "releaseNotes": "- **&#x0020;&#x1F6E0;&#xFE0F;Bug Fix**: Fixed error where empty note is opened when installing or updating shortcut ([#61](https://github.com/iffy-pi/apple-shortcuts/issues/61)). Applies to:\n\t- Nutrition Installer ",
     "releaseTime": "2024-04-02",
     "children": [
