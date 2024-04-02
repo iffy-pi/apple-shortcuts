@@ -5,10 +5,10 @@
     "rhub": "https://routinehub.co/shortcut/5177",
     "updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json",
     "pyfile": "projects/nutrition-framework/shortcuts/Nutrition_Installer.py",
-    "version": "4.21",
-    "link": "https://www.icloud.com/shortcuts/8e555d293090455c8462138f8d782365",
-    "releaseNotes": "- **&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**: Fixed failure that occurs if \"gui_strings.json\" file is missing [#58](https://github.com/iffy-pi/apple-shortcuts/issues/58). Applies to:\n\t- Nutrition\n\t- Nutrition Installer ",
-    "releaseTime": "2024-03-25",
+    "version": "4.22",
+    "link": "https://www.icloud.com/shortcuts/f4e98babcd3846c484f115e4a5599973",
+    "releaseNotes": "- **&#x0020;&#x1F6E0;&#xFE0F;Bug Fix**: Fixed error where empty note is opened when installing or updating shortcut ([#61](https://github.com/iffy-pi/apple-shortcuts/issues/61)). Applies to:\n\t- Nutrition Installer ",
+    "releaseTime": "2024-04-02",
     "children": [
         {
             "id": 19,

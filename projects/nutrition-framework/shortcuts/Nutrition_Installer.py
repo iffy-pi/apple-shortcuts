@@ -15,7 +15,7 @@ freshConfig = FALSE
 
 updateInfo = {
     'updateLink' : 'https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/updates.json',
-    'version':'4.21'
+    'version':'4.22'
 }
 
 # also now includes information about the children
