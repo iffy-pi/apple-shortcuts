@@ -214,5 +214,5 @@
    "installer.docs.updatemd":"# Atualização do Atalho $name\n## Atualizações estão disponíveis para atalhos:\n$update\n\n&nbsp;\n## &#x1F566; Liberado:\n$date",
    "installer.docs.othermd":"$info\n\n&nbsp;\n## &#x2705; Instalar:\n$links\n\n&nbsp;\n## &#x1F4DD; Notas de Lançamento:\n$notes\n\n&nbsp;\n## &#x1F4EC; Contato do Desenvolvedor:\nReddit: [u/iffythegreat](https://www.reddit.com/user/iffythegreat)\nRoutineHub: [iffy-pi](https://routinehub.co/user/iffy-pi)\n\n&nbsp;\n## &#x1F4DA; Histórico Completo de Atualizações:\n$rhublink",
    "installer.badmd.warning":"Instruções\nCole o conteúdo da sua área de transferência nesta nota para ver as instruções!\nEste é um patch para um problema de rich text introduzido com o iOS 17.0.",
-   "_string_lang_file": "gui_strings_pt"
+   "_string_lang_file": "gui_strings_pt.json"
 }

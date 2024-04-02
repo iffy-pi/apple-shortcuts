@@ -257,5 +257,5 @@
 	"opts.cancel": "Cancel",
 	"foodnotes": "Food Notes",
 	"ask.for.servings": "How many servings of $name? (1 serving = $size)",
-	"_string_lang_file": "gui_strings_en"
+	"_string_lang_file": "gui_strings_en.json"
 }

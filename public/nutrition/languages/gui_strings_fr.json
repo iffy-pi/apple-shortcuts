@@ -214,5 +214,5 @@
     "installer.docs.updatemd": "# Mise à jour du raccourci $name\n## Des mises à jour sont disponibles pour les raccourcis:\n$update\n\n&nbsp;\n## &#x1F566; Libéré:\n$date",
     "installer.docs.othermd": "$info\n\n&nbsp;\n## &#x2705; Installer:\n$links\n\n&nbsp;\n## &#x1F4DD; Notes de mise à jour:\n$notes\n\n&nbsp;\n## &#x1F4EC; Contact du Développeur:\nReddit: [u/iffythegreat](https://www.reddit.com/user/iffythegreat)\nRoutineHub: [iffy-pi](https://routinehub.co/user/iffy-pi)\n\n&nbsp;\n## &#x1F4DA; Historique complet des mises à jour:\n$rhublink",
     "installer.badmd.warning": "Instructions\nCollez le contenu de votre presse-papiers dans cette note pour voir les instructions !\nIl s'agit d'un correctif à un problème de texte enrichi introduit avec iOS 17.0.",
-    "_string_lang_file": "gui_strings_fr"
+    "_string_lang_file": "gui_strings_fr.json"
  }
