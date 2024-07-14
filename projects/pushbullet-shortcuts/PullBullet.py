@@ -122,6 +122,14 @@ if filterContents is not None:
             NOTE;CHARSET=UTF-8:copy-link
             {copyIcon}
             END:VCARD
+
+            BEGIN:VCARD
+            VERSION:3.0
+            N;CHARSET=utf-8:Share Link
+            ORG:Share with share sheet
+            NOTE;CHARSET=UTF-8:share-link
+            {shareIcon}
+            END:VCARD
         '''
 
         if Text(item['title']) != '':
@@ -174,6 +182,9 @@ if filterContents is not None:
         if option == 'copy-link':
             copiedLink = TRUE
             copyContent = foundLink
+
+        elif option == 'share-link':
+            Share(foundLink)
         
         if option == 'copy-title':
             copyContent = item['title']
