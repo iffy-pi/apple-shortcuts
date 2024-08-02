@@ -32,17 +32,21 @@ for i in range(15):
 
 				Notification(f"{plant}'s watering has been updated with new date: {wateringDate}", title="Plant has been watered")
 
-		case 'Days Since Last Watering':
+		case 'Watering History for Plant':
 			plantNames = FilterFiles(plantInfo.keys, sortBy='A to Z')
 			plant = ChooseFromList(plantNames, prompt='Select a plant')
 			waterings = plantInfo[plant]['waterings']
 			if Count(waterings) > 0:
-				prevWateringDate = GetItemFromList(waterings, lastitem=True)
+				prevWateringDate = GetItemFromList(waterings, firstitem=True)
+
+				for curWateringDate in waterings:
+					daysBetween = GetTimeBetweenDates(prevWateringDate, curWateringDate, days=True)
+					prevWateringDate = curWateringDate
+					REPEATRESULTS.append(f'{curWateringDate} ({daysBetween} days)')
+
 				days = GetTimeBetweenDates(prevWateringDate, today, days=True)
 				IFRESULT = f'''
-				{plant}
-				Last Watered: {prevWateringDate}
-				Time Since: {days} days
+					{REPEATRESULTS}
 				'''
 			else:
 				IFRESULT = 'This plant has never been watered!'
