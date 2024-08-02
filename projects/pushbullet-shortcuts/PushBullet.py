@@ -215,21 +215,24 @@ for repeatItem in contents:
         if isTextorRichText is not None:
             isRawText = FALSE
 
+            # If it is from the clipboard, and has text type, then it is raw text
+            res = MatchText(".*clipboard.*", itemFname, caseSensitive=False)
+            if res is not None:
+                # if extension is all numbers and came from clipboard, most likely raw text
+                # otherwise, it will be treated as file
+                isRawText = TRUE
+            
+            # If txt extension or no extension treat as raw text
+            res = FilterFiles(f".{itemFext}", whereAny=["Name" is ".txt", "Name" is "."])
+            if res is not None:
+                # if txt extension or no extension treat as raw text
+                # other extensions that are not all numbers will be treated as a file (fall through)
+                isRawText = TRUE
+
             # check if extension is all numbers
             extIsAllNumbers = MatchText("([0-9][0-9]*[^a-z])", itemFext, caseSensitive=False)
             if extIsAllNumbers is not None:
-                res = MatchText(".*clipboard.*", itemFname, caseSensitive=False)
-                if res is not None:
-                    # if extension is all numbers and came from clipboard, most likely raw text
-                    # otherwise, it will be treated as file
-                    isRawText = TRUE
-                
-            else:
-                res = FilterFiles(f".{itemFext}", whereAny=["Name" is ".txt", "Name" is "."])
-                if res is not None:
-                    # if txt extension or no extension treat as raw text
-                    # other extensions that are not all numbers will be treated as a file (fall through)
-                    isRawText = TRUE
+                isRawText = TRUE
                 
 
             if isRawText == TRUE:
