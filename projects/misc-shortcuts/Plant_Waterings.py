@@ -38,20 +38,38 @@ for i in range(15):
 			waterings = plantInfo[plant]['waterings']
 			if Count(waterings) > 0:
 				prevWateringDate = GetItemFromList(waterings, firstitem=True)
+				daysBetweenList = []
 
 				for curWateringDate in waterings:
 					daysBetween = GetTimeBetweenDates(prevWateringDate, curWateringDate, days=True)
 					prevWateringDate = curWateringDate
-					REPEATRESULTS.append(f'{curWateringDate} ({daysBetween} days)')
+					if daysBetween == 0:
+						REPEATRESULTS.append(f'{curWateringDate}')
+					else:
+						daysBetweenList.append(daysBetween)
+						REPEATRESULTS.append(f'''
+							    | {daysBetween} days
+							{curWateringDate}
+							''')
+
+				average = CalculateStatistics('average', daysBetweenList)
+				appendix = f'({average} day average)'
 
 				days = GetTimeBetweenDates(prevWateringDate, today, days=True)
 				IFRESULT = f'''
 					{REPEATRESULTS}
+						| {between} days and counting
 				'''
 			else:
+				appendix = ''
 				IFRESULT = 'This plant has never been watered!'
 			
-			ShowResult(IFRESULT)
+			historyText = f'''
+				{plant} Watering History {apppendix}
+				-----------------------------------------------
+				{IFRESULT}
+			'''
+			
 
 		case 'Add Plant':
 			plant = AskForInput(Input.text, "What's the plant name?", allowMultipleLines=False)
