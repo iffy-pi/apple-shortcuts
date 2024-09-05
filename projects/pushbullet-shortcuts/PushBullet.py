@@ -269,29 +269,24 @@ for repeatItem in contents:
 
                 # then do the stuff
                 text = f'''
-                    The type of the input could not be determined:
+                    We can't determine how to push the {itemType} item you requested:
+                    
                     Name: 
                     {itemFname}.{itemFext}
 
-                    Guessed Type:
-                    {itemType}
-
-                    Size:
-                    {itemSize}
-
-                    What is the type of this input?
+                    Size: {itemSize}
+                    
                 '''
                 Menu(prompt=text):
-
-                    case "Text":
+                    case "Push it as a note":
                         # set the push type to text
                         pushType = typeId['note']
                         item = Text(item)
 
-                    case "Link/URL":
+                    case "Push it as a link":
                         pushType = typeId['link']
 
-                    case "File":
+                    case "Push it as a file":
                         # filename might be confusing give users a chance to rename
                         Menu(prompt=f"Filename: {itemFname}.{itemFext}"):
                             case "Change Name":
@@ -310,7 +305,7 @@ for repeatItem in contents:
                             itemErrorCode = 5
                             itemErrorMsg = f"Extension: {itemFext}"
 
-                    case "View Item":
+                    case "Let me see the item first":
                         # reloop to give user options again
                         ShowResult(item)
                         exitLoop = FALSE
