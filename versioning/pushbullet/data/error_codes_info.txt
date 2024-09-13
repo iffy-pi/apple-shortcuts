@@ -4,12 +4,9 @@ This occurred due to some script execution failure, contact the developer if thi
 4: File Size is too large
 If you use PushBullet for free, the maximum transferrable file size is 25MB. This error code indicates the file was not pushed as it was bigger than the 25MB limit.
 
-6: HTTP Request Error
-One of the HTTP requests resulted in some sort of error. Request error is reported with the item above. Contact the developer regarding the request error.
-
-7: Unknown Item Type
-Item was not able to be identified as one of the PushBullet content types: file, note or link.
-
 5: Unkown MIME File Type
 The provided file's MIME file type was not found in the included MIME dictionary. This is required to push files of different types to the PushBullet server.
 To resolve this, contact the developer and ask to add the MIME type for the given extension. MIME file types are managed remotely so they can be updated without having to install a new shortcut.
+
+6, 7, 8: HTTP Request Error
+One of the HTTP requests resulted in some sort of error. Request error is reported with the item above. Contact the developer sending him a screenshot of the error code and accompanying error message
