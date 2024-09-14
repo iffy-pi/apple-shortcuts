@@ -363,10 +363,9 @@ for repeatItem in contents:
                         'file_type': itemMimeType
                     }
                 )
-
-            text = uploadResponse['error']
-
-            if text is not None:
+            
+            text = f'"{uploadResponse['error']}"'
+            if  text != '""':
                 itemErrorCode = 6
                 itemErrorMsg = text
 
@@ -384,10 +383,10 @@ for repeatItem in contents:
                 )
 
                 dix = Dictionary(res)
-                text = GetDictionaryValue(dix, 'error')
+                text = f'"{GetDictionaryValue(dix, 'error')}"'
 
-                if text is not None:
-                    itemErrorCode = 6
+                if text != '""':
+                    itemErrorCode = 7
                     itemErrorMsg = text
                 else:
                     itemPushBody['type'] = 'file'
@@ -415,10 +414,10 @@ for repeatItem in contents:
                 }
             )
 
-        text = res['error']
+        text = f'"{res['error']}"'
 
-        if text is not None:
-            itemErrorCode = 6
+        if text != '':
+            itemErrorCode = 8
             itemErrorMsg = text
         else:
             if f'[{targetIden}]' != '[]':
