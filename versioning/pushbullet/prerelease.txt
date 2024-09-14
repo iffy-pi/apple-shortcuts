@@ -1,4 +1,0 @@
-v1.5 or 15
-- Updated to improve push type identification for text and fukes
-- Option for user to specify push type when type cannot be identified
-- MIME file types is now pulled and updated remotely.

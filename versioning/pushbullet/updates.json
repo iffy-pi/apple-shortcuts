@@ -6,8 +6,8 @@
 	"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/updates.json",
 	"pyfile": "projects/pushbullet-shortcuts/PushBullet.py",
 
-	"version": 1.70,
-	"link": "https://www.icloud.com/shortcuts/2c52c1f36fd049f1aeb1525f94b93fee",
-	"releaseNotes": "- Users can now configure pushes be sent to a specific device",
-	"releaseTime": "2024-02-06"
+	"version": 1.71,
+	"link": "https://www.icloud.com/shortcuts/3da7656afb2b45678745685ce6013e90",
+	"releaseNotes": "- 🛠️Bug Fix: Fixed bug in iOS 18 that causes false error when pushing files or links (#70).\n\n-🎯 Improvement: Messages about configuring shortcuts are now more user-friendly (#67, #71).",
+	"releaseTime": "2024-09-14"
 }
