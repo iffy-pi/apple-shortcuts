@@ -23,9 +23,12 @@ openConfigMenu = FALSE
 exitAfterConfig = FALSE
 
 if ShortcutInput is None:
-    openConfigMenu = TRUE
-    exitAfterConfig = TRUE
-    contents = Clipboard
+    Menu('What would you like to do?')
+        case 'Change Shortcut Settings':
+            openConfigMenu = TRUE
+            exitAfterConfig = TRUE
+        case 'Push the content on my clipboard':
+            contents = Clipboard
 else:
     contents = ShortcutInput
 
@@ -34,7 +37,7 @@ file = GetFile(From='Shortcuts', filePaths['config'], errorIfNotFound=False)
 if file is None:
     openConfigMenu = TRUE
     # Move over access token and premium state from legacy file structure
-    config = Dictionary()
+    config =  {}
     file = GetFile(From='Shortcuts', filePaths['token'], errorIfNotFound=False)
     if file is not None:
         config['access_token'] = Text(file)
@@ -46,14 +49,16 @@ else:
     config = Dictionary(file)
 
 configPrompts = f'''
-    PushBullet Configuration
-    You can access this menu again by running the shortcut without any input.
+    PushBullet Shortcut Settings
+    This page allows you to configure settings for the shortcut to use in future runs.
+    To access settings again: Open Shortcuts app and run PushBullet shortcut, then select "Change Shortcut Settings"
     '''
 
 if config.get('access_token') is None:
-    configPrompts.append('You need to configure your access token')
-if config.get('premium') is None:
-    configPrompts.append('You need to configure your premium status')
+    configPrompts.append('The shortcut requires your PushBullet access token')
+
+# if config.get('premium') is None:
+#     configPrompts.append('The shortcut needs to know if you pay for PushBullet Premium')
 
 
 if openConfigMenu == TRUE:
@@ -63,10 +68,10 @@ if openConfigMenu == TRUE:
             Enter Access Token Below
             You can generate an access token from your PushBullet Account > Settings > Access Tokens.
             '''
-            text = AskForInput(Input.Text, prompt=prompt, default=config.get('access_token') allowMultipleLines=False)
+            text = AskForInput(Input.Text, prompt=prompt, default=config.get('access_token'), allowMultipleLines=False)
             config['access_token'] = text
 
-        case 'Set Premium Status':
+        case 'I have/do not have PushBullet Premium...':
             Menu('Do you have PushBullet Premium?'):
             case 'Yes':
                 MENURESULT = TRUE
@@ -110,8 +115,8 @@ if openConfigMenu == TRUE:
             config['target_device'] = Contact(selected).Notes
             config['target_device_name'] = Contact(selected).Name
 
-        case 'Push Item In Clipboard':
-            exitAfterConfig = FALSE
+        # case 'Push Item In Clipboard':
+        #     exitAfterConfig = FALSE
 
     # Save the config file
     SaveFile(config, To='Shortcuts', filePaths['config'], overwrite=True)
@@ -119,18 +124,23 @@ if openConfigMenu == TRUE:
     if exitAfterConfig == TRUE:
         StopShortcut()
 
+# Set access token
 if config.get('access_token') is None:
     ShowAlert('''
-        Access Token has not been configured.
-        Run the shortcut without any input to configure.''')
+        The shorcut requires your PushBullet access token to access your PushBullet account. To configure your access token:
+        1. Open the Shortcuts app and run the PushBullet shortcut
+        2. Select "Change Shortcut Settings" in menu
+        3. Select "Enter Access Token" ''', showCancel=False)
     StopShortcut()
+else:
+    accessToken = config['access_token']
 
+# Set premium status
 if config.get('premium') is None:
-    ShowAlert('''
-        Premium Status has not been configured.
-        Run the shortcut without any input to configure.''')
-    StopShortcut()
-
+    IFRESULT = -1
+else:
+    IFRESULT = Number(config.get('premium'))
+pushbulletPremium = IFRESULT
 
 targetIden = ''
 if config.get('target_device') is not None:
@@ -139,7 +149,8 @@ if config.get('target_device') is not None:
 
 remoteFiles = {
     'mime' : 'https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/data/ext_to_mime.json',
-    'errorCodesInfo' : 'https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/data/error_codes_info.txt'
+    'errorCodesInfo' : 'https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/data/error_codes_info.txt',
+    'remoteInfo': 'https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/data/remote_info.json'
 }
 
 res = GetContentsOfURL(remoteFiles['mime'])
@@ -147,10 +158,8 @@ mime = Dictionary(res)
 
 failedPushes = []
 
-accessToken = config['access_token']
-pushbulletPremium = config['premium']
+maxNonPremiumFileSizeMB = GetContentsOfURL(remoteFiles['remoteInfo']) | Number(GetDictionaryValue("maxNonPremiumFileSizeMB", _))
 
-maxNonPremiumFileSizeMB = 25
 
 pushBody = {
     'type': '',
@@ -334,11 +343,36 @@ for repeatItem in contents:
 
         size = GetDetailsOfFiles("File Size", item)
         if SetSizeUnits(size, 'MB') > maxNonPremiumFileSizeMB:
+            if pushbulletPremium == -1:
+                # Uninitialized
+                Menu(f'{itemFname} is larger than {maxNonPremiumFileSizeMB} MB. To push it you need to have PushBullet Premium (an optional paid version of PushBullet)')
+                    case 'I have PushBullet Premium':
+                        config['premium'] = TRUE
+                    case "I don't have PushBullet Premium":
+                        config['premium'] = FALSE
+
+                # we save the config here
+                SaveFile(config, To='Shortcuts', filePaths['config'], overwrite=True)
+
+            if pushbulletPremium == FALSE:
+                Menu(f'''
+                    {itemFname} is larger than {maxNonPremiumFileSizeMB} MB. To push it you need to have PushBullet Premium (an optional paid version of PushBullet)
+                    Your settings indiciate you do not have PushBullet Premium.
+                    ''')
+                    case 'I have PushBullet Premium now':
+                        config['premium'] = TRUE
+                        SaveFile(config, To='Shortcuts', filePaths['config'], overwrite=True)
+
+                    case "I don't have PushBullet Premium":
+                        pass
+
+            pushBulletPremium = config['premium']
             if pushbulletPremium == FALSE:
                 goodFileSize = FALSE
 
         if goodFileSize is FALSE:
-            itemErrorCode = 4
+            ShowAlert(f'{itemFname} cannot be pushed because it is larger than {maxNonPremiumFileSizeMB} and you do not have PushBullet Premium', showCancel=False)
+            itemErrorCode = -1
 
         else
             # if file extension is not in mime, then treat as binary stream
@@ -440,7 +474,7 @@ for repeatItem in contents:
                 Notification(itemPushBody['file_name'], title=f'{generalType} pushed successfully{deviceAppend}', attachment=item)
 
     # Report and collate errors
-    if itemErrorCode != 0:
+    if itemErrorCode > 0:
         text = f'Item Name: {itemFname}, Error Code: {itemErrorCode}, Message: "{itemErrorMsg}"'
         failedPushes.append(text)
 
