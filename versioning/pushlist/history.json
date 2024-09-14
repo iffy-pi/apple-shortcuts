@@ -1,6 +1,18 @@
 [
 	{
 		"id": 3,
+		"name": "PushList",
+		"type": "independent",
+		"rhub": "https://routinehub.co/shortcut/15517",
+		"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/pushlist/updates.json",
+
+		"version": 1.03,
+		"link": "https://www.icloud.com/shortcuts/e5c0d2fe9165488590a6af95b2e759d0",
+		"releaseNotes": "- Update checks now happen at the end of shortcut action rather than beginning",
+		"releaseTime": "2023-06-09"
+	},
+	{
+		"id": 3,
 		"version": 1.02,
 		"name": "PushList",
 		"type": "independent",

@@ -1,16 +1,24 @@
-# Pre-release Changelogs
-Just used to store the changelogs of pre-release shortcuts. 
+# Prerelease Notes
+Prerelease notes are used to keep track of changes we are doing to the shortcuts, so we have release notes for the next version
+## Emoji Features
+- Feature
+	- New additions or features added to the shortcut
+	- Emoji: Fire - `&#x0020;&#x1F525;`
+	- Format:
+- Improvement
+	- Changes or enhancements in shortcut but does not introduce any new features
+	- Emoji: Target Board - &#x1F3AF;`
+ Bug Fix
+	- Fixes for identified bugs
+	- Emoji: Hammer + Wrench - `&#x0020;&#x1F6E0;&#xFE0F;`
 
-## Pushbullet:
-v1.51
-- Users can now view the item when trying to determine the type
-- Users can change the filename of an user-determined type
-- Improved type detection for text files
+### Texts
+```
+**&#x0020;&#x1F525; Feature**
+**&#x1F3AF; Improvement**
+**&#x0020;&#x1F6E0;&#xFE0F; Bug Fix**
+```
 
-## Pullbullet
-1.1
-- Expanded options for dealing with links, including copying title or messages
-- Improved link detection from non-link type text
-
-
-## PushList
+# 4.22
+- **&#x0020;&#x1F6E0;&#xFE0F;Bug Fix**: Fixed error that occurs when installing  ([#61](https://github.com/iffy-pi/apple-shortcuts/issues/61)). Applies to:
+	- Nutrition Installer 

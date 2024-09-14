@@ -5,8 +5,8 @@
 	"rhub": "https://routinehub.co/shortcut/15517",
 	"updateLink": "https://iffy-pi.github.io/apple-shortcuts/versioning/pushlist/updates.json",
 
-	"version": 1.03,
-	"link": "https://www.icloud.com/shortcuts/e5c0d2fe9165488590a6af95b2e759d0",
-	"releaseNotes": "- Update checks now happen at the end of shortcut action rather than beginning",
-	"releaseTime": "2023-06-09"
+	"version": 2.0,
+	"link": "https://www.icloud.com/shortcuts/19f1896dfc734657a64c3b4fac4e7e31",
+	"releaseNotes": "- A complete redesign of the application!",
+	"releaseTime": "2024-09-14"
 }

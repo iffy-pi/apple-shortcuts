@@ -3,7 +3,7 @@ TRUE = 1
 
 updateInfo = {
 	'updateLink': 'https://iffy-pi.github.io/apple-shortcuts/versioning/pushlist/updates.json',
-	'version': 1.03
+	'version': 2.0
 }
 
 constants = {
