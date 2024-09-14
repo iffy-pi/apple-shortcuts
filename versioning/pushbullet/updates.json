@@ -8,6 +8,6 @@
 
 	"version": 1.71,
 	"link": "https://www.icloud.com/shortcuts/3da7656afb2b45678745685ce6013e90",
-	"releaseNotes": "- 🛠️Bug Fix: Fixed bug in iOS 18 that causes false error when pushing files or links (#70).\n\n-🎯 Improvement: Messages about configuring shortcuts are now more user-friendly (#67, #71).",
+	"releaseNotes": "- 🛠️Bug Fix: Fixed bug in iOS 18 that causes false error when pushing files or links (#70).\n\n- 🎯 Improvement: Messages about configuring shortcuts are now more user-friendly (#67, #71).",
 	"releaseTime": "2024-09-14"
 }
