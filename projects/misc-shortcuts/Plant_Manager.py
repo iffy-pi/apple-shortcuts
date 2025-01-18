@@ -10,6 +10,7 @@ dataFile = 'Plant Waterings/data.json'
 backupDataFile = 'Plant Waterings/data.backup.json'
 notification = ''
 separator = '------------------------------------------------------'
+sortSummaryByName = FALSE
 
 
 for i in range(15):
@@ -109,9 +110,20 @@ for i in range(15):
 
 
 					# Frac str is the symbol for the plant
-					IFRESULT = f'{days}|{fracStr} {days} days - {plant} - {prevWateringDate} {prevDaysStr}'
+					if sortSummaryByName == TRUE:
+						IFRESULT1 = Text(plant)
+					else:
+						IFRESULT1 = Text(days)
+						
+					IFRESULT = f'{IFRESULT1}|{fracStr} {days} days - {plant} - {prevWateringDate} {prevDaysStr}'
 				else:
-					IFRESULT = f'|? N/A - {plant} - N/A'
+					if sortSummaryByName == TRUE:
+						IFRESULT1 = Text(plant)
+					else:
+						IFRESULT1 = ''
+
+
+					IFRESULT = f'{IFRESULT1}|? N/A - {plant} - N/A'
 				
 				AddToVariable(results, IFRESULT)
 
@@ -221,7 +233,7 @@ for i in range(15):
 
 		case 'Edit Wateing Dates':
 			plantNames = FilterFiles(plantInfo.keys, sortBy='Name', order='A to Z')
-			plant = ChooseFromList(plantNames, prompt='Select plant to edit')
+			plant = ChooseFromList(plantNames, prompt='Select plant to edit watering dates for')
 
 			waterings = plantInfo[plant]['waterings']
 
@@ -230,29 +242,21 @@ for i in range(15):
 
 			newWateringList = REPEATRESULTS
 
-			text = Text(newWateringList)
-			selectedDate = ChooseFromList(newWateringList, selectMultiple=False)
+			wateringsText = Text(newWateringList)
+			updatedListText = AskForInput(Input.Text, 'Edit Watering Dates:', multipleLines=True, default=newWateringList)
 
-			Menu(f'Selected Date: {selectedDate}'):
-				case 'Edit Date':
-					newDate = AskForInput(Date, prompt=f'New Date (previous date is {selectedDate}):').format(date='short', time='None')
-					AddToVariable(waterings, newDate)
-					MENURESULT = f"{selectedDate} updated to {newDate} in {plant}'s watering dates"
-				case 'Remove Date':
-					MENURESULT = f"{selectedDate} removed from {newDate} in {plant}'s watering dates"
+			for wt in SplitText(updatedListText, byNewLines=True):
+				REPEATRESULTS.append(Text(Date(wt).format(date='short'), time='None'))
 
-			notification = MENURESULT
-
-			waterings = FilterFiles(waterings, where=f'Name is not {selectedDate}', sortBy='Name', order='A to Z')
+			waterings = REPEATRESULTS
+			waterings = FilterFiles(waterings, sortBy='Name', order='A to Z')
 
 			plantDix = plantInfo[plant]
 			plantDix['waterings'] = waterings
 			plantInfo[plant] = plantDix
 
+			notification = f'Watering Dates for {plant} were successfully edited!'
 			saveFile = True
-				
-
-
 
 		case 'Export Data as CSV':
 			plantNames = FilterFiles(plantInfo.keys, sortBy='Name', order='A to Z')
@@ -282,6 +286,14 @@ for i in range(15):
 				{table}
 			'''
 			Share(data)
+
+		case 'Toggle Summary Sort':
+			if sortSummaryByName == TRUE:
+				sortSummaryByName = FALSE
+				IFRESULT = 'Watering Summary will be sorted by days since last watering'
+			else:
+				sortSummaryByName = TRUE
+				IFRESULT = 'Watering Summary will be sorted by plant names'
 
 		case 'Exit':
 			StopShortcut()
