@@ -111,19 +111,19 @@ for i in range(15):
 
 					# Frac str is the symbol for the plant
 					if sortSummaryByName == TRUE:
-						IFRESULT1 = Text(plant)
+						IFRESULT1 = f'{plant}|{plant} - {fracStr} {days} days - {prevWateringDate} {prevDaysStr}'		
 					else:
-						IFRESULT1 = Text(days)
-						
-					IFRESULT = f'{IFRESULT1}|{fracStr} {days} days - {plant} - {prevWateringDate} {prevDaysStr}'
+						IFRESULT1 =  f'{days}|{fracStr} {days} days - {plant} - {prevWateringDate} {prevDaysStr}'						
+					
+					IFRESULT = IFRESULT1
 				else:
 					if sortSummaryByName == TRUE:
-						IFRESULT1 = Text(plant)
+						IFRESULT1 = f'|{plant} - ❔ N/A - N/A'
 					else:
-						IFRESULT1 = ''
+						IFRESULT1 = f'|❔ N/A - {plant} - N/A'
 
 
-					IFRESULT = f'{IFRESULT1}|? N/A - {plant} - N/A'
+					IFRESULT = IFRESULT1
 				
 				AddToVariable(results, IFRESULT)
 
