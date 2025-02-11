@@ -16,24 +16,35 @@ sortSummaryByName = FALSE
 for i in range(15):
 	file = GetFile(From='Shortcuts', dataFile, errorIfNotFound=False)
 	plantInfo = Dictionary(file)
-	plantNames = plantInfo.keys()
+	count = Count(plantInfo.keys())
 	today = Date(current)
 
 	if f'"{notification}"' != '""':
 		temp = notification
 		notification = ''
 		IFRESULT = f'''
-		Plant Manager
+		Plant Manager ({count} plants)
 		{temp}
 		'''
 	else:
-		IFRESULT = 'Plant Manager'
+		IFRESULT = f'Plant Manager ({count} plants)'
 
 
 	Menu(IFRESULT):
 		case 'Water Plant':
 			plantNames = FilterFiles(plantInfo.keys, sortBy='Name', order='A to Z')
 			selected = ChooseFromList(plantNames, prompt='Select plant(s)', multiple=True)
+
+			if Count(selected) > 1:
+				plants = CombineText(selected, custom=', ')
+				text = f'''
+					Select watering date for
+					{plants}:
+				'''
+				date = AskForInput(Input.Date, prompt=text)
+				groupWateringDate = Text(date.format(date=short, time=None))
+
+			
 			for plant in selected:
 				waterings = plantInfo[plant]['waterings']
 				if Count(waterings) > 0:
@@ -47,8 +58,11 @@ for i in range(15):
 				else:
 					IFRESULT = f'Enter watering date for {plant}!'
 				
-				date = AskForInput(Input.Date, prompt=IFRESULT)
-				wateringDate = Text(date.format(date=medium, time=None))
+				if groupWateringDate is None:
+					date = AskForInput(Input.Date, prompt=IFRESULT)
+					wateringDate = Text(date.format(date=short, time=None))
+				else:
+					wateringDate = groupWateringDate
 
 				if prevWateringDate is not None:
 					if wateringDate != prevWateringDate:
