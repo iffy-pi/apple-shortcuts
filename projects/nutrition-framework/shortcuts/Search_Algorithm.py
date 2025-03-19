@@ -6,6 +6,15 @@ Ver: 1.1
 
 # Search for food in MyFitnessPal Database
 
+ShowAlert(
+    title='Search is no longer available',
+    body='''
+    Unfortunately, the search functionality is no longer available as the MFP public API has been permanently shutdown.
+    An alternative which integrates with ChatGPT or some other similar search engine will be released in future.
+    '''
+)
+StopShortcut()
+
 TRUE = 1
 FALSE = 0
 Strings = Dictionary()
