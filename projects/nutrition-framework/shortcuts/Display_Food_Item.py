@@ -51,22 +51,22 @@ displayDix = {
     "Barcode":              foodDix["Barcode"],
     "Serving Size":         foodDix["Serving Size"],
     "Calories (kCal)":      foodDix["Calories"],
-    "Carbs (g)":            foodDix["Carbs"],
-    "Protein (g)":          foodDix["Protein"],
     "Fat (g)":              foodDix["Fat"],
-    "Sugar (g)":            foodDix["Sugar"],
-    "Fiber (g)":            foodDix["Fiber"],
-    "Monounsaturated (g)":  foodDix["Monounsaturated"],
-    "Polyunsaturated (g)":  foodDix["Polyunsaturated"],
-    "Saturated (g)":        foodDix["Saturated"],
-    "Cholesterol (mg)":     foodDix["Cholesterol"],
     "Trans (g)":            foodDix["Trans"],
+    "Saturated (g)":        foodDix["Saturated"],
+    "Carbs (g)":            foodDix["Carbs"],
+    "Fiber (g)":            foodDix["Fiber"],
+    "Sugar (g)":            foodDix["Sugar"],
+    "Protein (g)":          foodDix["Protein"],
+    "Cholesterol (mg)":     foodDix["Cholesterol"],
     "Sodium (mg)":          foodDix["Sodium"],
     "Potassium (mg)":       foodDix["Potassium"],
+    "Calcium (mg)":         foodDix["Calcium"],
+    "Iron (mg)":            foodDix["Iron"],
     "VitA (mcg)":           foodDix["VitA"],
     "VitC (mg)":            foodDix["VitC"],
-    "Calcium (mg)":         foodDix["Calcium"],
-    "Iron (mg)":            foodDix["Iron"]
+    "Monounsaturated (g)":  foodDix["Monounsaturated"],
+    "Polyunsaturated (g)":  foodDix["Polyunsaturated"]
 }
 
 
