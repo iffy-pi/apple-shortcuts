@@ -61,7 +61,7 @@ for _ in range(maxLoops):
 
         for listId in selectedIds:
             food = foodsDix[listId]
-            cals = food['Calories'] * food['Servings']
+            cals = RoundNumber(food['Calories'] * food['Servings'], 'Hundredths')
             REPEATRESULTS.append(f'{food['Servings']}x {food['Name']} ({cals} kcal)')
 
         if REPEATRESULTS is not None:
@@ -248,6 +248,6 @@ for _ in range(maxLoops):
                 servings = foodsDix[listId]['Servings']
                 REPEATRESULTS.append(foodVal * servings)
 
-            sumStats[sk] = CalculateStatistics('Sum', REPEATRESULTS)
+            sumStats[sk] = RoundNumber(CalculateStatistics('Sum', REPEATRESULTS), 'Hundredths')
 
                 
