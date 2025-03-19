@@ -28,6 +28,8 @@ breakLoop = FALSE
 
 hasNotes = FALSE
 
+sumStats = { "Protein": 0, "Fat": 0, "Calories": 0, "Carbs": 0 }
+
 # If we are passing results to a shortcut where the user has to select foods (e.g. Log Foods At Different Times, Make Preset)
 # We can eliminate redundant iteration by passing the generated foods dix and unique selection ids
 # to that shortcut, instead of just the raw list of foods
@@ -48,13 +50,24 @@ if file is not None:
 
 for _ in range(maxLoops):
     if breakLoop == FALSE:
+        stats = f'''
+        Total: {sumStats['Calories']} kcal
+        {sumStats['Carbs']}g Carbs ⸱ {sumStats['Protein']}g Carbs ⸱ {sumStats['Carbs']}g Carbs
+
+
+        ''' 
+        stats = IFRESULT
+
+
         for listId in selectedIds:
             food = foodsDix[listId]
-            REPEATRESULTS.append(f'{food['Servings']}x {food['Name']}')
+            cals = food['Calories'] * food['Servings']
+            REPEATRESULTS.append(f'{food['Servings']}x {food['Name']} ({cals} kcal)')
 
         if REPEATRESULTS is not None:
+            # Is on the same line because stats already has new line in it
             IFRESULT = f'''
-            {Strings['foodslist.foods.selected']}:
+            {stats}{Strings['foodslist.foods.selected']}:
             {REPEATRESULTS}
             '''
         else:
@@ -195,6 +208,11 @@ for _ in range(maxLoops):
                     # remove it from the list
                     selectedIds = FilterFiles(selectedIds, where=['Name' != listId])
 
+            case 'View Total Nutrients': #TODO add this to the String dictionary
+                addMenuResult = FALSE
+                # TODO FILL THIS IN
+
+
         if addMenuResult == TRUE:
             # add the foods to our selected foods
             menuFoods = []
@@ -222,3 +240,14 @@ for _ in range(maxLoops):
 
             for food in REPEATRESULTS:
                 RunShortcut(nutrDix['Add Recent'], input=food)
+
+
+        for sk in sumStats.keys
+            for listId in selectedIds:
+                foodVal = foodsDix[listId][sk]
+                servings = foodsDix[listId]['Servings']
+                REPEATRESULTS.append(foodVal * servings)
+
+            sumStats[sk] = CalculateStatistics('Sum', REPEATRESULTS)
+
+                
