@@ -37,6 +37,13 @@ sumStats = { "Protein": 0, "Fat": 0, "Calories": 0, "Carbs": 0 }
 
 params = Dictionary(ShortcutInput)
 
+if params['calculator'] is not None:
+    IFRESULT = 'Exit Calculator' # TODO translate this
+else:
+    IFRESULT = Strings['foodslist.menu.done']
+doneOpt = IFRESULT
+
+
 
 file = GetFile(From='Shortcuts', f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
 if file is not None:
@@ -92,7 +99,7 @@ for _ in range(maxLoops):
         addMenuResult = TRUE
 
         Menu(prompt):
-            case Strings['foodslist.menu.done']:
+            case doneOpt:
                 addMenuResult = FALSE
 
                 if params['passToBulkEntry'] is not None:

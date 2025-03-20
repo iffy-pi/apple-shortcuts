@@ -177,7 +177,7 @@ Menu(prompt):
         StopShortcut()
 
     case 'Nutrient Calculator':
-        RunShortcut(shortcutNames["Foods List"])
+        RunShortcut(shortcutNames["Foods List"], input={'calculator': True})
 
     case Strings['nutr.menu.savedsearch']:
         RunShortcut(shortcutNames["Saved And Search"])
