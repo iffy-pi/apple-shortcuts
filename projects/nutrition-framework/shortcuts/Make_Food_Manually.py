@@ -6,8 +6,11 @@ Ver: 1.1
 
 # Create a food by manually filling in the nutrient fieldds
 
+# TODO translate instructions
 noteTemplate = '''
-Populate the food information below. When finished return to the Shortcuts app for the Shortcut to continue.
+Enter information about the food below. When you're done, open/return to the Shortcuts app and the entered food information will be parsed from this note.
+Letters and other special symbols are only allowed for the Name, Barcode and Serving Size. Only numbers should be used for nutrients.
+For minerals and vitamins, the shortcut will ask if they are exact values or daily percentages.
 
 Name: 
 Barcode: 
@@ -95,14 +98,14 @@ Menu(prompt='How would you like to make it?'):
         lines = SplitText(note, ByNewLines=True)
 
         for line in lines:
-            parts = SplitText(line, custom=': ')
+            parts = SplitText(line, custom=':')
 
             if Count(parts) > 1:
                 displayName = TrimWhitespace(GetItemsFromList(part, index=1))
                 nutrKey = display.GetDictionaryValue(displayName)
                 
                 if nutrKey is not None:
-                    rem = TrimWhiteSpace( CombineText(GetItemsFromList(startIndex=2), custom=': ') )
+                    rem = TrimWhiteSpace( CombineText(GetItemsFromList(startIndex=2), custom=':') )
                     
                     if nutrKey == 'Name' or nutrKey == 'Barcode' or nutrKey == 'Serving Size':
                         IFRESULT = rem
