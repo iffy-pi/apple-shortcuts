@@ -120,7 +120,6 @@ for _ in range(maxLoops):
                 MENURESULT = RunShortcut(nutrDix['Get Recent'])
 
             case Strings['foodslist.menu.manual']:
-                # TODO, make manual maker
                 MENURESULT = RunShortcut(nutrDix['Make Food Manually'])
 
             case Strings['foodslist.menu.edit']:
@@ -211,6 +210,32 @@ for _ in range(maxLoops):
             case 'View Total Nutrients': #TODO add this to the String dictionary
                 addMenuResult = FALSE
                 # TODO FILL THIS IN
+
+                outputFood = Dictionary(Text('{"Serving Size":"","Protein":0,"Trans":0,"Barcode":"0","Cholesterol":0,"Name":"Total Nutrients","Sugar":0,"Monounsaturated":0,"Polyunsaturated":0,"Fat":0,"Fiber":0,"VitC":0,"Calories":0,"Iron":0,"VitA":0,"Potassium":0,"Saturated":0,"Sodium":0,"Calcium":0,"Carbs":0}'))
+
+                for nk in outputFood.keys
+                    for listId in selectedIds:
+                        foodVal = foodsDix[listId][nk]
+                        servings = foodsDix[listId]['Servings']
+                        REPEATRESULTS.append(foodVal * servings)
+
+                    outputFood[nk] = RoundNumber(CalculateStatistics('Sum', REPEATRESULTS), 'Hundredths')
+
+                prompt = f'''
+                Total Nutrients
+                {Strings['nutr.cals']}: {outputFood['Calories']}
+                {Strings['nutr.carbs']}: {outputFood['Carbs']}g ⸱ {Strings['nutr.fat']}: {outputFood['Fat']}g ⸱ {Strings['nutr.protein']}: {outputFood['Protein']}g
+                {Strings['nutr.sugar']}: {outputFood['Sugar']}g ⸱ {Strings['nutr.fiber']}: {outputFood['Fiber']}g 
+                {Strings['nutr.monofat']}: {outputFood['Monounsaturated']}g
+                {Strings['nutr.polyfat']}: {outputFood['Polyunsaturated']}g
+                {Strings['nutr.saturfat']}: {outputFood['Saturated']}g ⸱ {Strings['nutr.cholesterol']}: {outputFood['Cholesterol']}mg ⸱ {Strings['nutr.sodium']}: {outputFood['Sodium']}mg ⸱ {Strings['nutr.potassium']}: {outputFood['Potassium']}mg
+                {Strings['nutr.calcium']}: {outputFood['Calcium']}% ⸱ {Strings['nutr.iron']}: {outputFood['Iron']}% ⸱ {Strings['nutr.vita']}: {outputFood['VitA']}% ⸱ {Strings['nutr.vitc']}: {outputFood['VitC']}% 
+                '''
+
+                # Using Menu instead of alert because it shows the items in bold
+                Menu(prompt):
+                    case 'OK':
+                        pass
 
 
         if addMenuResult == TRUE:
