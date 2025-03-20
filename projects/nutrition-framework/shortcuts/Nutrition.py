@@ -176,6 +176,9 @@ Menu(prompt):
         AppendToFile(text, f"{storage}/Other/foodNotes.txt", makeNewLine=True)
         StopShortcut()
 
+    case 'Nutrient Calculator':
+        RunShortcut(shortcutNames["Foods List"])
+
     case Strings['nutr.menu.savedsearch']:
         RunShortcut(shortcutNames["Saved And Search"])
 
