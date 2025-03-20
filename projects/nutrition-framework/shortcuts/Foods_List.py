@@ -218,8 +218,8 @@ for _ in range(maxLoops):
                         foodVal = foodsDix[listId][nk]
                         servings = foodsDix[listId]['Servings']
                         REPEATRESULTS.append(foodVal * servings)
-
-                    outputFood[nk] = RoundNumber(CalculateStatistics('Sum', REPEATRESULTS), 'Hundredths')
+                    if REPEATRESULTS is not None:
+                        outputFood[nk] = RoundNumber(CalculateStatistics('Sum', REPEATRESULTS), 'Hundredths')
 
                 prompt = f'''
                 Total Nutrients
