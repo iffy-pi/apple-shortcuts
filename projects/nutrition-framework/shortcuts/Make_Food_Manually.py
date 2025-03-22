@@ -79,46 +79,48 @@ exactValDix = {
 
 newFood = Dictionary(Text('{"Serving Size":"","Protein":0,"Trans":0,"Barcode":"0","Cholesterol":0,"Name":"","Sugar":0,"Monounsaturated":0,"Polyunsaturated":0,"Fat":0,"Fiber":0,"VitC":0,"Calories":0,"Iron":0,"VitA":0,"Potassium":0,"Saturated":0,"Sodium":0,"Calcium":0,"Carbs":0}'))
 
-Menu(prompt='How would you like to make it?'):
-    case 'Make immediately': # TODO workshop these!!
-        pass
-    
-    case 'Make and return':
-        if (note := FindNotes('All Notes', where=['Name' == noteTitle])) is not None:
-            DeleteNotes(note)
+
+if (note := FindNotes('All Notes', where=['Name' == noteTitle])) is not None:
+    DeleteNotes(note)
 
 
-        note = CreateNote(contents=noteTemplate, name=noteTitle)
-        OpenNote(note)
+note = CreateNote(contents=noteTemplate, name=noteTitle)
+OpenNote(note)
 
-        # Wait for user to come back
-        WaitToReturn()
+# Wait for user to come back
+WaitToReturn()
 
-        note = Text(FindNotes('All Notes', where=['Name' == noteTitle], limit=1))
-        lines = SplitText(note, ByNewLines=True)
+note = Text(FindNotes('All Notes', where=['Name' == noteTitle], limit=1))
+lines = SplitText(note, ByNewLines=True)
 
-        for line in lines:
-            parts = SplitText(line, custom=':')
+for line in lines:
+    parts = SplitText(line, custom=':')
 
-            if Count(parts) > 1:
-                displayName = TrimWhitespace(GetItemsFromList(part, index=1))
-                nutrKey = display.GetDictionaryValue(displayName)
-                
-                if nutrKey is not None:
-                    rem = TrimWhiteSpace( CombineText(GetItemsFromList(startIndex=2), custom=':') )
-                    
-                    if nutrKey == 'Name' or nutrKey == 'Barcode' or nutrKey == 'Serving Size':
-                        IFRESULT = rem
+    if Count(parts) > 1:
+        displayName = TrimWhitespace(GetItemsFromList(part, index=1))
+        nutrKey = display.GetDictionaryValue(displayName)
+        
+        if nutrKey is not None:
+            rem = TrimWhiteSpace( CombineText(GetItemsFromList(startIndex=2), custom=':') )
+            
+            if nutrKey == 'Name' or nutrKey == 'Barcode' or nutrKey == 'Serving Size':
+                IFRESULT = rem
+            else:
+                # Validates the actual text is a number, if not it prompts the user to enter a number
+                res = MatchText(r'(^[0-9][0-9]*$)|(^[0-9][0-9]*\.[0-9][0-9]*$)|(^[0-9][0-9]*,[0-9][0-9]*$)', rem)
+                if res is None:
+                    if f"{rem}" != "":
+                        # Todo string this
+                        IFRESULT3 = AskForInput(Input.Number, prompt=f'Value "{rem}" for '{displayName}' could not be converted into a number. Please enter value below.', allowDecimals=True, allowNegatives=False)
                     else:
-                        if f'"{rem}"' == ""
-                            IFRESULT2 = 0
-                        else:
-                            IFRESULT2 = GetNumbersFromInput(rem)
-                        IFRESULT = IFRESULT2
+                        IFRESULT3 = 0
+                    IFRESULT2 = IFRESULT3
+                else:
+                    IFRESULT2 = GetNumbersFromInput(rem)
+               
+                IFRESULT = IFRESULT2
 
-                    newFood[nutrKey] = IFRESULT
-
-
+            newFood[nutrKey] = IFRESULT
 
 
 # Run display food item to allow user to input values
