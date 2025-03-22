@@ -10,6 +10,7 @@ Ver: 1.1
 noteTemplate = '''
 Enter information about the food below. When you're done, open/return to the Shortcuts app and the entered food information will be parsed from this note.
 Letters and other special symbols are only allowed for the Name, Barcode and Serving Size. Only numbers should be used for nutrients.
+Nutrients that are 0 in value don't have to be manually entered, leaving the field blank will automatically give the nutrient a value of 0.
 For minerals and vitamins, the shortcut will ask if they are exact values or daily percentages.
 
 Name: 
