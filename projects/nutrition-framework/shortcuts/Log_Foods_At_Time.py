@@ -16,6 +16,7 @@ res = GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json")
 shortcutNames = Dictionary(res)
 
 prompt = Strings['input.logtime']
+menuPrompt = 'Select and log foods at a certain date and time' # TODO string this
 
 file = GetFile(From='Shortcuts', f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
 if file is not None:
@@ -25,6 +26,21 @@ if file is not None:
 
         {prompt}
     '''
+
+    menuPrompt = f'''
+        {menuPrompt}
+        {Strings['foodnotes']}:
+        {file}
+    '''
+
+Menu(menuPrompt):
+    case 'Select Date and Time':
+        pass
+    case 'Back':
+        # Return to calling shortcut
+        StopShortcut()
+
+
 
 dating = AskForInput(prompt, Input.DateAndTime)
 
