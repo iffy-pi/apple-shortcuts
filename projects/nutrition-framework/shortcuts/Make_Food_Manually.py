@@ -94,29 +94,27 @@ note = Text(FindNotes('All Notes', where=['Name' == noteTitle], limit=1))
 lines = SplitText(note, ByNewLines=True)
 
 for line in lines:
-    parts = SplitText(line, custom=':')
-
-    if Count(parts) > 1:
-        displayName = TrimWhitespace(GetItemsFromList(part, index=1))
+    matches = MatchText(r'([^:]*): *(.*)', line)
+    if res is not None:
+        displayName = TrimWhiteSpace(GetGroupFromMatchedText(1, matches))
         nutrKey = display.GetDictionaryValue(displayName)
         
         if nutrKey is not None:
-            rem = TrimWhiteSpace( CombineText(GetItemsFromList(startIndex=2), custom=':') )
-            
+            value = TrimWhiteSpace(GetGroupFromMatchedText(2, matches))            
             if nutrKey == 'Name' or nutrKey == 'Barcode' or nutrKey == 'Serving Size':
-                IFRESULT = rem
+                IFRESULT = value
             else:
                 # Validates the actual text is a number, if not it prompts the user to enter a number
-                res = MatchText(r'(^[0-9][0-9]*$)|(^[0-9][0-9]*\.[0-9][0-9]*$)|(^[0-9][0-9]*,[0-9][0-9]*$)', rem)
+                res = MatchText(r'(^[0-9][0-9]*$)|(^[0-9][0-9]*\.[0-9][0-9]*$)|(^[0-9][0-9]*,[0-9][0-9]*$)', value)
                 if res is None:
-                    if f"{rem}" != "":
+                    if f"{value}" != "":
                         # Todo string this
-                        IFRESULT3 = AskForInput(Input.Number, prompt=f'Value "{rem}" for '{displayName}' could not be converted into a number. Please enter value below.', allowDecimals=True, allowNegatives=False)
+                        IFRESULT3 = AskForInput(Input.Number, prompt=f'Value "{value}" for '{displayName}' could not be converted into a number. Please enter value below.', allowDecimals=True, allowNegatives=False)
                     else:
                         IFRESULT3 = 0
                     IFRESULT2 = IFRESULT3
                 else:
-                    IFRESULT2 = GetNumbersFromInput(rem)
+                    IFRESULT2 = GetNumbersFromInput(value)
                
                 IFRESULT = IFRESULT2
 
