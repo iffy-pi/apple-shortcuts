@@ -154,7 +154,7 @@ for _ in range(30):
             case Strings['nutr.menu.howtouse']:
                 ShowAlert(instructions, title=Strings['logdiff.instr.title'], showCancel=False)
 
-            case Strings['logdiff.exit']:
+            case Strings['logdiff.exit']: # TODO Update this string to 'Go Back'
                 StopShortcut()
 
         if setLogTimes == TRUE:
