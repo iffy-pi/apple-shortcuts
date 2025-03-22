@@ -261,11 +261,6 @@ if env['permsEnabled'] is None:
                 case 'Back': # TODO make string for this
                     pass
 
-
-        case Strings['nutr.menu.howtouse']::
-                OpenURL(tutorialLink)
-                StopShortcut()
-
         case 'Exit': # TODO string this
             RunShortcut(shortcutNames['Clear Cache and Backlog'])
             RunShortcut(shortcutNames["Installer"], input={'updateCheck': True})
