@@ -31,8 +31,8 @@ Iron (mg or %):
 Potassium (mg or %): 
 VitA (mcg or %): 
 VitC (mg or %): 
-Monounsaturated Fat (g): 
 Polyunsaturated Fat (g): 
+Monounsaturated Fat (g): 
 '''
 
 display = {
@@ -120,6 +120,13 @@ for line in lines:
                 IFRESULT = IFRESULT2
 
             newFood[nutrKey] = IFRESULT
+
+# To do translate this
+Menu('What would you like to do with the created food'):
+    case 'View/edit created food':
+        pass
+    case 'Discard created food':
+        StopShortcut()
 
 
 # Run display food item to allow user to input values
