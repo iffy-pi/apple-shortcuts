@@ -34,9 +34,9 @@ if file is not None:
     '''
 
 Menu(menuPrompt):
-    case 'Select Date and Time':
+    case 'Select Date and Time': # TODO string for this
         pass
-    case 'Back':
+    case 'Back': # TODO translate this
         # Return to calling shortcut
         StopShortcut()
 
