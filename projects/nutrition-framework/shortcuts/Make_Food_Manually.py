@@ -26,9 +26,9 @@ Sugar (g):
 Protein (g): 
 Cholesterol (mg): 
 Sodium (mg): 
+Potassium (mg): 
 Calcium (mg or %): 
 Iron (mg or %): 
-Potassium (mg or %): 
 VitA (mcg or %): 
 VitC (mg or %): 
 Polyunsaturated Fat (g): 
@@ -51,7 +51,7 @@ display = {
     "Cholesterol (mg)":              "Cholesterol",
     "Trans Fat (g)":              "Trans",
     "Sodium (mg)":              "Sodium",
-    "Potassium (mg or %)":              "Potassium",
+    "Potassium (mg)":              "Potassium",
     "VitA (mcg or %)":              "VitA",
     "VitC (mg or %)":              "VitC",
     "Calcium (mg or %)":              "Calcium",
