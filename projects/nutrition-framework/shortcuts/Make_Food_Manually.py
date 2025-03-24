@@ -6,6 +6,9 @@ Ver: 1.1
 
 # Create a food by manually filling in the nutrient fieldds
 
+TRUE = 1
+FALSE = 0
+
 # TODO translate instructions
 noteTemplate = '''
 Enter information about the food below. When you're done, open/return to the Shortcuts app and the entered food information will be parsed from this note.
@@ -121,17 +124,38 @@ for line in lines:
 
             newFood[nutrKey] = IFRESULT
 
-# To do translate this
-Menu('What would you like to do with the created food'):
-    case 'View/edit created food':
-        pass
-    case 'Discard created food':
-        StopShortcut()
+outputFood = Dictionary(newFood)
+
+prompt = f'''
+Created Food
+{outputFood['Name']}
+{outputFood['Serving Size']}
+{Strings['nutr.cals']}: {outputFood['Calories']}
+{Strings['nutr.carbs']}: {outputFood['Carbs']}g ⸱ {Strings['nutr.fat']}: {outputFood['Fat']}g ⸱ {Strings['nutr.protein']}: {outputFood['Protein']}g
+{Strings['nutr.sugar']}: {outputFood['Sugar']}g ⸱ {Strings['nutr.fiber']}: {outputFood['Fiber']}g 
+{Strings['nutr.monofat']}: {outputFood['Monounsaturated']}g
+{Strings['nutr.polyfat']}: {outputFood['Polyunsaturated']}g
+{Strings['nutr.saturfat']}: {outputFood['Saturated']}g ⸱ {Strings['nutr.cholesterol']}: {outputFood['Cholesterol']}mg ⸱ {Strings['nutr.sodium']}: {outputFood['Sodium']}mg ⸱ {Strings['nutr.potassium']}: {outputFood['Potassium']}mg
+{Strings['nutr.calcium']}: {outputFood['Calcium']}(mg/%) ⸱ {Strings['nutr.iron']}: {outputFood['Iron']}(mg/%)  ⸱ {Strings['nutr.vita']}: {outputFood['VitA']}(mg/%)  ⸱ {Strings['nutr.vitc']}: {outputFood['VitC']}(mg/%)
+'''
+
+continueLoop = TRUE
+for i in range(10):
+    if continueLoop == TRUE:
+        # To do translate this
+        Menu(prompt):
+            case 'OK':
+                foodDix = newFood
+                continueLoop = FALSE
+
+            case 'Edit a field':
+                newFood = RunShortcut(nutrDix['Display Food Item'], input=newFood)
+
+            case 'Discard food and exit':
+                StopShortcut()
 
 
-# Run display food item to allow user to input values
-foodDix = RunShortcut(nutrDix['Display Food Item'], input=newFood)
-
+foodDix = newFood
 # If there are any vitamins or minerals, we ask if the value is Exact Values or Daily Percentages
 
 for key in exactValDix:
