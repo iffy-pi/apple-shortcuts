@@ -67,7 +67,7 @@ Menu(prompt=prompt):
                 # reverse because we want the latest ones first
                 dateList = FilterFiles(history.keys(), sortBy=(Name, ZtoA))
 
-            case Strings['opts.exit']:
+            case 'Back': # TODO translate this
                 StopShortcut()
 
         if useDateList == TRUE
@@ -116,6 +116,6 @@ Menu(prompt=prompt):
 
         QuickLook(logResults)
 
-    case Strings['opts.exit']:
+    case 'Back': # TODO translate
         StopShortcut()
 
