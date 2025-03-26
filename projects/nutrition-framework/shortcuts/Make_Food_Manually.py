@@ -94,6 +94,8 @@ OpenNote(note)
 # Wait for user to come back
 WaitToReturn()
 
+VibrateDevice()
+
 note = Text(FindNotes('All Notes', where=['Name' == noteTitle], limit=1))
 lines = SplitText(note, ByNewLines=True)
 
