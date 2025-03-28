@@ -33,6 +33,7 @@ datesInfo = {}
 selectedIds = []
 breakLoop = FALSE
 nextId = 0
+defaultDate = CurrentDate()
 
 instructions = Strings['logdiff.instr']
                 .replace('$addopt', Strings['logdiff.action.add'])
@@ -213,6 +214,9 @@ for _ in range(30):
                         contact = selectedContacts.getFirstItem()
                         date = datesInfo[contact.Notes]
 
+                        if date is not None:
+                            defaultDate = date
+                        
                         for contact in selectedContacts:
                             food = foodsInfo[contact.Notes]
                             REPEATRESULTS.append(f'{food['Servings']}x {food['Name']}')
@@ -229,7 +233,10 @@ for _ in range(30):
                                 {prompt}
                             '''
 
-                        date = AskForInput(Input.DateAndTime, prompt=text, default=date)
+                        date = AskForInput(Input.DateAndTime, prompt=prompt, default=defaultDate)
+
+                        # make next default date to be the last used date
+                        defaultDate = date
 
                         # for each of the foods, set the date that the user selected
                         # also remove from unset ids, so the loop will break if user sets log times for all unset foods
