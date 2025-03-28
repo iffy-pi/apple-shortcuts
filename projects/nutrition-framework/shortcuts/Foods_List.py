@@ -104,10 +104,16 @@ for _ in range(maxLoops):
 
                 if params['passToBulkEntry'] is not None:
                     # sends the foods dictionary and selection ids as foods info to the shortcut
-                    dix = {}
-                    dix['selectedIds'] = selectedIds
-                    dix['foodsDix'] = foodsDix
-                    StopShortcut(output = dix)
+                    dix = {
+                        'selectedIds': [],
+                        'foodsDix': {}
+                    }
+                    if selectedIds is not None:
+                        dix['selectedIds'] = selectedIds
+                        dix['foodsDix'] = foodsDix
+                        StopShortcut(output = dix)
+                    else:
+                        StopShortcut(output = dix)
                 else:
                     for listId in selectedIds:
                         food = foodsDix[listId]
