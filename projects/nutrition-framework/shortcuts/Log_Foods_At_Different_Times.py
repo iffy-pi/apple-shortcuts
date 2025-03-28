@@ -151,6 +151,10 @@ for _ in range(30):
                     listId = contact.Notes
                     selectedIds = FilterFiles(selectedIds, where=['Name' != listId])
 
+            case 'Pause': # TODO translate this
+                Alert(title='Shortcut Paused', body="The shortcut has been paused. When you're ready, open the Shortcuts app and the shortcut will continue running.", showCancel=False)
+                WaitToReturn()
+
             case Strings['nutr.menu.howtouse']:
                 ShowAlert(instructions, title=Strings['logdiff.instr.title'], showCancel=False)
 
