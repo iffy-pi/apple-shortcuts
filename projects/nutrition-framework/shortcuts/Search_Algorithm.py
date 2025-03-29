@@ -40,8 +40,8 @@ display = {
     "Trans":              "Trans",
     "Sodium":              "Sodium",
     "Potassium":              "Potassium",
-    "VitA":              "VitA",
-    "VitC":              "VitC",
+    "Vitamin A":              "VitA",
+    "Vitamin C":              "VitC",
     "Calcium":              "Calcium",
     "Iron":              "Iron"
 }
@@ -60,7 +60,7 @@ Menu(prompt):
     case 'Open search in new tab':
         OpenURL('https://www.myfitnesspal.com/food/calorie-chart-nutrition-facts')
     case 'I already have a tab opened':
-        OpenApp(Brave) # TODO need to reassess this 
+        OpenApp('Brave') # TODO need to reassess this 
 
 WaitToReturn()
 
@@ -119,7 +119,7 @@ for $REPEATINDEX in range(lineCount / 2):
     #endif
 #endrepeat
 
-
+OpenApp('Brave')
 $name = AskForInput(Input.Text, prompt=Strings['manual.input.name'], allowMultipleLines=False)
 $size = AskForInput(Input.Text, prompt=Strings['manual.input.size'], allowMultipleLines=False)
 
