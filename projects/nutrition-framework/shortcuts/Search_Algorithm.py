@@ -120,12 +120,34 @@ for $REPEATINDEX in range(lineCount / 2):
 #endrepeat
 
 OpenApp('Brave')
-$name = AskForInput(Input.Text, prompt=Strings['manual.input.name'], allowMultipleLines=False)
-$size = AskForInput(Input.Text, prompt=Strings['manual.input.size'], allowMultipleLines=False)
 
-outputFood['Name'] = $name
-outputFood['Serving Size'] = $size
+# Each option is written as text
+$options = [
+    {"prompt": Strings["manual.input.name"], "key": "Name" },
+    {"prompt": Strings["manual.input.size"], "key": "Serving Size"}
+]
 
+for $REPEATITEM in $options:
+    opt = GetDictionaryFromInput($REPEATITEM)
+    breakLoop = FALSE
+    for _ in repeat(10):
+        if breakLoop == FALSE:
+            # TODO translate this
+            $text = f'''
+                Need to check the page? Leave the field blank and the shortcut will pause until you return to the Shortcuts app.
+
+                {opt['prompt']}
+            '''
+            res = AskForInput(Input.Text, prompt=$text, allowMultipleLines=False)
+            if res is not None:
+                outputFood[opt['key']] = res
+                breakLoop = TRUE
+            else:
+                WaitToReturn()
+            #endif
+        #endif
+    #endrepeat
+#endrepeat
 
 prompt = f'''
 {outputFood['Name']}
