@@ -129,7 +129,6 @@ for line in lines:
 outputFood = Dictionary(newFood)
 
 prompt = f'''
-Created Food
 {outputFood['Name']}
 {outputFood['Serving Size']}
 {Strings['nutr.cals']}: {outputFood['Calories']}
