@@ -24,10 +24,10 @@ nutrDix = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.j
 # This can either be `barcodes` or `presets`
 
 if params['args'] is not None:
-    IFRESULT = params['args']
+    $IFRESULT = params['args']
 else:
-    IFRESULT = RunShortcut(nutrDix['Select Saved Foods'], input=params)
-selectedFoods = IFRESULT
+    $IFRESULT = RunShortcut(nutrDix['Select Saved Foods'], input=params)
+selectedFoods = $IFRESULT
 
 # get the config for the given type from saved info, this includes the food folder as well as the prompt
 config = savedInfo [ params['type'] ]
@@ -52,13 +52,13 @@ for item in selectedFoods:
 
                 oldFood['Serving Size'] = AskForInput(Input.Text, prompt=Strings['editfood.size.input'], default=f"{oldFood['Serving Size']}")
             
-            MENURESULT = oldFood
+            $MENURESULT = oldFood
 
         case Strings['editfood.opt.edit']:
             # Edit foods with display food item
-            MENURESULT = RunShortcut(nutrDix['Display Food Item'], input=oldFood)
+            $MENURESULT = RunShortcut(nutrDix['Display Food Item'], input=oldFood)
 
-    newFood = MENURESULT
+    newFood = $MENURESULT
     name = newFood['Name']
 
     if name != oldFood['Name']:

@@ -8,10 +8,10 @@ Ver: 1.01
 
 storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
 if ShortcutInput is not None:
-    IFRESULT = ShortcutInput
+    $IFRESULT = ShortcutInput
 else
-    IFRESULT = { 'cache': True, 'backlog': True }
-params = Dictionary(IFRESULT)
+    $IFRESULT = { 'cache': True, 'backlog': True }
+params = Dictionary($IFRESULT)
 
 TRUE = 1
 FALSE = 0
@@ -48,10 +48,10 @@ if params['cache'] is not None:
         
         file = OpenFile("FLS/History/foodHistory.json", errorIfNotFound=False)
         if file is not None:
-            IFRESULT = file
+            $IFRESULT = file
         else:
-            IFRESULT = {}
-        history = Dictionary( IFRESULT )
+            $IFRESULT = {}
+        history = Dictionary( $IFRESULT )
 
         # add items in cache to history
         for item in histCache:
@@ -60,10 +60,10 @@ if params['cache'] is not None:
 
             dayDix = history[dayKey]
             if history[dayKey] is None:
-                IFRESULT = history[dayKey]
+                $IFRESULT = history[dayKey]
             else
-                IFRESULT = {}
-            dayDix = IFRESULT
+                $IFRESULT = {}
+            dayDix = $IFRESULT
 
             timeList = dayDix[timeKey]
 

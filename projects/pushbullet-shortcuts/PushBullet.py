@@ -74,10 +74,10 @@ if openConfigMenu == TRUE:
         case 'I have/do not have PushBullet Premium...':
             Menu('Do you have PushBullet Premium?'):
             case 'Yes':
-                MENURESULT = TRUE
+                $MENURESULT = TRUE
             case 'No':
-                MENURESULT = FALSE
-            config['premium'] = MENURESULT
+                $MENURESULT = FALSE
+            config['premium'] = $MENURESULT
 
         case 'Send pushes to device...':
             if config.get('access_token') is None:
@@ -95,10 +95,10 @@ if openConfigMenu == TRUE:
                     NOTE;CHARSET=UTF-8:{dev['iden']}
                     END:VCARD
                 '''
-                REPEATRESULTS.append(text)
+                $REPEATRESULTS.append(text)
 
             text = f'''
-                {REPEATRESULTS}
+                {$REPEATRESULTS}
 
                 BEGIN:VCARD
                 VERSION:3.0
@@ -108,7 +108,7 @@ if openConfigMenu == TRUE:
                 END:VCARD
             '''
 
-            renamedItem = SetName(REPEATRESULTS, 'vcard.vcf')
+            renamedItem = SetName($REPEATRESULTS, 'vcard.vcf')
             contacts = GetContacts(renamedItem)
             selected = ChooseFrom(contacts, prompt='Select device option')
 
@@ -137,10 +137,10 @@ else:
 
 # Set premium status
 if config.get('premium') is None:
-    IFRESULT = -1
+    $IFRESULT = -1
 else:
-    IFRESULT = Number(config.get('premium'))
-pushbulletPremium = IFRESULT
+    $IFRESULT = Number(config.get('premium'))
+pushbulletPremium = $IFRESULT
 
 targetIden = ''
 if config.get('target_device') is not None:
@@ -455,10 +455,10 @@ for repeatItem in contents:
             itemErrorMsg = text
         else:
             if f'[{targetIden}]' != '[]':
-                IFRESULT = f' to {config['target_device_name']}'
+                $IFRESULT = f' to {config['target_device_name']}'
             else:
-                IFRESULT = ''
-            deviceAppend = IFRESULT
+                $IFRESULT = ''
+            deviceAppend = $IFRESULT
 
             # Successful push so notify user
             typ = ChangeCase(itemPushBody['type'], 'lowercase')

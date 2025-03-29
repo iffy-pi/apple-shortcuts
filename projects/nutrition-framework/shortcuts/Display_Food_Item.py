@@ -7,11 +7,11 @@ Ver: 1.01
 storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt"))
 
 if ShortcutInput is not None:
-    IFRESULT = foodDix
+    $IFRESULT = foodDix
 else:
     # the default food dictionary
-    IFRESULT = ... # the default food dictionary
-foodDix = Dictionary(IFRESULT)
+    $IFRESULT = ... # the default food dictionary
+foodDix = Dictionary($IFRESULT)
 
 
 g = '(g)'
@@ -122,9 +122,9 @@ else:
         res = FilterFiles(nutriKeys, where=['Name' == key])
         if res is not None:
             num = Number(displayDix[field])
-            IFRESULT = RoundNumber(num, hundredths)
+            $IFRESULT = RoundNumber(num, hundredths)
         else:
-            IFRESULT = displayDix[field]
+            $IFRESULT = displayDix[field]
 
-        foodDix[key] = IFRESULT
+        foodDix[key] = $IFRESULT
 

@@ -101,7 +101,7 @@ if env['permsEnabled'] is None:
 
 
     if hasHealthApp == FALSE:
-        IFRESULT = Strings['nutr.backlog.notif'].replace('$device', deviceModel)
+        $IFRESULT = Strings['nutr.backlog.notif'].replace('$device', deviceModel)
     else:
         # if on health app, calculate total calories consumed today and show in menu prompt
         calsToday = 0
@@ -116,11 +116,11 @@ if env['permsEnabled'] is None:
 
         if healthSamples is not None:
             total = CalculateStatistics("Sum", healthSamples.value)
-            IFRESULT = Round (total, "hundredths")
+            $IFRESULT = Round (total, "hundredths")
         else:
-            IFRESULT = 0
+            $IFRESULT = 0
 
-        calsToday = IFRESULT
+        calsToday = $IFRESULT
 
         file = GetFile(From='Shortcuts', f"{storage}/Other/backlog.json", errorIfNotFound=False)
 
@@ -132,9 +132,9 @@ if env['permsEnabled'] is None:
                 {Strings['nutr.backlog.nonempty']}
             """
 
-        IFRESULT = prompt
+        $IFRESULT = prompt
 
-    prompt = IFRESULT
+    prompt = $IFRESULT
 
     file = GetFile(From='Shortcuts', 'FLS/Other/foodNotes.txt', errorIfNotFound=False)
     if file is not None:
@@ -154,7 +154,7 @@ if env['permsEnabled'] is None:
                 updatedText = updatedText.replace('$size', curFood['Serving Size'])
                 # translates to set dictionary value in curFood and then set dictionary
                 curFood['Servings'] = Number(AskForInput(updatedText, Input.Number, default=1, allowDecimalNumbers=True, allowNegativeNumbers=False))
-                REPEATRESULTS.append(curFood)
+                $REPEATRESULTS.append(curFood)
 
             # we log foods in different iteration to fast track user input
             for item in RunShortcut(shortcutNames['Get Recent']):

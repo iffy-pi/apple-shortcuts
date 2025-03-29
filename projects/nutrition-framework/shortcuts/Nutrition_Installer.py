@@ -206,17 +206,17 @@ if Number(updateRes['version']) > updateInfo['version']:
         date = Date(updateRes['releaseTime'])
 
         if newInstall == TRUE:
-            IFRESULT = Strings['installer.docs.installmd'].replace('$name', updateRes['name'])
+            $IFRESULT = Strings['installer.docs.installmd'].replace('$name', updateRes['name'])
         else:
             updatedText = Strings['installer.docs.updatemd']
                             .replace('$name', updateRes['name'])
                             .replace('$update', updateText)
                             .replace('$date', date.format(date="long", time=None))
-            IFRESULT = updatedText
+            $IFRESULT = updatedText
 
 
         updatedText = Strings['installer.docs.othermd']
-                        .replace('$info', IFRESULT)
+                        .replace('$info', $IFRESULT)
                         .replace('$links', updateLinks)
                         .replace('$notes', {updateRes['releaseNotes']})
                         .replace('$rhublink', f'{updateRes['rhub']}/changelog')
@@ -229,10 +229,10 @@ if Number(updateRes['version']) > updateInfo['version']:
         if sysVers >= 17.0:
             # use the patch
             CopyToClipboard(richText)
-            IFRESULT = CreateNote(Strings['installer.badmd.warning'])
+            $IFRESULT = CreateNote(Strings['installer.badmd.warning'])
         else:
-            IFRESULT = CreateNote(richText)
+            $IFRESULT = CreateNote(richText)
 
-        OpenNote(IFRESULT)
+        OpenNote($IFRESULT)
 
 

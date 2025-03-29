@@ -85,11 +85,11 @@ for _ in range (50):
 
 
             if item['brand_name'] is not None:
-                IFRESULT=f"{item['brand_name']} | {servingSize}"
+                $IFRESULT=f"{item['brand_name']} | {servingSize}"
             else:
-                IFRESULT = f"{servingSize}"
+                $IFRESULT = f"{servingSize}"
 
-            subtitle = IFRESULT
+            subtitle = $IFRESULT
 
             dix = item['nutritional_contents']
             
@@ -123,21 +123,21 @@ for _ in range (50):
             # Add verifIcon if it is a best match
             files = FilterFiles(tags, whereAny=['Name' == 'canonical', 'Name' == 'best_match'])
             if Count(files) == 2:
-                IFRESULT = f' {verifIcon}'
+                $IFRESULT = f' {verifIcon}'
             else:
-                IFRESULT = ''
+                $IFRESULT = ''
             
             text = f'''
             BEGIN:VCARD
             VERSION:3.0
-            N;CHARSET=UTF-8:{item['description']}{IFRESULT}
+            N;CHARSET=UTF-8:{item['description']}{$IFRESULT}
             ORG;CHARSET=UTF-8:{subtitle}
             NOTE;CHARSET=UTF-8:{itemId}
             END:VCARD
             '''
             
-            REPEATRESULTS.append(text)
-        itemCards = REPEATRESULTS
+            $REPEATRESULTS.append(text)
+        itemCards = $REPEATRESULTS
 
         # Add next, previous, new search and cancel search buttons
         nextPage = pageNo+1
@@ -237,11 +237,11 @@ for _ in range (50):
                     {servingSizeIcon}
                     END:VCARD
                     '''
-                REPEATRESULTS.append(text)
+                $REPEATRESULTS.append(text)
 
-            if Count(REPEATRESULTS) == 1:
+            if Count($REPEATRESULTS) == 1:
                 # if only one, skip selection
-                text = f'{REPEATRESULTS}'
+                text = f'{$REPEATRESULTS}'
                 contacts = macros.textToContacts(text)
                 chosenSize = contacts.getFirstItem()
             else:
@@ -253,7 +253,7 @@ for _ in range (50):
                     ORG;CHARSET=UTF-8:{Strings['search.opts.back.desc']}
                     {backwardIcon}
                     END:VCARD
-                    {REPEATRESULTS}
+                    {$REPEATRESULTS}
                 '''
                 # choose from it
                 renamedItem = SetName(text, 'vcard.vcf')

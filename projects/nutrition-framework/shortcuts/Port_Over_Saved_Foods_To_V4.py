@@ -13,10 +13,10 @@ foodDirs = [
 # note files are originally text files without food ids
 file = GetFile(From='Shortcuts', "FLS/Other/nextFoodId.txt", errorIfNotFound=False)
 if file is not None:
-    IFRESULT = Number(file)
+    $IFRESULT = Number(file)
 else:
-    IFRESULT = 0
-nextId = IFRESULT
+    $IFRESULT = 0
+nextId = $IFRESULT
 
 
 for REPEATITEM in nameFiles:
@@ -34,11 +34,11 @@ for REPEATITEM in nameFiles:
                     num = Number(nextId)
                     nextId = nextId+1
                     SaveFile(To='Shortcuts', nextId, "FLS/Other/nextFoodId.txt", overwrite=True)
-                    IFRESULT = num
+                    $IFRESULT = num
                 else:
-                    IFRESULT = Number(food['id'])
+                    $IFRESULT = Number(food['id'])
                 
-                foodId = IFRESULT
+                foodId = $IFRESULT
                 SaveFile(To='Shortcuts', food, f'{foodsDir}/food_{foodId}.json', overwrite=True)
 
             DeleteFile(foodFile)

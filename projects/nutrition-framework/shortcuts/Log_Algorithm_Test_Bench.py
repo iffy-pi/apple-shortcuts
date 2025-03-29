@@ -113,22 +113,22 @@ for i in (1,2):
         # log our results
 
         if logTestPassed == TRUE:
-            IFRESULT = f'Health Sample Log Test - {servings}x - {nutr} - PASS'
+            $IFRESULT = f'Health Sample Log Test - {servings}x - {nutr} - PASS'
         else:
-            IFRESULT = f'Health Sample Log Test - {servings}x - {nutr} - FAIL'
-        results.append(IFRESULT)
+            $IFRESULT = f'Health Sample Log Test - {servings}x - {nutr} - FAIL'
+        results.append($IFRESULT)
 
         if outputPassed == TRUE:
-            IFRESULT = f'Output Food Test - {servings}x - {nutr} - PASS'
+            $IFRESULT = f'Output Food Test - {servings}x - {nutr} - PASS'
         else:
-            IFRESULT = f'Output Food Test - {servings}x - {nutr} - FAIL'
-        results.append(IFRESULT)
+            $IFRESULT = f'Output Food Test - {servings}x - {nutr} - FAIL'
+        results.append($IFRESULT)
 
         if cacheTestPassed == TRUE:
-            IFRESULT = f'Cache Test - {servings}x - {nutr} - PASS'
+            $IFRESULT = f'Cache Test - {servings}x - {nutr} - PASS'
         else:
-            IFRESULT = f'Cache Test - {servings}x - {nutr} - FAIL'
-        results.append(IFRESULT)
+            $IFRESULT = f'Cache Test - {servings}x - {nutr} - FAIL'
+        results.append($IFRESULT)
 
 # at the end of the test, delete cache and save results
 

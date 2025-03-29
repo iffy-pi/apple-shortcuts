@@ -40,7 +40,7 @@ barcode = Text(ScanBarcode())
 # barcodeCache maps barcodes to the ID of their food objects, allows immediate access of barcodes alread in personal database
 file = GetFile(From='Shortcuts', f'{storage}/Barcodes/barcodeCache.json', errorIfNotFound=False)
 if file is not None:
-    IFRESULT = file
+    $IFRESULT = file
 else:
     # if the barcode cache does not exist, create it and then return the created cache
     barcodeCache = {}
@@ -50,9 +50,9 @@ else:
     
     SaveFile(To='Shortcuts', barcodeCache, f'{storage}/Barcodes/barcodeCache.json', overwrite=True)
     
-    IFRESULT = barcodeCache
+    $IFRESULT = barcodeCache
 
-barcodeCache = IFRESULT
+barcodeCache = $IFRESULT
 
 if barcodeCache[barcode] is not None:
     # if barcode is in cache retrieve the food using the food ID i.e. barcodeCache[barcode]
@@ -83,13 +83,13 @@ testing = FALSE
 # Search online database openfoodfacts.org
 
 if testing == TRUE:
-    IFRESULT = ... # text of some barcode result (files/barcode.json)
+    $IFRESULT = ... # text of some barcode result (files/barcode.json)
 else:
     # query the API
     url = URL(f'https://world.openfoodfacts.org/api/v0/product/{barcode}.json')
-    IFRESULT = GetContentsOfURL(url)
+    $IFRESULT = GetContentsOfURL(url)
 
-res = Dictionary(IFRESULT)
+res = Dictionary($IFRESULT)
 
 if res['status'] == 1:
     # we found the product, now we just map the dictionary values

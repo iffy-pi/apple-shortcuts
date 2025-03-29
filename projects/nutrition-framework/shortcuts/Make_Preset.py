@@ -68,20 +68,20 @@ for _ in Count(selectedIds):
             NOTE;CHARSET=UTF-8:{listId}
             END:VCARD
             '''
-            REPEATRESULTS.append(text)
+            $REPEATRESULTS.append(text)
 
-        contacts = macros.textToContacts(REPEATRESULTS)
+        contacts = macros.textToContacts($REPEATRESULTS)
 
         if confirmServings == TRUE:
-            IFRESULT = f'''
+            $IFRESULT = f'''
             {Strings['makepreset.select.foods']}
             {Strings['makepreset.servings.editable']}
             '''
         else:
-            IFRESULT = Strings['makepreset.select.foods']
+            $IFRESULT = Strings['makepreset.select.foods']
 
         text = f'''
-            {IFRESULT}
+            {$IFRESULT}
             {Strings['makepreset.howto.exit']}
         '''
 
@@ -113,12 +113,12 @@ for _ in Count(selectedIds):
                     updatedText = Strings['ask.for.servings']
                                     .replace('$name', defaultName)
                                     .replace('$size', defaultSize)
-                    IFRESULT = AskForInput(Input.Number, prompt=updatedText,
+                    $IFRESULT = AskForInput(Input.Number, prompt=updatedText,
                                 default=curFood['Servings'], allowDecimals=True, allowNegatives=False)
                 else:
-                    IFRESULT = curFood['Servings']
+                    $IFRESULT = curFood['Servings']
                 
-                servings = Number(IFRESULT)
+                servings = Number($IFRESULT)
 
                 # For each selected food, multiply food value by servings and add to preset Food
                 for nutr in nutriKeys:

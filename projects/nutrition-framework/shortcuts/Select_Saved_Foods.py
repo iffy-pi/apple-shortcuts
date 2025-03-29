@@ -40,10 +40,10 @@ if params['deleteMode'] is not None:
 
 
 if params['type'] == 'all':
-    IFRESULT = [ 'presets', 'barcodes' ]
+    $IFRESULT = [ 'presets', 'barcodes' ]
 else:
-    IFRESULT = params['type']
-searchTypes = IFRESULT
+    $IFRESULT = params['type']
+searchTypes = $IFRESULT
 
 # Get the cache for each source
 for curType in searchTypes:
@@ -53,7 +53,7 @@ for curType in searchTypes:
 
     file = GetFile(From='Shortcuts', f"{storage}/{parentFolder}/vcardCache.txt", errorIfNotFound=False)
     if file is not None:
-        IFRESULT = Text(file)
+        $IFRESULT = Text(file)
     else:
         # create the vcard cache if it does not exist
         folder = GetFile(From='Shortcuts', f"{storage}/{parentFolder}/Foods")
@@ -76,15 +76,15 @@ for curType in searchTypes:
                 END:VCARD
 
             '''
-            REPEATRESULTS.append(text)
+            $REPEATRESULTS.append(text)
 
-        SaveFile(To='Shortcuts', Text(REPEATRESULTS), f"{storage}/{parentFolder}/vcardCache.txt", overwrite=True)
+        SaveFile(To='Shortcuts', Text($REPEATRESULTS), f"{storage}/{parentFolder}/vcardCache.txt", overwrite=True)
 
-        IFRESULT = Text(REPEATRESULTS)
+        $IFRESULT = Text($REPEATRESULTS)
 
-    REPEATRESULTS.append(IFRESULT.replace('$folder', prompt))
+    $REPEATRESULTS.append($IFRESULT.replace('$folder', prompt))
 
-vcardCache = Text(REPEATRESULTS)
+vcardCache = Text($REPEATRESULTS)
 
 # Add cancel button
 text = f'''
@@ -109,11 +109,11 @@ choices.append(files)
 
 
 if deleteMode == TRUE:
-    IFRESULT = Strings['savedfoods.select.prompt.delete'].replace('$folder', config['prompt'])
+    $IFRESULT = Strings['savedfoods.select.prompt.delete'].replace('$folder', config['prompt'])
 else:
-    IFRESULT = Strings['savedfoods.select.prompt'].replace('$folder', config['prompt'])
+    $IFRESULT = Strings['savedfoods.select.prompt'].replace('$folder', config['prompt'])
 
-selectedItems = ChooseFrom(choices, prompt=IFRESULT, selectMultiple=True)
+selectedItems = ChooseFrom(choices, prompt=$IFRESULT, selectMultiple=True)
 for chosen in selectedItems:
     if chosen.Notes == 'Cancel':
         StopShortcut()

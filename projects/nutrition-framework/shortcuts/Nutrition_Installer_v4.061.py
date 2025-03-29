@@ -76,7 +76,7 @@ if newInstall == TRUE:
     # Let user select the storage folder 
     file = GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name.txt", errorIfNotFound=False)
     if file is not None:
-        IFRESULT = file
+        $IFRESULT = file
     
     else:
         newStorage = AskForInput(Input.Text, prompt="Enter folder name to store saved foods and configuration files", default='Nutrition')
@@ -94,9 +94,9 @@ if newInstall == TRUE:
 
         SaveFile(To='Shortcuts', newStorage, "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
 
-        IFRESULT = newStorage
+        $IFRESULT = newStorage
 
-    storage = IFRESULT
+    storage = $IFRESULT
 
     dix = Dictionary(...) # shortcutNames.json
     SaveFile(To='Shortcuts', dix, f"{storage}/Other/shortcutNames.json") # save shortcut names file
@@ -149,7 +149,7 @@ if Number(updateRes['version']) > updateInfo['version']:
         date = Date(updateRes['releaseTime'])
 
         if newInstall == TRUE:
-            IFRESULT = f"""
+            $IFRESULT = f"""
                 #  Installing {updateRes['name']} Shortcut
                 ## &#x1F50E; Description:
                 The Nutrition Shortcut is made up of several helper shortcuts for its extensive functionality. Please install all the shortcuts listed in the Install section below.
@@ -161,7 +161,7 @@ if Number(updateRes['version']) > updateInfo['version']:
                 If you run into any errors or issues, please contact developer. (See developer contact below)
             """
         else:
-            IFRESULT = f"""
+            $IFRESULT = f"""
                 # {updateRes['name']} Shortcut Update
                 ## Updates are available for shortcuts:
                 {updateText}
@@ -172,7 +172,7 @@ if Number(updateRes['version']) > updateInfo['version']:
             """
 
         text = f"""
-            {IFRESULT}
+            {$IFRESULT}
 
             &nbsp;
             ## &#x2705; Install:
@@ -206,9 +206,9 @@ if Number(updateRes['version']) > updateInfo['version']:
                 This is a patch to a rich text issue introduced with iOS 17.0.
             '''
             
-            IFRESULT = CreateNote(warningText)
+            $IFRESULT = CreateNote(warningText)
         else:
-            IFRESULT = CreateNote(richText)
+            $IFRESULT = CreateNote(richText)
 
-        OpenNote(IFRESULT)
+        OpenNote($IFRESULT)
 

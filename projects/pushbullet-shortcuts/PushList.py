@@ -113,9 +113,9 @@ continueLoop = TRUE
 for _ in range(itemCount):
 	if continueLoop == TRUE:
 		for item in pushIdens:
-			REPEATRESULTS.append(vcardCache[item])
+			$REPEATRESULTS.append(vcardCache[item])
 
-		contacts = Text(REPEATRESULTS) | SetName(_, 'vcard.vcf') | GetContactsFromInput(_)
+		contacts = Text($REPEATRESULTS) | SetName(_, 'vcard.vcf') | GetContactsFromInput(_)
 
 		text = f'''
 			Push List
@@ -139,10 +139,10 @@ for _ in range(itemCount):
 
 			pushIdens = pushIdens.filter(x -> x.Name != curIden)
 
-			REPEATRESULTS.append(content)
+			$REPEATRESULTS.append(content)
 
-		if Count(REPEATRESULTS) > 0:
-			Share(REPEATRESULTS)
+		if Count($REPEATRESULTS) > 0:
+			Share($REPEATRESULTS)
 		else:
 			continueLoop = FALSE
 
@@ -150,11 +150,11 @@ for _ in range(itemCount):
 			continueLoop = FALSE
 		else:
 			if count == 1:
-				IFRESULT = 'is still 1 push that has'
+				$IFRESULT = 'is still 1 push that has'
 			else:
-				IFRESULT = f'are still {count} that have'
+				$IFRESULT = f'are still {count} that have'
 
-			Menu(prompt=f'There {IFRESULT} not been saved. What would you like to do?'):
+			Menu(prompt=f'There {$IFRESULT} not been saved. What would you like to do?'):
 				case "Exit, I've saved the pushes I wanted":
 					continueLoop = FALSE
 				case "Go back, I want to save more pushes":

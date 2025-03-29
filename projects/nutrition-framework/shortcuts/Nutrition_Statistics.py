@@ -38,11 +38,11 @@ Menu("Statistics"):
 start = AskForInput(Input.Date, prompt=Strings['stats.select.start'])
 
 if getDateRange == TRUE:
-    IFRESULT = AskForInput(Input.Date, prompt=trings['stats.select.end'], default=start)
+    $IFRESULT = AskForInput(Input.Date, prompt=trings['stats.select.end'], default=start)
 else:
-    IFRESULT = start
+    $IFRESULT = start
 
-end = IFRESULT
+end = $IFRESULT
 termEnd = AddToDate(end, days=1)
 
 # We make the calorie breakdown graph if there is more than one day in our sample range

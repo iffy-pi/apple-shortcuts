@@ -178,7 +178,7 @@ else:
             ]
         }
     """
-dix = Dictionary(IFRESULT)
+dix = Dictionary($IFRESULT)
 datasets = dix['ds']
 
 # the total nutridixes for each of the datasets
@@ -207,10 +207,10 @@ for repeatIndex in range(repeats):
             unit = nutrUnits[curNutrKey]
             results = FindHealthSamples(type=sampleType, startDateIsOn=curDate, unit=unit)
             
-            REPEATRESULTS = [ healthSample.Value for healthSample in results]
+            $REPEATRESULTS = [ healthSample.Value for healthSample in results]
             
             # sum health samples tot tal
-            num = Number( CalculateStatistics("Sum", REPEATRESULTS))
+            num = Number( CalculateStatistics("Sum", $REPEATRESULTS))
             daySum = RoundNumber(num, hundredths)
 
             if curNutrKey == 'Calories':
@@ -242,11 +242,11 @@ for repeatIndex in range(repeats):
             if dayTotal > 0:
                 # Cant use calculate expression due to Issue #1
                 calcResult = Calculate(item / dayTotal)
-                IFRESULT = Calculate(calcResult * 100)
+                $IFRESULT = Calculate(calcResult * 100)
             else:
-                IFRESULT = 0
+                $IFRESULT = 0
             
-            num = RoundNumber(IFRESULT, hundredths)
+            num = RoundNumber($IFRESULT, hundredths)
             langNutr = langMap[curNutrKey]
             labels.append(f'{langNutr} ({num}%)')
             
@@ -281,11 +281,11 @@ if averageBreakdown == TRUE:
             if nutrTotal > 0:
                 # Cant use calculate expression due to Issue #1
                 calcResult = Calculate(totalNutrDix[curNutrKey] / nutrTotal)
-                IFRESULT = Calculate(calcResult * 100)
+                $IFRESULT = Calculate(calcResult * 100)
             else:
-                IFRESULT = 0
+                $IFRESULT = 0
 
-            curPercent = RoundNumber(IFRESULT, hundredths)
+            curPercent = RoundNumber($IFRESULT, hundredths)
 
             # Calculate the average nutrient value for the plot, by dividing the total nutrient by the number of dates sampled
             averageNutr = Calculate(totalNutrDix[curNutrKey] / repeats)
@@ -297,20 +297,20 @@ if averageBreakdown == TRUE:
             # appends the appropriate color for th esystem
             averageColors.append(labelColorMap[curNutrKey])
 
-        REPEATRESULTS.append({
+        $REPEATRESULTS.append({
             'title': f'{start.format(custom="MMM dd")} - {end.format(custom="MMM dd")} {curSet['avgTitle']}',
             'labels': averageLabels,
             'values': averageValues,
             'labelColors': averageColors
         })
 
-    IFRESULT = REPEATRESULTS
+    $IFRESULT = $REPEATRESULTS
 
 else:
     # return generated nutrPlots above
-    IFRESULT = nutrPlots
+    $IFRESULT = nutrPlots
 
-chartyPiePlots = IFRESULT
+chartyPiePlots = $IFRESULT
 
 # we return the calorie labels and calorie values along with information to make each plot in charty
 res = {}

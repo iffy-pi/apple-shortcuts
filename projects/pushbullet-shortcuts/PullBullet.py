@@ -197,14 +197,14 @@ if filterContents is not None:
 
     else:
         if item['title'] is not None:
-            IFRESULT = f'''
+            $IFRESULT = f'''
                 {item['title']}
                 {item['body']}
             '''
         else:
-            IFRESULT = f"{item['body']}"
+            $IFRESULT = f"{item['body']}"
 
-        itemForClipboard = IFRESULT
+        itemForClipboard = $IFRESULT
 
 else:
     # it is a file
@@ -231,11 +231,11 @@ else:
     if itemForClipboard is not None:
         CopyToClipboard(itemForClipboard)
         if copiedLink == TRUE:
-            IFRESULT = 'Link'
+            $IFRESULT = 'Link'
         else:
-            IFRESULT = 'Text'
+            $IFRESULT = 'Text'
             
-        Notification(itemForClipboard, title=f"{IFRESULT} copied to clipboard", attachment=itemForClipboard)
+        Notification(itemForClipboard, title=f"{$IFRESULT} copied to clipboard", attachment=itemForClipboard)
 
 # Check for updates
 UpdateRes = GetContentsOfURL(UpdateInfo['updateLink'])

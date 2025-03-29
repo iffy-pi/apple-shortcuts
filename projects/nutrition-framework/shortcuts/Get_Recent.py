@@ -30,7 +30,7 @@ for item in files:
         NOTE;CHARSET=UTF-8:{food['id']}
         END:VCARD
     '''
-    REPEATRESULTS.append(text)
+    $REPEATRESULTS.append(text)
 
 # Add cancel button
 text = f'''
@@ -41,7 +41,7 @@ text = f'''
     NOTE;CHARSET=UTF-8:Cancel
     {cancelIcon}
     END:VCARD
-    {REPEATRESULTS}
+    {$REPEATRESULTS}
 '''
 contacts = SetName(text, 'vcard.vcf')
             .GetContactsFromInput()

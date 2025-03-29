@@ -38,10 +38,10 @@ sumStats = { "Protein": 0, "Fat": 0, "Calories": 0, "Carbs": 0 }
 params = Dictionary(ShortcutInput)
 
 if params['calculator'] is not None:
-    IFRESULT = 'Exit Calculator' # TODO translate this
+    $IFRESULT = 'Exit Calculator' # TODO translate this
 else:
-    IFRESULT = Strings['foodslist.menu.done']
-doneOpt = IFRESULT
+    $IFRESULT = Strings['foodslist.menu.done']
+doneOpt = $IFRESULT
 
 
 
@@ -52,7 +52,7 @@ if file is not None:
         {file}
 
     '''
-    notes = IFRESULT
+    notes = $IFRESULT
     hasNotes = TRUE
 
 for _ in range(maxLoops):
@@ -63,25 +63,25 @@ for _ in range(maxLoops):
 
 
         ''' 
-        stats = IFRESULT
+        stats = $IFRESULT
 
 
         for listId in selectedIds:
             food = foodsDix[listId]
             cals = RoundNumber(food['Calories'] * food['Servings'], 'Hundredths')
-            REPEATRESULTS.append(f'{food['Servings']}x {food['Name']} ({cals} kcal)')
+            $REPEATRESULTS.append(f'{food['Servings']}x {food['Name']} ({cals} kcal)')
 
-        if REPEATRESULTS is not None:
+        if $REPEATRESULTS is not None:
             # Is on the same line because stats already has new line in it
-            IFRESULT = f'''
+            $IFRESULT = f'''
             {stats}{Strings['foodslist.foods.selected']}:
-            {REPEATRESULTS}
+            {$REPEATRESULTS}
             '''
         else:
-            IFRESULT = f'''
+            $IFRESULT = f'''
             {Strings['foodslist.foods.empty']}
             '''
-        prompt = IFRESULT
+        prompt = $IFRESULT
         
         # append our food notes if they are any
         if hasNotes == TRUE:
@@ -117,23 +117,23 @@ for _ in range(maxLoops):
                 else:
                     for listId in selectedIds:
                         food = foodsDix[listId]
-                        REPEATRESULTS.append(food)
-                    StopShortcut(output = REPEATRESULTS)
+                        $REPEATRESULTS.append(food)
+                    StopShortcut(output = $REPEATRESULTS)
 
             case Strings['foodslist.menu.search']:
-                MENURESULT = RunShortcut(nutrDix['Search Algorithm'])
+                $MENURESULT = RunShortcut(nutrDix['Search Algorithm'])
 
             case Strings['foodslist.menu.saved']:
-                MENURESULT = RunShortcut(nutrDix['Select Saved Foods'], input={'type': 'all'})
+                $MENURESULT = RunShortcut(nutrDix['Select Saved Foods'], input={'type': 'all'})
 
             case Strings['foodslist.menu.scan']:
-                MENURESULT = RunShortcut(nutrDix['Barcode Search'], input={'getFood': True})
+                $MENURESULT = RunShortcut(nutrDix['Barcode Search'], input={'getFood': True})
 
             case Strings['foodslist.menu.recent']:
-                MENURESULT = RunShortcut(nutrDix['Get Recent'])
+                $MENURESULT = RunShortcut(nutrDix['Get Recent'])
 
             case Strings['foodslist.menu.manual']:
-                MENURESULT = RunShortcut(nutrDix['Make Food Manually'])
+                $MENURESULT = RunShortcut(nutrDix['Make Food Manually'])
 
             case Strings['foodslist.menu.edit']:
                 addMenuResult = FALSE
@@ -150,7 +150,7 @@ for _ in range(maxLoops):
                         NOTE;CHARSET=UTF-8:{listId}
                         END:VCARD
                     '''
-                    REPEATRESULTS.append(text)
+                    $REPEATRESULTS.append(text)
 
                 # cancel contact card
                 text = f'''
@@ -161,7 +161,7 @@ for _ in range(maxLoops):
                     NOTE;CHARSET=UTF-8:Cancel
                     {cancelIcon}
                     END:VCARD
-                    {REPEATRESULTS}
+                    {$REPEATRESULTS}
                 '''
                 renamedItem = SetName(text, 'vcard.vcf')
                 contacts = GetContacts(renamedItem)
@@ -207,9 +207,9 @@ for _ in range(maxLoops):
                     NOTE;CHARSET=UTF-8:{listId}
                     END:VCARD
                     '''
-                    REPEATRESULTS.append(text)
+                    $REPEATRESULTS.append(text)
 
-                text = Text(REPEATRESULTS)
+                text = Text($REPEATRESULTS)
                 renamedItem = SetName(text, 'vcard.vcf')
                 contacts = GetContacts(renamedItem)
 
@@ -230,9 +230,9 @@ for _ in range(maxLoops):
                     for listId in selectedIds:
                         foodVal = foodsDix[listId][nk]
                         servings = foodsDix[listId]['Servings']
-                        REPEATRESULTS.append(foodVal * servings)
-                    if REPEATRESULTS is not None:
-                        outputFood[nk] = RoundNumber(CalculateStatistics('Sum', REPEATRESULTS), 'Hundredths')
+                        $REPEATRESULTS.append(foodVal * servings)
+                    if $REPEATRESULTS is not None:
+                        outputFood[nk] = RoundNumber(CalculateStatistics('Sum', $REPEATRESULTS), 'Hundredths')
 
                 prompt = f'''
                 Total Nutrients
@@ -259,7 +259,7 @@ for _ in range(maxLoops):
             # add the foods to our selected foods
             menuFoods = []
 
-            for food in MENURESULT:
+            for food in $MENURESULT:
                 text = Text(food)
                 SaveFile(To='Shortcuts', text, f'{storage}/Other/tempNutrientsDix.txt', overwrite=True)
                 food = Dictionary( Text(GetFile(From='Shortcuts', f'{storage}/Other/tempNutrientsDix.txt')) )
@@ -278,9 +278,9 @@ for _ in range(maxLoops):
                 selectedIds.append(nextId)
                 nextId = nextId + 1
 
-                REPEATRESULTS.append(GetVariable(food))
+                $REPEATRESULTS.append(GetVariable(food))
 
-            for food in REPEATRESULTS:
+            for food in $REPEATRESULTS:
                 RunShortcut(nutrDix['Add Recent'], input=food)
 
 
@@ -288,8 +288,8 @@ for _ in range(maxLoops):
             for listId in selectedIds:
                 foodVal = foodsDix[listId][sk]
                 servings = foodsDix[listId]['Servings']
-                REPEATRESULTS.append(foodVal * servings)
+                $REPEATRESULTS.append(foodVal * servings)
 
-            sumStats[sk] = RoundNumber(CalculateStatistics('Sum', REPEATRESULTS), 'Hundredths')
+            sumStats[sk] = RoundNumber(CalculateStatistics('Sum', $REPEATRESULTS), 'Hundredths')
 
                 

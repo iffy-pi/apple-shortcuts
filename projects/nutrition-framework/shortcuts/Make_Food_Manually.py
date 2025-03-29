@@ -108,23 +108,23 @@ for line in lines:
         if nutrKey is not None:
             value = TrimWhiteSpace(GetGroupFromMatchedText(2, matches))            
             if nutrKey == 'Name' or nutrKey == 'Barcode' or nutrKey == 'Serving Size':
-                IFRESULT = value
+                $IFRESULT = value
             else:
                 # Validates the actual text is a number, if not it prompts the user to enter a number
                 res = MatchText(r'(^[0-9][0-9]*$)|(^[0-9][0-9]*\.[0-9][0-9]*$)|(^[0-9][0-9]*,[0-9][0-9]*$)', value)
                 if res is None:
                     if f"{value}" != "":
                         # Todo string this
-                        IFRESULT3 = AskForInput(Input.Number, prompt=f'Value "{value}" for '{displayName}' could not be converted into a number. Please enter value below.', allowDecimals=True, allowNegatives=False)
+                        $IFRESULT3 = AskForInput(Input.Number, prompt=f'Value "{value}" for '{displayName}' could not be converted into a number. Please enter value below.', allowDecimals=True, allowNegatives=False)
                     else:
-                        IFRESULT3 = 0
-                    IFRESULT2 = IFRESULT3
+                        $IFRESULT3 = 0
+                    $IFRESULT2 = $IFRESULT3
                 else:
-                    IFRESULT2 = GetNumbersFromInput(value)
+                    $IFRESULT2 = GetNumbersFromInput(value)
                
-                IFRESULT = IFRESULT2
+                $IFRESULT = $IFRESULT2
 
-            newFood[nutrKey] = IFRESULT
+            newFood[nutrKey] = $IFRESULT
 
 outputFood = Dictionary(newFood)
 
@@ -161,23 +161,23 @@ foodDix = newFood
 # If there are any vitamins or minerals, we ask if the value is Exact Values or Daily Percentages
 
 for key in exactValDix:
-    REPEATRESULTS.append(Number(foodDix[key]))
+    $REPEATRESULTS.append(Number(foodDix[key]))
 
-calcResult = CalculateStatistics('Sum', REPEATRESULTS)
+calcResult = CalculateStatistics('Sum', $REPEATRESULTS)
 
 if calcResult > 0:
     Menu(Strings['manual.vtype.prompt']):
         case Strings['manual.vtype.exact']:
             # Is exact values
-            MENURESULT = 0
+            $MENURESULT = 0
         case Strings['manual.vtype.percentages']:
             # Is daily percentages
-            MENURESULT = 1
-    IFRESULT = MENURESULT
+            $MENURESULT = 1
+    $IFRESULT = $MENURESULT
 else:
-    IFRESULT = 0
+    $IFRESULT = 0
 
-if IFRESULT == 1:
+if $IFRESULT == 1:
     # Vitamins were in daily percentages convert to exact values
     for vitKey in exactValDix.keys():
         num = Calculate(foodDix[vitKey] / 100)
@@ -188,17 +188,17 @@ if IFRESULT == 1:
 # check to make sure food has a name and a serving size
 text = f'[{foodDix['Name']}]'
 if text != '[]':
-    IFRESULT = foodDix['Name']
+    $IFRESULT = foodDix['Name']
 else:
-    IFRESULT = AskForInput(Input.Text, Strings['manual.input.name'], allowMultipleLines=False)
-name = IFRESULT
+    $IFRESULT = AskForInput(Input.Text, Strings['manual.input.name'], allowMultipleLines=False)
+name = $IFRESULT
 
 text = f'[{foodDix['Serving Size']}]'
 if text != '[]':
-    IFRESULT = foodDix['Serving Size']
+    $IFRESULT = foodDix['Serving Size']
 else:
-    IFRESULT = AskForInput(Input.Text, Strings['manual.input.size'], allowMultipleLines=False)
-servingSize = IFRESULT
+    $IFRESULT = AskForInput(Input.Text, Strings['manual.input.size'], allowMultipleLines=False)
+servingSize = $IFRESULT
 
 # Generate food ID for food
 foodId = RunShortcut(nutrDix['GFID'])

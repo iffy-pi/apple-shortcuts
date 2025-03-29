@@ -21,11 +21,11 @@ maxRecents = 30
 
 
 if food['id'] is not None:
-    IFRESULT = food['id']
+    $IFRESULT = food['id']
 else:
-    IFRESULT = RunShorctut(nutrDix['GFID'])
+    $IFRESULT = RunShorctut(nutrDix['GFID'])
 
-foodId = IFRESULT
+foodId = $IFRESULT
 
 # add food to recent if it doesn't already exist
 # by saving it, it will be at top of list when we get recents

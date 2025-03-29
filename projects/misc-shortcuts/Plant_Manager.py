@@ -19,15 +19,15 @@ for i in range(15):
 	if f'"{notification}"' != '""':
 		temp = notification
 		notification = ''
-		IFRESULT = f'''
+		$IFRESULT = f'''
 		Plant Manager ({count} plants)
 		{temp}
 		'''
 	else:
-		IFRESULT = f'Plant Manager ({count} plants)'
+		$IFRESULT = f'Plant Manager ({count} plants)'
 
 
-	Menu(IFRESULT):
+	Menu($IFRESULT):
 		case 'Water Plant':
 			plantNames = FilterFiles(plantInfo.keys, sortBy='Name', order='A to Z')
 			selected = ChooseFromList(plantNames, prompt='Select plant(s)', multiple=True)
@@ -48,15 +48,15 @@ for i in range(15):
 					prevWateringDate = GetItemFromList(waterings, lastitem=True)
 					days = GetTimeBetweenDates(prevWateringDate, today, days=True)
 					
-					IFRESULT = f'''
+					$IFRESULT = f'''
 					Enter watering date for {plant}.
 					{plant} was last watered on {prevWateringDate} ({days} days ago).
 					'''
 				else:
-					IFRESULT = f'Enter watering date for {plant}!'
+					$IFRESULT = f'Enter watering date for {plant}!'
 				
 				if groupWateringDate is None:
-					date = AskForInput(Input.Date, prompt=IFRESULT)
+					date = AskForInput(Input.Date, prompt=$IFRESULT)
 					wateringDate = Text(date.format(date=short, time=None))
 				else:
 					wateringDate = groupWateringDate
@@ -74,9 +74,9 @@ for i in range(15):
 				plantInfo[plant] = plantDix
 				
 
-				REPEATRESULTS.append(f"{plant}'s watering has been updated with new date: {wateringDate}")
+				$REPEATRESULTS.append(f"{plant}'s watering has been updated with new date: {wateringDate}")
 
-			notification = TEXT(REPEATRESULTS)
+			notification = TEXT($REPEATRESULTS)
 			saveFile = True
 
 
@@ -109,11 +109,11 @@ for i in range(15):
 					if daysBetween == 0:
 						# They are the same date, don't append any days
 						# Basically to handle the first iteration where curWateringDate == prevWateringDate
-						REPEATRESULTS.append(f'{curWateringDate}')
+						$REPEATRESULTS.append(f'{curWateringDate}')
 					else:
 						# Append the days between
 						daysBetweenList.append(daysBetween)
-						REPEATRESULTS.append(f'''
+						$REPEATRESULTS.append(f'''
 							    | {daysBetween} days
 							{curWateringDate}
 							''')
@@ -122,19 +122,19 @@ for i in range(15):
 				appendix = f'({average} day average)'
 
 				days = GetTimeBetweenDates(prevWateringDate, today, days=True)
-				IFRESULT = f'''
-					{REPEATRESULTS}
+				$IFRESULT = f'''
+					{$REPEATRESULTS}
 						| {between} days and counting
 					🕥 {average} day average
 				'''
 			else:
 				appendix = ''
-				IFRESULT = f'No watering data for {plant}!'
+				$IFRESULT = f'No watering data for {plant}!'
 			
 			historyText = f'''
 				{plant} Watering History {apppendix}
 				{separator}
-				{IFRESULT}
+				{$IFRESULT}
 			'''	
 
 			ShowResult(historyText)
@@ -188,17 +188,17 @@ for i in range(15):
 			waterings = plantInfo[plant]['waterings']
 
 			for wt in waterings:
-				REPEATRESULTS.append(Text(Date(wt).format(date='medium', time='None')))
+				$REPEATRESULTS.append(Text(Date(wt).format(date='medium', time='None')))
 
-			newWateringList = REPEATRESULTS
+			newWateringList = $REPEATRESULTS
 
 			wateringsText = Text(newWateringList)
 			updatedListText = AskForInput(Input.Text, 'Edit Watering Dates:', multipleLines=True, default=newWateringList)
 
 			for wt in SplitText(updatedListText, byNewLines=True):
-				REPEATRESULTS.append(Text(Date(wt).format(date='short'), time='None'))
+				$REPEATRESULTS.append(Text(Date(wt).format(date='short'), time='None'))
 
-			waterings = REPEATRESULTS
+			waterings = $REPEATRESULTS
 			waterings = FilterFiles(waterings, sortBy='Name', order='A to Z')
 
 			plantDix = plantInfo[plant]
@@ -240,10 +240,10 @@ for i in range(15):
 		case 'Toggle Summary Sort':
 			if sortSummaryByName == TRUE:
 				sortSummaryByName = FALSE
-				IFRESULT = 'Watering Summary will be sorted by days since last watering'
+				$IFRESULT = 'Watering Summary will be sorted by days since last watering'
 			else:
 				sortSummaryByName = TRUE
-				IFRESULT = 'Watering Summary will be sorted by plant names'
+				$IFRESULT = 'Watering Summary will be sorted by plant names'
 
 		case 'Exit':
 			StopShortcut()

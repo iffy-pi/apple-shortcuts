@@ -14,11 +14,11 @@ Strings = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.jso
 
 file = GetFile(From='Shortcuts', f"{storage}/History/foodHistory.json")
 if file is not None:
-    IFRESULT = file
+    $IFRESULT = file
 else:
-    IFRESULT = {}
+    $IFRESULT = {}
 
-history = Dictionary(IFRESULT)
+history = Dictionary($IFRESULT)
 
 # get the foods logged today
 today = CurrentDate()
@@ -34,14 +34,14 @@ if dayDix is not None:
 
 # Show foods logged today in menu prompt and then continue
 if Count(todaysLogs) > 0:
-    IFRESULT = f'''
+    $IFRESULT = f'''
         {Strings['history.foods.today']}
         {todaysLogs}
     '''
 else:
-    IFRESULT = Strings['history.foods.today.none']
+    $IFRESULT = Strings['history.foods.today.none']
 
-prompt = IFRESULT
+prompt = $IFRESULT
 
 Menu(prompt=prompt):
     case Strings['history.menu.moreopts']:
@@ -71,23 +71,23 @@ Menu(prompt=prompt):
                 StopShortcut()
 
         if useDateList == TRUE
-            IFRESULT = Count(dateList)
+            $IFRESULT = Count(dateList)
         else:
-            IFRESULT = TimeBetweenDates(start, end, inDays=True)
-        repeats = IFRESULT
+            $IFRESULT = TimeBetweenDates(start, end, inDays=True)
+        repeats = $IFRESULT
 
 
         for repeatIndex in range( repeats ):
             if useDateList == TRUE
-                IFRESULT = dateList.getItemAtIndex(repeatIndex)
+                $IFRESULT = dateList.getItemAtIndex(repeatIndex)
             else:
                 # shortcuts are one indexes, so subtract by 1 and add to start
                 # doing it so we get latest date first
                 res = repeats - repeatIndex
                 res = AddToDate(start, res)
-                IFRESULT = Text(res.format(custom="yyyy-MM-dd"))
+                $IFRESULT = Text(res.format(custom="yyyy-MM-dd"))
 
-            dayKey = IFRESULT
+            dayKey = $IFRESULT
             dayDix = history[dayKey] 
 
             if dayDix is not None:

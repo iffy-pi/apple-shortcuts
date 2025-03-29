@@ -20,26 +20,26 @@ setPerms = FALSE
 if ShortcutInput['setPerms'] is not None:
     Alert(Strings['loga.healthperms.enable'], showCancel=False, Title=Strings['loga.healthperms.title'])
     setPerms = TRUE
-    IFRESULT = {
+    $IFRESULT = {
         'Food': { 'Servings': 1 },
         'Date': CurrentDate()
     }
 else:
-    IFRESULT = f'{ShortcutInput}'
+    $IFRESULT = f'{ShortcutInput}'
 
-res = Dictionary(IFRESULT)
+res = Dictionary($IFRESULT)
 
 loggingDate = Date(res['Date'])
 foodDix = Dictionary(res['Food'])
 
 # set servings in food dictionary
 if foodDix['Servings'] is not None:
-    IFRESULT = Number(foodDix['Servings'])
+    $IFRESULT = Number(foodDix['Servings'])
 else:
     updatedText = Strings['ask.for.servings'].replace('$name', foodDix['Name']).replace('$size', foodDix['Serving Size'])
-    IFRESULT = AskForInput(InputTypes.Number, updatedText, allowNegatives=False, allowDecimals=True)
+    $IFRESULT = AskForInput(InputTypes.Number, updatedText, allowNegatives=False, allowDecimals=True)
 
-num = Number(IFRESULT)
+num = Number($IFRESULT)
 foodDix['Servings'] = num
 servings = num
 
@@ -65,11 +65,11 @@ if hasHealthApp == FALSE:
     file = GetFile(From='Shortcuts', f"{storage}/Other/backlog.json", noErrors=True)
 
     if file is not None:
-        IFRESULT = Dictionary(file)
+        $IFRESULT = Dictionary(file)
     else:
-        IFRESULT = { 'backlog': [] }
+        $IFRESULT = { 'backlog': [] }
 
-    backlog = IFRESULT['backlog']
+    backlog = $IFRESULT['backlog']
 
     # add it to the backlog
     dix = {
@@ -120,10 +120,10 @@ nutrients = Dictionary()
 
 # Normally we skip any nutrient values that are 0, but for setting permissions we want to log 0 values, so set threshold to -1
 if setPerms == TRUE:
-    IFRESULT = -1
+    $IFRESULT = -1
 else:
-    IFRESULT = 0
-threshold = IFRESULT
+    $IFRESULT = 0
+threshold = $IFRESULT
 
 file = GetFile(From='Shortcuts', 'FLS/Other/nutriKeys.txt')
 # store the nutrients in the dictionary
@@ -152,11 +152,11 @@ cals = RoundNumber(nutrients['Calories'], ones)
 # check if cache file exists and make one by default if not available
 file = GetFile(From='Shortcuts', f"{storage}/History/foodHistoryCache.json", errorIfNotFound=False)
 if file is not None:
-    IFRESULT = Text(file)
+    $IFRESULT = Text(file)
 else:
-    IFRESULT = "{ 'cache': [] }"
+    $IFRESULT = "{ 'cache': [] }"
 
-res = Dictionary(IFRESULT)
+res = Dictionary($IFRESULT)
 cache = res['cache']
 
 # put the item in the cache

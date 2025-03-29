@@ -53,9 +53,9 @@ for _ in range(30):
                         NOTE;CHARSET=UTF-8:{listId}
                         END:VCARD
                     '''
-                REPEATRESULTS.append(text)
+                $REPEATRESULTS.append(text)
 
-            contacts = macros.textToContacts(f'{REPEATRESULTS}')
+            contacts = macros.textToContacts(f'{$REPEATRESULTS}')
 
             for contact in FilterFiles(contacts, sortBy='Name', order='A to Z'):
                 listId = contact.Notes
@@ -68,19 +68,19 @@ for _ in range(30):
                     warning = ' ⚠'
                     datePrompt = ''
 
-                REPEATRESULTS.append(f'{datePrompt}{food['Servings']}x {food['Name']}{warning}')
+                $REPEATRESULTS.append(f'{datePrompt}{food['Servings']}x {food['Name']}{warning}')
 
 
             updatedText = Strings['logdiff.loglist.prompt'].replace('$warn', '⚠')
-            IFRESULT = f'''
+            $IFRESULT = f'''
                 {updatedText}
 
-                {REPEATRESULTS}
+                {$REPEATRESULTS}
             '''
         else:
-            IFRESULT = GetVariable(instructions)
+            $IFRESULT = GetVariable(instructions)
 
-        prompt = IFRESULT
+        prompt = $IFRESULT
 
         if hasFoodNotes == TRUE:
             prompt = f'''
@@ -141,9 +141,9 @@ for _ in range(30):
                         NOTE;CHARSET=UTF-8:{listId}
                         END:VCARD
                     '''
-                    REPEATRESULTS.append(text)
+                    $REPEATRESULTS.append(text)
 
-                contacts = macros.textToContacts(REPEATRESULTS)
+                contacts = macros.textToContacts($REPEATRESULTS)
 
                 selectedContacts = ChooseFromList(contacts, prompt=Strings['foods.remove.select'], selectMultiple=True)
                 
@@ -195,9 +195,9 @@ for _ in range(30):
                             NOTE;CHARSET=UTF-8:{listId}
                             END:VCARD
                         '''
-                        REPEATRESULTS.append(text)
+                        $REPEATRESULTS.append(text)
 
-                    contacts = macros.textToContacts(REPEATRESULTS)
+                    contacts = macros.textToContacts($REPEATRESULTS)
 
                     prompt = Strings['logdiff.settime.instr']
 
@@ -219,11 +219,11 @@ for _ in range(30):
                         
                         for contact in selectedContacts:
                             food = foodsInfo[contact.Notes]
-                            REPEATRESULTS.append(f'{food['Servings']}x {food['Name']}')
+                            $REPEATRESULTS.append(f'{food['Servings']}x {food['Name']}')
 
                         prompt = f'''
                             {Strings['logdiff.settime.select']}
-                            {REPEATRESULTS}
+                            {$REPEATRESULTS}
                         '''
 
                         if hasFoodNotes == TRUE:
