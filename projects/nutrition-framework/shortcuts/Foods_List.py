@@ -254,6 +254,8 @@ for _ in range(maxLoops):
                 Alert(title='Shortcut Paused', body="The shortcut has been paused. When you're ready, open the Shortcuts app and the shortcut will continue running.", showCancel=False)
                 WaitToReturn()
 
+            case 'Back':
+                StopShortcut()
 
         if addMenuResult == TRUE:
             # add the foods to our selected foods
