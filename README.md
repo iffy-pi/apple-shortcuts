@@ -27,7 +27,7 @@ Shorpy does not account for this as it makes the code more complicated. It is as
 | ``` dixVar['a'] = 1 ``` | ``` dixVar = SetDictionaryValue(dixVar'a', 1) ``` |
 
 ### Labelling Block Ends
-Python uses tab based delimiting to define block ends, but Shortcuts uses a brace-like system, where if-blocks, repeat blocks and Menus all have defined `End If`, `End Repeat`, `End Menu`. Therefore, to make Shorpy files easier to read, we use `#endif`, `#endrepeat`, and `#endmenu` comments put at the end of the blocks. This makes it easier to compare Shorpy files to their actual shortcut
+Python uses tab based delimiting to define block ends, but Shortcuts uses a brace-like system, where if-blocks, repeat blocks and Menus all have defined `End If`, `End Repeat`, `End Menu`. Therefore, to make Shorpy files easier to read, we use `#endif`, `#endfor`, and `#endmenu` comments put at the end of the blocks. This makes it easier to compare Shorpy files to their actual shortcut
 
 ### Tip: If you intend to use a repeat item or repeat index multiple times, set it to a variable at the beginning of the repeat loop.
 Whenever you use `repeat` or `repeat with each` in Shortcuts, you are provided to magic variables: `$REPEATINDEX`, `$REPEATITEM`. These can be used to refer to the repeat item or index within the repeat loop.

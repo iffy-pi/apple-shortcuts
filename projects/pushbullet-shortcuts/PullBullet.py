@@ -24,8 +24,10 @@ if file is None:
     file = GetFile(From='Shortcuts', filePaths['token'], errorIfNotFound=False)
     if file is not None:
         config['access_token'] = Text(file)
+    #endif
 else:
     config = Dictionary(file)
+#endif
 
 
 if config.get('access_token') is None:
@@ -38,6 +40,8 @@ if config.get('access_token') is None:
         case "I don't have my access token":
             ShowAlert("Get an access token from your PushBullet Account > Settings > Access Tokens")
             StopShortcut()
+    #endmenu
+#endif
 
 
 accessToken = config['access_token']
@@ -57,6 +61,7 @@ url = f"https://api.pushbullet.com/v2/pushes?active={active}&limit={limit}"
 
 if Dictionary(ShortcutInput)['returnContent'] is not None:
     returnContent = TRUE
+#endif
 
 dixOut = GetContentsOfURL(
         url,
@@ -94,14 +99,20 @@ if filterContents is not None:
                     # if its just standard body then there will be other stuff that dont get evaluated to it
                     foundLink = item['body']
                     bodyIsLink = TRUE
+                #endif
+            #endif
+        #endif
+    #endif
 
     if foundLink is not None:
         # if we are returning content, then just stop and output the link immediately
         if returnContent == TRUE:
             StopShortcut(output=foundLink)
+        #endif
 
         if bodyIsLink == TRUE:
             item['body'] = ''
+        #endif
 
         # Otherwise, create user selection to either open link, copy link,
         # copy title (if available) and copy message (if available)
@@ -143,6 +154,7 @@ if filterContents is not None:
                 {copyIcon}
                 END:VCARD
             '''
+        #endif
 
         if Text(item['body']) != '':
             optionsVcard = f'''
@@ -155,6 +167,7 @@ if filterContents is not None:
                 {copyIcon}
                 END:VCARD
             '''
+        #endif
 
         renamedItem = SetName(optionsVcard, 'vcard.vcf')
         contacts = GetContacts(renamedItem)
@@ -168,6 +181,7 @@ if filterContents is not None:
             displayedLink = f'''
                 {CombineText(items, '')}... (full link not shown)
                 '''
+        #endif
 
         chosen = ChooseFrom(contacts, prompt=f'''
                 Link:
@@ -178,22 +192,28 @@ if filterContents is not None:
 
         if option == 'open-link':
             OpenURL(foundLink)
+        #endif
 
         if option == 'copy-link':
             copiedLink = TRUE
             copyContent = foundLink
-
-        elif option == 'share-link':
+        #endif
+        
+        if option == 'share-link':
             Share(foundLink)
+        #endif
         
         if option == 'copy-title':
             copyContent = item['title']
+        #endif
         
         if option == 'copy-message':
             copyContent = item['body']
+        #endif
 
         if copyContent is not None:
             itemForClipboard = copyContent
+        #endif
 
     else:
         if item['title'] is not None:
@@ -203,9 +223,10 @@ if filterContents is not None:
             '''
         else:
             $IFRESULT = f"{item['body']}"
+        #endif
 
         itemForClipboard = $IFRESULT
-
+    #endif
 else:
     # it is a file
     urlContents = GetContentsOfURL(item['file_url'])
@@ -214,7 +235,6 @@ else:
     if item['file_name'] == 'Pushed Text.txt':
         # was text that overflowed
         itemForClipboard = urlContents
-        
     else:
         # If we are returning content then just output the file and exit
         # Otherwise open share sheet (will run update script after)
@@ -222,7 +242,9 @@ else:
             StopShortcut(output=renamedItem)
         else:
             Share(renamedItem)
-    
+        #endif
+    #endif
+#endif
 
 # If we are returning content then just output the text, otherwise copy the item to the clipboard.
 if returnContent == TRUE:
@@ -234,8 +256,11 @@ else:
             $IFRESULT = 'Link'
         else:
             $IFRESULT = 'Text'
+        #endif
             
         Notification(itemForClipboard, title=f"{$IFRESULT} copied to clipboard", attachment=itemForClipboard)
+    #endif
+#endif
 
 # Check for updates
 UpdateRes = GetContentsOfURL(UpdateInfo['updateLink'])
@@ -257,4 +282,6 @@ if Number(UpdateRes['version']) > UpdateInfo['version']:
 
         case 'Later':
             pass
+    #endmenu
+#endif
 

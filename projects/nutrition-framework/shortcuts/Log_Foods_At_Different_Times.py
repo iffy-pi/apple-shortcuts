@@ -23,7 +23,7 @@ if file is not None:
 
     '''
     hasFoodNotes = TRUE
-
+#endif
 
 # Each food item has a unique list ID which is different from their food id
 # For a given listId i, foodsInfo[i] is the food for that listId and
@@ -54,6 +54,7 @@ for _ in range(30):
                         END:VCARD
                     '''
                 $REPEATRESULTS.append(text)
+            #endfor
 
             contacts = macros.textToContacts(f'{$REPEATRESULTS}')
 
@@ -67,8 +68,10 @@ for _ in range(30):
                 else:
                     warning = ' ⚠'
                     datePrompt = ''
+                #endif
 
                 $REPEATRESULTS.append(f'{datePrompt}{food['Servings']}x {food['Name']}{warning}')
+            #endfor
 
 
             updatedText = Strings['logdiff.loglist.prompt'].replace('$warn', '⚠')
@@ -79,6 +82,7 @@ for _ in range(30):
             '''
         else:
             $IFRESULT = GetVariable(instructions)
+        #endif
 
         prompt = $IFRESULT
 
@@ -88,6 +92,7 @@ for _ in range(30):
 
                 {prompt}
             '''
+        #endif
         
         setLogTimes = FALSE
         fromEditOption = FALSE
@@ -108,6 +113,7 @@ for _ in range(30):
                     # adding food to list of foods that dont have a log time
                     unsetIds.append(nextId)
                     nextId = nextId+1
+                #endfor
 
                 # run set log time interface
                 setLogTimes = TRUE
@@ -130,6 +136,7 @@ for _ in range(30):
                         datePrompt = updatedText
                     else:
                         datePrompt = Strings['logdiff.notime.warn'].replace('$warn', '⚠')
+                    #endif
 
                     updatedText = Strings['food.servings'].replace('$num', food['Servings'])
 
@@ -142,6 +149,7 @@ for _ in range(30):
                         END:VCARD
                     '''
                     $REPEATRESULTS.append(text)
+                #endfor
 
                 contacts = macros.textToContacts($REPEATRESULTS)
 
@@ -151,6 +159,7 @@ for _ in range(30):
                 for contact in selectedContacts:
                     listId = contact.Notes
                     selectedIds = FilterFiles(selectedIds, where=['Name' != listId])
+                #endfor
 
             case 'Pause': # TODO translate this
                 Alert(title='Shortcut Paused', body="The shortcut has been paused. When you're ready, open the Shortcuts app and the shortcut will continue running.", showCancel=False)
@@ -161,6 +170,7 @@ for _ in range(30):
 
             case 'Back': # TODO Update this string to 'Go Back'
                 StopShortcut()
+        #endmenu
 
         if setLogTimes == TRUE:
             breakEditLoop = FALSE
@@ -170,6 +180,7 @@ for _ in range(30):
                 # break loop when there are no more foods with unset log times
                 if Count(unsetIds) == 0:
                     breakEditLoop = TRUE
+                #endif
 
                 if breakEditLoop == FALSE:
                     # use contact vcards to get the list ids of the foods the user wants to change
@@ -184,6 +195,7 @@ for _ in range(30):
                             warning = ''
                         else:
                             datePrompt = Strings['logdiff.notime.warn'].replace('$warn', '⚠')
+                        #endif
 
                         updatedText = Strings['food.servings'].replace('$num', food['Servings'])
 
@@ -196,6 +208,7 @@ for _ in range(30):
                             END:VCARD
                         '''
                         $REPEATRESULTS.append(text)
+                    #endfor
 
                     contacts = macros.textToContacts($REPEATRESULTS)
 
@@ -207,6 +220,7 @@ for _ in range(30):
 
                         {prompt}
                         '''
+                    #endif
 
                     selectedContacts = ChooseFromList(contacts, prompt=prompt, selectMultiple=True)
 
@@ -216,10 +230,12 @@ for _ in range(30):
 
                         if date is not None:
                             defaultDate = date
+                        #endif
                         
                         for contact in selectedContacts:
                             food = foodsInfo[contact.Notes]
                             $REPEATRESULTS.append(f'{food['Servings']}x {food['Name']}')
+                        #endfor
 
                         prompt = f'''
                             {Strings['logdiff.settime.select']}
@@ -232,6 +248,7 @@ for _ in range(30):
 
                                 {prompt}
                             '''
+                        #endif
 
                         date = AskForInput(Input.DateAndTime, prompt=prompt, default=defaultDate)
 
@@ -248,10 +265,19 @@ for _ in range(30):
                             # i.e. dont filter out foods with set date.
                             if fromEditOption == FALSE:
                                 unsetIds = FilterFiles(unsetIds, where=['Name' != listId])
+                            #endif
+                        #endfor
+                    #endif
 
                     # # if user specifically requested to edit food times, then break immediately after one iteration
                     # if fromEditOption == TRUE:
                     #     breakEditLoop = TRUE
+                    # #endif
+                #endif
+            #endfor
+        #endif
+    #endif
+#endfor
 
 
 # log the foods in the selected Ids list
@@ -268,10 +294,13 @@ for listId in selectedIds:
                 date = AskForInput(Input.DateAndTime, prompt=Strings['input.logtime'])
             case Strings['logdiff.notime.discard']:
                 logFood = FALSE
+        #endmenu
     
     if logFood == TRUE:
         res = RunShortcut(nutrDix['Log Algorithm'], input={'Date': date, 'Food': food})
         loggedFoods.append(res)
+    #endif
+#endfor
 
 # clearing foods notes and making preset
 if hasNotes == TRUE:
@@ -281,9 +310,12 @@ if hasNotes == TRUE:
             DeleteFile(file, deleteImmediately=True)
         case Strings['opts.no']:
             pass
+    #endmenu
+#endif
 
 Menu(Strings['logt.makepreset']):
     case Strings['opts.yes']:
         RunShortcut(nutrDix['Make Preset'], input={ 'foodsInfo': foodsInfo })
     case Strings['opts.no']:
         pass
+#endmenu

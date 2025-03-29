@@ -178,6 +178,8 @@ else:
             ]
         }
     """
+#endif
+
 dix = Dictionary($IFRESULT)
 datasets = dix['ds']
 
@@ -223,6 +225,8 @@ for repeatIndex in range(repeats):
 
                 # add to the total values for this nutrient
                 totalNutrDix[curNutrKey] = Number(totalNutrDix[curNutrKey]) + daySum
+            #endif
+        #endfor
 
         # save the total nutri dix
         totalDixes[curSet['id']] = totalNutrDix
@@ -245,6 +249,7 @@ for repeatIndex in range(repeats):
                 $IFRESULT = Calculate(calcResult * 100)
             else:
                 $IFRESULT = 0
+            #endif
             
             num = RoundNumber($IFRESULT, hundredths)
             langNutr = langMap[curNutrKey]
@@ -252,7 +257,8 @@ for repeatIndex in range(repeats):
             
             # get the label color for the nutrient
             labelColors.append(labelColorMap[curNutrKey])
-
+        #endfor
+        
         if plotNutrients == TRUE:
             nutrPlots.append({
                 'title': f'{curDate.format(date="long")} {curSet['title']}',
@@ -260,6 +266,9 @@ for repeatIndex in range(repeats):
                 'values': values,
                 'labelColors': labelColors
                 })
+        #endif
+    #endfor
+#endfor
 
 if averageBreakdown == TRUE:
     # we are generating data for the average across the date range not for each date range
@@ -284,6 +293,7 @@ if averageBreakdown == TRUE:
                 $IFRESULT = Calculate(calcResult * 100)
             else:
                 $IFRESULT = 0
+            #endif
 
             curPercent = RoundNumber($IFRESULT, hundredths)
 
@@ -296,6 +306,7 @@ if averageBreakdown == TRUE:
 
             # appends the appropriate color for th esystem
             averageColors.append(labelColorMap[curNutrKey])
+        #endfor
 
         $REPEATRESULTS.append({
             'title': f'{start.format(custom="MMM dd")} - {end.format(custom="MMM dd")} {curSet['avgTitle']}',
@@ -303,12 +314,13 @@ if averageBreakdown == TRUE:
             'values': averageValues,
             'labelColors': averageColors
         })
+    #endfor
 
     $IFRESULT = $REPEATRESULTS
-
 else:
     # return generated nutrPlots above
     $IFRESULT = nutrPlots
+#endif
 
 chartyPiePlots = $IFRESULT
 
@@ -316,8 +328,10 @@ chartyPiePlots = $IFRESULT
 res = {}
 res['calorieLabels'] = calorieLabels
 res['calorieValues'] = calorieValues
+
 if plotNutrients == TRUE:
     res['chartyPiePlots'] = chartyPiePlots
+#endif
 
 StopShortcut(output = res)
 

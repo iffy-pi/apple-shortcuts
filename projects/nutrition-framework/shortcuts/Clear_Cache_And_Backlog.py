@@ -11,6 +11,7 @@ if ShortcutInput is not None:
     $IFRESULT = ShortcutInput
 else
     $IFRESULT = { 'cache': True, 'backlog': True }
+#endif
 params = Dictionary($IFRESULT)
 
 TRUE = 1
@@ -23,6 +24,7 @@ hasHealthApp = FALSE
 file = GetFile(From='Shortcuts', f"{storage}/Other/env.json")
 if file['hasHealthApp'] is not None:
     hasHealthApp = file['hasHealthApp']
+#endif
 
 if params['backlog'] is not None:
     # clearing the backlog
@@ -33,10 +35,14 @@ if params['backlog'] is not None:
             dix = Dictionary(file)
             for item in dix['backlog']:
                 RunShortcut(shortcutNames["Log Algorithm"], input=item)
+            #endfor
 
             # erase the backlog
             file = GetFile(From='Shortcuts', f"{storage}/Other/backlog.json")
             DeleteFile(file, deleteImmediately=True)
+        #endif
+    #endif
+#endif
 
 
 if params['cache'] is not None:
@@ -51,6 +57,7 @@ if params['cache'] is not None:
             $IFRESULT = file
         else:
             $IFRESULT = {}
+        #endif
         history = Dictionary( $IFRESULT )
 
         # add items in cache to history
@@ -63,6 +70,7 @@ if params['cache'] is not None:
                 $IFRESULT = history[dayKey]
             else
                 $IFRESULT = {}
+            #endif
             dayDix = $IFRESULT
 
             timeList = dayDix[timeKey]
@@ -76,6 +84,7 @@ if params['cache'] is not None:
 
             dayDix[timeKey] = timeList
             history[dayKey] = dayDix
+        #endfor
 
         # save our history
         SaveFile(To='Shortcuts', history, f"{storage}/History/foodHistory.json", overwrite=True)
@@ -83,5 +92,7 @@ if params['cache'] is not None:
         # clear our cache by deleting the file
         file = GetFile(From='Shortcuts', f"{storage}/History/foodHistoryCache.json")
         DeleteFile(file, deleteImmediately=True)
+    #endif
+#endif
 
 

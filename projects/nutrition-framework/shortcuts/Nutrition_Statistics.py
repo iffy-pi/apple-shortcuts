@@ -34,6 +34,7 @@ Menu("Statistics"):
     case Strings['stats.menu.cals.breakdown']:
         makeCaloriePlot = TRUE
         plotNutrients = FALSE
+#endmenu
 
 start = AskForInput(Input.Date, prompt=Strings['stats.select.start'])
 
@@ -41,6 +42,7 @@ if getDateRange == TRUE:
     $IFRESULT = AskForInput(Input.Date, prompt=trings['stats.select.end'], default=start)
 else:
     $IFRESULT = start
+#endif
 
 end = $IFRESULT
 termEnd = AddToDate(end, days=1)
@@ -49,6 +51,7 @@ termEnd = AddToDate(end, days=1)
 repeats = TimeBetweenDates(start, termEnd, inDays=True)
 if repeats > 1:
     makeCaloriePlot = TRUE
+#endif
 
 dix = {
     'averageBreakdown': averageBreakdown,
@@ -65,12 +68,15 @@ if plotNutrients == TRUE:
         chartId = Charty.NewChart(plot['title'])
         seriesLabel = Charty.AddSeries(Strings['stats.graph.nutr'], chartId, 'Pie', values=plot['values'], labels=plot['labels'])
         Charty.StylePieSeries(seriesLabel, chartId, colors=plot['labelColors'], labels=plot['labels'])
+    #endfor
+#endif
 
 
 if makeCaloriePlot == TRUE:
     averageCals = CalculateStatistics("Average", stats['calorieValues'])
     for _ in range(repeats):
         averageCalValues.append(averageCals)
+    #endfor
 
     # create the chart
     updatedText = Strings['stats.graph.cals.title'].replace('$start', start.format(custom="MMM dd"))
@@ -79,6 +85,6 @@ if makeCaloriePlot == TRUE:
     Charty.AddSeries(Strings['stats.graph.cals.daily'], chartId, 'Line', xValues=stats['calorieLabels'], yValues=stats['calorieValues'])
     Charty.AddSeries(Strings['stats.graph.cals.avg'], chartId, 'Line', xValues=stats['calorieLabels'], yValues=averageCalValues)
     Charty.StyleAxis("X Axis", chartId, title=Strings['stats.graph.dates'], formatValuesAs='Date', options={'custom': 'd'})
-
+#endif
 OpenApp("Charty")
 

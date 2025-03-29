@@ -31,6 +31,7 @@ for item in files:
         END:VCARD
     '''
     $REPEATRESULTS.append(text)
+#endfor
 
 # Add cancel button
 text = f'''
@@ -51,9 +52,11 @@ selectedItems = ChooseFrom(contacts, prompt=Strings['recents.select'], selectMul
 for chosen in selectedItems:
     if chosen.Notes == 'Cancel':
         StopShortcut()
+    #endif
 
     file = GetFile(From='Shortcuts', f"{storage}/Recents/Foods/food_{chosen.Notes}.json")
     selectedFoods.append(Dictionary(file))
+#endfor
 
 StopShorcut(output = selectedFoods)
 

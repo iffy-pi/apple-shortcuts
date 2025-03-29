@@ -25,7 +25,7 @@ for i in range(15):
 		'''
 	else:
 		$IFRESULT = f'Plant Manager ({count} plants)'
-
+	#endif
 
 	Menu($IFRESULT):
 		case 'Water Plant':
@@ -40,7 +40,7 @@ for i in range(15):
 				'''
 				date = AskForInput(Input.Date, prompt=text)
 				groupWateringDate = Text(date.format(date=short, time=None))
-
+			#endif
 			
 			for plant in selected:
 				waterings = plantInfo[plant]['waterings']
@@ -54,19 +54,22 @@ for i in range(15):
 					'''
 				else:
 					$IFRESULT = f'Enter watering date for {plant}!'
+				#endif
 				
 				if groupWateringDate is None:
 					date = AskForInput(Input.Date, prompt=$IFRESULT)
 					wateringDate = Text(date.format(date=short, time=None))
 				else:
 					wateringDate = groupWateringDate
+				#endif
 
 				if prevWateringDate is not None:
 					if wateringDate != prevWateringDate:
 						AddToVariable(waterings, wateringDate)
+					#endif
 				else:
 					AddToVariable(waterings, wateringDate)
-
+				#endif
 
 				waterings = FilterFiles(waterings, sortBy='Name', order='A to Z')
 				plantDix = plantInfo[plant]
@@ -75,10 +78,10 @@ for i in range(15):
 				
 
 				$REPEATRESULTS.append(f"{plant}'s watering has been updated with new date: {wateringDate}")
+			#endfor
 
 			notification = TEXT($REPEATRESULTS)
 			saveFile = True
-
 
 		case 'View Summary':
 			text = RunShortcut('Plant Watering Summary', input=sortSummaryByName)
@@ -117,6 +120,8 @@ for i in range(15):
 							    | {daysBetween} days
 							{curWateringDate}
 							''')
+					#endif
+				#endfor
 
 				average = Round(CalculateStatistics('average', daysBetweenList), 'tenths')
 				appendix = f'({average} day average)'
@@ -130,13 +135,13 @@ for i in range(15):
 			else:
 				appendix = ''
 				$IFRESULT = f'No watering data for {plant}!'
+			#endif
 			
 			historyText = f'''
 				{plant} Watering History {apppendix}
 				{separator}
 				{$IFRESULT}
 			'''	
-
 			ShowResult(historyText)
 
 		case 'Add Plant':
@@ -156,11 +161,11 @@ for i in range(15):
 			filteredPlants = FilterFiles(plantInfo.keys, where=('Name' != plant))
 			for pl in filteredPlants:
 				newDix[pl] = plantInfo[pl]
+			#endfor
 
 			plantInfo = newDix
 			notification = f'Goodbye {plant}. You will be missed :(', title="Plant Removed"
 			saveFile = TRUE
-
 
 		case 'Edit Plant Name':
 			plantNames = FilterFiles(plantInfo.keys, sortBy='Name', order='A to Z')
@@ -174,6 +179,9 @@ for i in range(15):
 						breakLoop = TRUE
 					else:
 						ShowAlert(f'There is already a plant named "{newName}". Please select a different name.')
+					#endif
+				#endif
+			#endfor
 
 			updatedText = Text(plantInfo).replace(f'"{plant}":', f'"{newName}":')
 			plantInfo = Dictionary(plantInfo)
@@ -189,6 +197,7 @@ for i in range(15):
 
 			for wt in waterings:
 				$REPEATRESULTS.append(Text(Date(wt).format(date='medium', time='None')))
+			#endfor
 
 			newWateringList = $REPEATRESULTS
 
@@ -197,6 +206,7 @@ for i in range(15):
 
 			for wt in SplitText(updatedListText, byNewLines=True):
 				$REPEATRESULTS.append(Text(Date(wt).format(date='short'), time='None'))
+			#endfor
 
 			waterings = $REPEATRESULTS
 			waterings = FilterFiles(waterings, sortBy='Name', order='A to Z')
@@ -216,6 +226,7 @@ for i in range(15):
 			for plant in selected:
 				header = f'{plant},{header}'
 				plantCounts[plant] = Count(plantInfo[plant]['waterings'])
+			#endfor
 
 			maxCount = CalculateStatistics('maximum', plantCounts.values)
 
@@ -229,7 +240,10 @@ for i in range(15):
 						watering = plantInfo[plant]['watering']
 						curDate = GetItemFromList(watering, index=rowIndex)
 						line = f'{curDate},{line}'
+					#endif
+				#endfor
 				AddToVariable(table, row)
+			#endfor
 
 			data = f'''
 				{header}
@@ -244,10 +258,14 @@ for i in range(15):
 			else:
 				sortSummaryByName = TRUE
 				$IFRESULT = 'Watering Summary will be sorted by plant names'
+			#endif
 
 		case 'Exit':
 			StopShortcut()
+	#endmenu
 
 	if saveFile == TRUE:
 		SaveFile(plantInfo, To='Shortcuts', dataFile, overwrite=True)
 		SaveFile(plantInfo, To='Shortcuts', backupDataFile, overwrite=True)
+	#endif
+#endfor

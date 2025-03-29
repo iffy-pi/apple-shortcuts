@@ -11,6 +11,7 @@ if file is not None:
     $IFRESULT = file
 else:
     $IFRESULT = "0"
+#endif
 
 nextId = Number($IFRESULT)
 num = nextId + 1

@@ -27,6 +27,7 @@ if params['args'] is not None:
     $IFRESULT = params['args']
 else:
     $IFRESULT = RunShortcut(nutrDix['Select Saved Foods'], input=params)
+#endif
 selectedFoods = $IFRESULT
 
 # get the config for the given type from saved info, this includes the food folder as well as the prompt
@@ -49,14 +50,17 @@ for item in selectedFoods:
                     num = Calculate(num * mult)
                     num = RoundNumber(num, hundredths)
                     oldFood[item] = num
+                #endfor
 
                 oldFood['Serving Size'] = AskForInput(Input.Text, prompt=Strings['editfood.size.input'], default=f"{oldFood['Serving Size']}")
+            #endif
             
             $MENURESULT = oldFood
 
         case Strings['editfood.opt.edit']:
             # Edit foods with display food item
             $MENURESULT = RunShortcut(nutrDix['Display Food Item'], input=oldFood)
+    #endmenu
 
     newFood = $MENURESULT
     name = newFood['Name']
@@ -68,6 +72,7 @@ for item in selectedFoods:
         folder = GetFile(From='Shortcuts', f"{config['folder']}/Foods", errorIfNotFound=False)
         for food in GetContentsOfFolder(folder):
             foodNames.append(food['Name'])
+        #endfor
 
         breakLoop = FALSE
         for _ in range(10):
@@ -79,13 +84,19 @@ for item in selectedFoods:
                             name = AskForInput(Input.Text, prompt=Strings['editfood.name.new'])
                         case Strings['editfood.name.keep']:
                             breakLoop = TRUE
+                    #endmenu
                 else:
                     breakLoop = TRUE
+                #endif
+            #endif
+        #endfor
+    #endif
 
     newFood['Name'] = name
 
     # save the file
     SaveFile(To='Shortcuts', newFood, f"{config['folder']}/food_{foodId}.json", overwrite=True)
+#endfor
 
 # delete the cache since it is invalid
 file = GetFile(From='Shortcuts', f"{config['folder']}/vcardCache.txt", errorIfNotFound=False)

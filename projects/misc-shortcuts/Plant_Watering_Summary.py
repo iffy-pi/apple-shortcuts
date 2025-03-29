@@ -39,41 +39,45 @@ for plant in FilterFiles(plantInfo.keys, sortBy='Name', order='A to Z'):
 
 			# We use this fraction to select the emoji shown with the plant
 			if frac > 1:
-				$IFRESULT1 = 👹 # devil symbol
+				$IFRESULT2 = 👹 # devil symbol
 			else:
 				# If we log a watering date ahead of the current day, we can get negative numbers
 				# Regex expression just evaluates neagtive numbers to NaN which pulls a question mark from the symbol dictionary
 				updatedText = Text(frac).replace('-.*', 'NaN', regex=True, caseSensitive=False)
-				$IFRESULT1 = symbols[updatedText]
-
-			fracStr = $IFRESULT1
-	else:
-		# No previous watering information so no analysis can be performed
-		fracStr = '🔄' # question mark symbol
-		prevDaysStr = ''
-
+				$IFRESULT2 = symbols[updatedText]
+			#endif
+			
+			fracStr = $IFRESULT2
+		else:
+			# No previous watering information so no analysis can be performed
+			fracStr = '🔄' # question mark symbol
+			prevDaysStr = ''
+		#endif
 
 		# Frac str is the symbol for the plant
 		if sortSummaryByName == TRUE:
 			$IFRESULT1 = f'{plant}|{plant} - {fracStr} {days} days - {prevWateringDate} {prevDaysStr}'		
 		else:
-			$IFRESULT1 =  f'{days}|{fracStr} {days} days - {plant} - {prevWateringDate} {prevDaysStr}'						
-		
+			$IFRESULT1 =  f'{days}|{fracStr} {days} days - {plant} - {prevWateringDate} {prevDaysStr}'
+		#endif			
+			
 		$IFRESULT = $IFRESULT1
 	else:
 		if sortSummaryByName == TRUE:
 			$IFRESULT1 = f'|{plant} - ❔ N/A - N/A'
 		else:
 			$IFRESULT1 = f'|❔ N/A - {plant} - N/A'
-
-
+		#endif
 		$IFRESULT = $IFRESULT1
+	#endif
 	
-	AddToVariable(results, $IFRESULT)
+	$REPEATRESULTS.append($IFRESULT)
+#endfor
 
 for e in FilterFiles(results, sortBy='Name', order='Z to A'):
 	splitText = SplitText(e, custom='|')
 	$REPEATRESULTS.append(GetItemFromList(splitText, lastitem=True))
+#endfor
 
 text = f'''
 	{$REPEATRESULTS}

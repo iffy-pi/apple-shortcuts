@@ -33,6 +33,8 @@ if params['getFood'] is not None:
 
         case Strings['opts.cancel']:
             StopShortcut()
+    #endmenu
+#endif
 
 # scan the barcode
 barcode = Text(ScanBarcode())
@@ -47,10 +49,12 @@ else:
     folder = GetFile(From='Shortcuts', f'{storage}/Barcodes/Foods', errorIfNotFound=False)
     for item in GetContentsOfFolder(folder):
         barcodeCache[ item['Barcode'] ] = item['id']
+    #endfor
     
     SaveFile(To='Shortcuts', barcodeCache, f'{storage}/Barcodes/barcodeCache.json', overwrite=True)
     
     $IFRESULT = barcodeCache
+#endif
 
 barcodeCache = $IFRESULT
 
@@ -73,6 +77,9 @@ if barcodeCache[barcode] is not None:
                 DeleteFile(file, deleteImmediately=True)
             case Strings['opts.cancel']:
                 StopShortcut()
+        #endmenu
+    #endif
+#endif
 
 
 # if we get here that means we are creating a new food item
@@ -88,6 +95,7 @@ else:
     # query the API
     url = URL(f'https://world.openfoodfacts.org/api/v0/product/{barcode}.json')
     $IFRESULT = GetContentsOfURL(url)
+#endif
 
 res = Dictionary($IFRESULT)
 
@@ -153,12 +161,14 @@ if res['status'] == 1:
                 
                 case f'{Strings['opts.no'], Strings['barcode.searchmanual']}':
                     pass
-        
+            #endmenu
         case Strings['barcodes.searchmanual']:
             pass
         
         case Strings['opts.cancel']:
             StopShortcut()
+    #endmenu
+#endif
 
 if foodResolved == FALSE:
     # no match in database or in search so we continue
@@ -169,6 +179,8 @@ if foodResolved == FALSE:
             pass
         case Strings['opts.cancel']:
             StopShortcut()
+    #endmenu
+#endif
 
 if doSearch == TRUE:
     # perform search with search algorithm
@@ -176,16 +188,20 @@ if doSearch == TRUE:
     
     if outputFood is not None:
         foodResolved = TRUE
+    #endif
         
     Menu(Strings['barcodes.search.none']):
         case Strings['barcodes.exit.withnone']:
             StopShortcut()
         case Strings['foodslist.menu.manual']:
             pass
+    #endmenu
+#endif
 
 if foodResolved == FALSE:
     # otherwise we fall through to make food manually
     outputFood = RunShortcut(nutrDix['Make Food Manually'])
+#endif
 
 # save the new output food to database and then continue
 outputFood['Barcode'] = barcode

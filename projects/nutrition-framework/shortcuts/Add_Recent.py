@@ -14,6 +14,7 @@ food = Dictionary(Text(ShortcutInput))
 
 if food is None:
     StopShortcut()
+#endif
 
 nutrDix = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json"))
 
@@ -24,6 +25,7 @@ if food['id'] is not None:
     $IFRESULT = food['id']
 else:
     $IFRESULT = RunShorctut(nutrDix['GFID'])
+#endif
 
 foodId = $IFRESULT
 
@@ -40,4 +42,6 @@ if Count(files) > maxRecents:
     for _ in range(Count(files)-maxRecents):
         deletefile = files.getLastItem()
         DeleteFile(foodFile, deleteImmediately=True)
+    #endfor
+#endif
 

@@ -11,6 +11,7 @@ if ShortcutInput is not None:
 else:
     # the default food dictionary
     $IFRESULT = ... # the default food dictionary
+#endif
 foodDix = Dictionary($IFRESULT)
 
 
@@ -105,9 +106,11 @@ if dix is not None:
     newFoodDix = dix
     if foodDix['id'] is not None:
         newFoodDix['id'] = foodDix['id']
+    #endif
 
     if foodDix['Servings'] is not None:
         newFoodDix['Servings'] = foodDix['Servings']
+    #endif
 
     foodDix = newFoodDix
 else:
@@ -125,6 +128,10 @@ else:
             $IFRESULT = RoundNumber(num, hundredths)
         else:
             $IFRESULT = displayDix[field]
+        #endif
 
         foodDix[key] = $IFRESULT
+    #endfor
+#endif
+
 

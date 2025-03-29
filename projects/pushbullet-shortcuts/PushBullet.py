@@ -29,8 +29,10 @@ if ShortcutInput is None:
             exitAfterConfig = TRUE
         case 'Push the content on my clipboard':
             contents = Clipboard
+    #endmenu
 else:
     contents = ShortcutInput
+#endif
 
 
 file = GetFile(From='Shortcuts', filePaths['config'], errorIfNotFound=False)
@@ -41,12 +43,15 @@ if file is None:
     file = GetFile(From='Shortcuts', filePaths['token'], errorIfNotFound=False)
     if file is not None:
         config['access_token'] = Text(file)
+    #endif
 
     file = GetFile(From='Shortcuts', filePaths['premium'], errorIfNotFound=False)
     if file is not None:
         config['premium'] = Number(file)
+    #endif
 else:
     config = Dictionary(file)
+#endif
 
 configPrompts = f'''
     PushBullet Shortcut Settings
@@ -56,6 +61,7 @@ configPrompts = f'''
 
 if config.get('access_token') is None:
     configPrompts.append('The shortcut requires your PushBullet access token')
+#endif
 
 # if config.get('premium') is None:
 #     configPrompts.append('The shortcut needs to know if you pay for PushBullet Premium')
@@ -73,16 +79,18 @@ if openConfigMenu == TRUE:
 
         case 'I have/do not have PushBullet Premium...':
             Menu('Do you have PushBullet Premium?'):
-            case 'Yes':
-                $MENURESULT = TRUE
-            case 'No':
-                $MENURESULT = FALSE
+                case 'Yes':
+                    $MENURESULT = TRUE
+                case 'No':
+                    $MENURESULT = FALSE
+            #endmenu
             config['premium'] = $MENURESULT
 
         case 'Send pushes to device...':
             if config.get('access_token') is None:
                 ShowAlert('Access Token has not been configured')
                 StopShortcut()
+            #endmenu
             
             # Get the list of devices
             res = GetContentsOfURL('https://api.pushbullet.com/v2/devices', headers={'Access-Token': config['access_token']})
@@ -96,6 +104,7 @@ if openConfigMenu == TRUE:
                     END:VCARD
                 '''
                 $REPEATRESULTS.append(text)
+            #endfor
 
             text = f'''
                 {$REPEATRESULTS}
@@ -117,12 +126,15 @@ if openConfigMenu == TRUE:
 
         # case 'Push Item In Clipboard':
         #     exitAfterConfig = FALSE
+    #endmenu
 
     # Save the config file
     SaveFile(config, To='Shortcuts', filePaths['config'], overwrite=True)
 
     if exitAfterConfig == TRUE:
         StopShortcut()
+    #endif
+#endif
 
 # Set access token
 if config.get('access_token') is None:
@@ -134,18 +146,22 @@ if config.get('access_token') is None:
     StopShortcut()
 else:
     accessToken = config['access_token']
+#endif
 
 # Set premium status
 if config.get('premium') is None:
     $IFRESULT = -1
 else:
     $IFRESULT = Number(config.get('premium'))
+#endif
 pushbulletPremium = $IFRESULT
 
 targetIden = ''
 if config.get('target_device') is not None:
     if Text(config['target_device']) != '_all':
         targetIden = config['target_device']
+    #endif
+#endif
 
 remoteFiles = {
     'mime' : 'https://iffy-pi.github.io/apple-shortcuts/versioning/pushbullet/data/ext_to_mime.json',
@@ -215,6 +231,8 @@ for repeatItem in contents:
         matches = MatchText("(url)|(safari web page)", itemType, caseSensitive=False)
         if matches is not None:
             pushType = typeId['link']
+        #endif
+    #endif
 
     # do note
     # clipboard.c clipboard.46 clipboard.txt apple.txt "text"
@@ -230,6 +248,7 @@ for repeatItem in contents:
                 # if extension is all numbers and came from clipboard, most likely raw text
                 # otherwise, it will be treated as file
                 isRawText = TRUE
+            #endif
             
             # If txt extension or no extension treat as raw text
             res = FilterFiles(f".{itemFext}", whereAny=["Name" is ".txt", "Name" is "."])
@@ -237,11 +256,13 @@ for repeatItem in contents:
                 # if txt extension or no extension treat as raw text
                 # other extensions that are not all numbers will be treated as a file (fall through)
                 isRawText = TRUE
+            #endif
 
             # check if extension is all numbers
             extIsAllNumbers = MatchText("([0-9][0-9]*[^a-z])", itemFext, caseSensitive=False)
             if extIsAllNumbers is not None:
                 isRawText = TRUE
+            #endif
                 
 
             if isRawText == TRUE:
@@ -259,11 +280,17 @@ for repeatItem in contents:
                     # let user decide what to do
                     if SetSizeUnits(itemSize, 'KB') > 5:
                         pushType = -2
+                    #endif
+                #endif
+            #endif
+        #endif
+    #endif
 
     # do file
     if pushType == -1:
         # assume its file
         pushType = typeId['file']
+    #endif
 
     # user selects for negative values
     if pushType < 0:
@@ -306,6 +333,7 @@ for repeatItem in contents:
 
                             case "Back":
                                 exitLoop = FALSE
+                        #endmenu
 
                         # if the item mime type is none, then we have an errror
                         if Mime[itemFext] is not None:
@@ -313,31 +341,40 @@ for repeatItem in contents:
                         else
                             itemErrorCode = 5
                             itemErrorMsg = f"Extension: {itemFext}"
+                        #endif
 
                     case "Let me see the item first":
                         # reloop to give user options again
                         ShowResult(item)
                         exitLoop = FALSE
+                #endmenu
+            #endif
+        #endfor
+    #endif
 
     # ------------ HANDLE ITEM --------------
 
     if pushType == typeId['link']:
         if ChangeCase(itemType, 'lowercase') == 'safari web page':
             item = GetDetailsOfSafariWebPage('Page URL', item)
+        #endif
 
         itemPushBody['type'] = 'link'
         itemPushBody['url'] = item
+    #endif
 
     # note handlerz
     if pushType == typeId['note']:
         itemPushBody['type'] = 'note'
         itemPushBody['body'] = item
+    #endif
 
     # file handler
     if pushType == typeId['file']:
         if itemFext == 'heic':
             item = ConvertImage(item, "JPEG")
             itemFext = GetDetailsOfFiles("File Extension", item)
+        #endif
 
         goodFileSize = TRUE
 
@@ -350,9 +387,11 @@ for repeatItem in contents:
                         config['premium'] = TRUE
                     case "I don't have PushBullet Premium":
                         config['premium'] = FALSE
+                #endmenu
 
                 # we save the config here
                 SaveFile(config, To='Shortcuts', filePaths['config'], overwrite=True)
+            #endif
 
             if pushbulletPremium == FALSE:
                 Menu(f'''
@@ -365,20 +404,24 @@ for repeatItem in contents:
 
                     case "I don't have PushBullet Premium":
                         pass
+                #endmenu
+            #endif
 
             pushBulletPremium = config['premium']
             if pushbulletPremium == FALSE:
                 goodFileSize = FALSE
+            #endif
+        #endif
 
         if goodFileSize is FALSE:
             ShowAlert(f'{itemFname} cannot be pushed because it is larger than {maxNonPremiumFileSizeMB} and you do not have PushBullet Premium', showCancel=False)
             itemErrorCode = -1
-
         else
             # if file extension is not in mime, then treat as binary stream
             itemMimeType = Mime[itemFext]
             if itemMimeType is None:
                 itemMimeType = Mime['bin']
+            #endif
 
             itemFname = itemFname.replace(",", "")
 
@@ -402,7 +445,6 @@ for repeatItem in contents:
             if  text != '""':
                 itemErrorCode = 6
                 itemErrorMsg = text
-
             else
                 res = GetContentsOfURL(
                     uploadResponse['upload_url'],
@@ -427,6 +469,10 @@ for repeatItem in contents:
                     itemPushBody['file_name'] = uploadResponse['file_name']
                     itemPushBody['file_type'] = uploadResponse['file_type']
                     itemPushBody['file_url'] = uploadResponse['file_url']
+                #endif
+            #endif
+        #endif
+    #endif
 
     # push the item
     if itemErrorCode == 0:
@@ -458,6 +504,7 @@ for repeatItem in contents:
                 $IFRESULT = f' to {config['target_device_name']}'
             else:
                 $IFRESULT = ''
+            #endif
             deviceAppend = $IFRESULT
 
             # Successful push so notify user
@@ -465,18 +512,25 @@ for repeatItem in contents:
             
             if typ == 'note':
                 Notification(f'"{item}"', title=f'Text pushed successfully{deviceAppend}', attachment=item)
+            #endif
 
             if typ == 'link':
                 Notification(item, title=f'Link pushed successfully{deviceAppend}')
+            #endif
 
             if typ == 'file':
                 generalType = ReplaceText(GetTypeOf(item), 'Text', 'Text File')
                 Notification(itemPushBody['file_name'], title=f'{generalType} pushed successfully{deviceAppend}', attachment=item)
+            #endif
+        #endif
+    #endif
 
     # Report and collate errors
     if itemErrorCode > 0:
         text = f'Item Name: {itemFname}, Error Code: {itemErrorCode}, Message: "{itemErrorMsg}"'
         failedPushes.append(text)
+    #endif
+#endfor
 
 # Open all failed items in a note
 if Count("Items", failedPushes) > 0:
@@ -487,6 +541,7 @@ if Count("Items", failedPushes) > 0:
 
     note = CreateNote(text)
     OpenNote(note)
+#endif
 
 # Check for updates
 UpdateRes = GetContentsOfURL(UpdateInfo['updateLink'])
@@ -508,6 +563,8 @@ if Number(UpdateRes['version']) > UpdateInfo['version']:
 
         case 'Later':
             pass
+    #endmenu
+#endif
 
 
 

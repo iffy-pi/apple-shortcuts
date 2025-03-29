@@ -17,6 +17,7 @@ if file is not None:
     $IFRESULT = file
 else:
     $IFRESULT = {}
+#endif
 
 history = Dictionary($IFRESULT)
 
@@ -31,6 +32,9 @@ if dayDix is not None:
         for logItem in timeList:
             text = f'''{timeKey}: {logItem['servings']}x {logItem['food']} ({logItem['cals']} kCals)'''
             todaysLogs.append(text)
+        #endfor
+    #endfor
+#endif
 
 # Show foods logged today in menu prompt and then continue
 if Count(todaysLogs) > 0:
@@ -40,6 +44,7 @@ if Count(todaysLogs) > 0:
     '''
 else:
     $IFRESULT = Strings['history.foods.today.none']
+#endif
 
 prompt = $IFRESULT
 
@@ -69,13 +74,15 @@ Menu(prompt=prompt):
 
             case 'Back': # TODO translate this
                 StopShortcut()
+        #endmenu
 
         if useDateList == TRUE
             $IFRESULT = Count(dateList)
         else:
             $IFRESULT = TimeBetweenDates(start, end, inDays=True)
-        repeats = $IFRESULT
+        #endif
 
+        repeats = $IFRESULT
 
         for repeatIndex in range( repeats ):
             if useDateList == TRUE
@@ -86,6 +93,7 @@ Menu(prompt=prompt):
                 res = repeats - repeatIndex
                 res = AddToDate(start, res)
                 $IFRESULT = Text(res.format(custom="yyyy-MM-dd"))
+            #endif
 
             dayKey = $IFRESULT
             dayDix = history[dayKey] 
@@ -103,19 +111,25 @@ Menu(prompt=prompt):
                         resultsForDay.append( 
                             f'{logItem['servings']}x {logItem['food']} ({logItem['cals']} kCals) @ {dispTime}'
                         )
+                    #endfor
+                #endfor
                 
                 logResults.append(f'''
                         {dayKey.format(date='long')}
                         {resultsForDay}
                     ''')
+            #endif
+        #endfor
 
         # show results of the search
         if logResults is None:
             Alert(Strings['history.nofoods'], title=Strings['history.nofoods.title'], showCancel=False)
             StopShortcut()
+        #endif
 
         QuickLook(logResults)
 
     case 'Back': # TODO translate
         StopShortcut()
+#endmenu
 

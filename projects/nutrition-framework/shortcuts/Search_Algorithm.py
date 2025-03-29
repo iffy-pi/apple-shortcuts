@@ -117,7 +117,7 @@ for $REPEATINDEX in range(lineCount / 2):
             outputFood[nutrKey] = value
         #endif
     #endif
-#endrepeat
+#endfor
 
 OpenApp('Brave')
 
@@ -146,8 +146,8 @@ for $REPEATITEM in $options:
                 WaitToReturn()
             #endif
         #endif
-    #endrepeat
-#endrepeat
+    #endfor
+#endfor
 
 prompt = f'''
 {outputFood['Name']}
@@ -175,7 +175,7 @@ for i in range(10):
         case 'Discard food and exit':
             StopShortcut()
     #endmenu
-#endrepeat
+#endfor
 
 
 # Old search implementation still kept around --------------------------------------------------------------------------------------------------------------------------
@@ -198,6 +198,7 @@ query = AskForInput(Input.Text, prompt=Strings['search.query.instr'])
 updatedText = query.ReplaceText(' ', '')
 if updatedText is None:
     StopShortcut()
+#endif
 
 for _ in range (50):
     if searchExit == FALSE:
@@ -223,12 +224,14 @@ for _ in range (50):
 
             if Count(sizes) > 1:
                 servingSize = f"{servingSize} ({Strings['search.moresizes']})"
+            #endif
 
 
             if item['brand_name'] is not None:
                 $IFRESULT=f"{item['brand_name']} | {servingSize}"
             else:
                 $IFRESULT = f"{servingSize}"
+            #endif
 
             subtitle = $IFRESULT
 
@@ -244,6 +247,7 @@ for _ in range (50):
 
                 item['nutritional_contents'] = dix
                 searchItems[itemId] = item
+            #endif
 
             # only add the subtitle if all the relevant keys exist in the food
             res = FilterFiles(dix.keys, whereAny=[
@@ -260,6 +264,7 @@ for _ in range (50):
                 subtitle = f'''
                     {subtitle}\n{Strings['nutr.cals']}: {item['nutritional_contents.energy.value']} ⸱ {Strings['nutr.carbs']}: {item['nutritional_contents.carbohydrates']}g ⸱ {Strings['nutr.fat']}: {item['nutritional_contents.fat']}g ⸱ {Strings['nutr.protein']}: {item['nutritional_contents.protein']}g
                 '''
+            #endif
 
             # Add verifIcon if it is a best match
             files = FilterFiles(tags, whereAny=['Name' == 'canonical', 'Name' == 'best_match'])
@@ -267,6 +272,7 @@ for _ in range (50):
                 $IFRESULT = f' {verifIcon}'
             else:
                 $IFRESULT = ''
+            #endif
             
             text = f'''
             BEGIN:VCARD
@@ -278,6 +284,7 @@ for _ in range (50):
             '''
             
             $REPEATRESULTS.append(text)
+        #endfor
         itemCards = $REPEATRESULTS
 
         # Add next, previous, new search and cancel search buttons
@@ -334,6 +341,7 @@ for _ in range (50):
         if chosenItem.Notes == 'Next':
             isControlItem = TRUE
             pageNo = pageNo + 1
+        #endif
 
         if chosenItem.Notes == 'Prev':
             isControlItem = TRUE
@@ -341,15 +349,19 @@ for _ in range (50):
             if pageNo == 0:
                 Alert(Strings['search.warning.firstpage'])
                 pageNo = pageNo + 1
+            #endif
+        #endif
 
         if chosenItem.Notes == 'New':
             isControlItem = TRUE
             res = RunShorctut(NutriDix['Search Algorithm'])
             StopShortcut(output = res)
+        #endif
 
         if chosenItem.Notes == 'Cancel':
             isControlItem = TRUE
             StopShortcut()
+        #endif
         
         if isControlItem == FALSE:
             # then its not a control item
@@ -379,6 +391,7 @@ for _ in range (50):
                     END:VCARD
                     '''
                 $REPEATRESULTS.append(text)
+            #endfor
 
             if Count($REPEATRESULTS) == 1:
                 # if only one, skip selection
@@ -401,6 +414,7 @@ for _ in range (50):
                 contacts = GetContacts(renamedItem)
 
                 chosenSize = ChooseFrom(contacts, prompt=Strings['search.select.servingsize'])
+            #endif
 
 
             if chosenSize.Name != "Back"
@@ -444,6 +458,7 @@ for _ in range (50):
                     num = num * multiplier
                     num = RoundNumber(num, hundredths)
                     outputFood[item] = num
+                #endfor
 
                 prompt = f'''
                 Search Result:    
@@ -471,12 +486,17 @@ for _ in range (50):
                                 searchExit = TRUE
                             case Strings['search.item.backtosearch']:
                                 pass
-                    
+                        #endmenu
                     case Strings['search.opts.back.desc']:
                         pass
 
                     case Strings['search.opts.cancel.desc']:
                         StopShortcut()
+                #endmenu
+            #endif
+        #endif
+    #endif
+#endfor
 
 
 # used to generate id for shortcut
@@ -503,6 +523,7 @@ for item in vitDix.keys():
     num = Calculate(percentageVal /  100)
     num = Calculate(num * vitFullVal)
     outputFood[item] = RoundNumber(num, hundredths)
+#endfor
 
 StopShortcut(output = outputFood)
 

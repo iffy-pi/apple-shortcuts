@@ -32,6 +32,7 @@ if file is not None:
         {Strings['foodnotes']}:
         {file}
     '''
+#endif
 
 Menu(menuPrompt):
     case 'Select Date and Time': # TODO string for this
@@ -39,6 +40,7 @@ Menu(menuPrompt):
     case 'Back': # TODO translate this
         # Return to calling shortcut
         StopShortcut()
+#endmenu
 
 
 
@@ -53,6 +55,7 @@ for item in RunShortcut(shortcutNames["Foods List"]):
 
     res = RunShortcut(shortcutNames["Log Algorithm"], input=dix)
     loggedFoods.append(res)
+#endfor
 
 file = GetFile(From='Shortcuts', f"{storage}/Other/foodNotes.txt", errorIfNotFound=False)
 if file is not None:
@@ -61,6 +64,8 @@ if file is not None:
             DeleteFile(file, deleteImmediately=True)
         case Strings['opts.no']:
             pass
+    #endmenu
+#endif
 
 makePreset = TRUE
 
@@ -69,6 +74,8 @@ if Count(loggedFoods) == 1:
     file = GetFile(From='Shortcuts', f"{storage}/Presets/Foods/food_{loggedFoods['id']}.json")
     if file is not None:
         makePreset = FALSE
+    #endif
+#endif
 
 if makePreset == TRUE:
     Menu(Strings['logt.makepreset']):
@@ -76,4 +83,6 @@ if makePreset == TRUE:
             RunShortcut(shortcutNames["Make Preset"], input=loggedFoods)
         case Strings['opts.no']:
             pass
+    #endmenu
+#endif
 

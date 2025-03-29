@@ -33,16 +33,18 @@ if typeDir[ params['type']] is None:
     StopShortcut()
 else:
     config = savedInfo [ params['type'] ]
+#endif
 
 
 if params['deleteMode'] is not None:
     deleteMode = TRUE
-
+#endif
 
 if params['type'] == 'all':
     $IFRESULT = [ 'presets', 'barcodes' ]
 else:
     $IFRESULT = params['type']
+#endif
 searchTypes = $IFRESULT
 
 # Get the cache for each source
@@ -77,12 +79,15 @@ for curType in searchTypes:
 
             '''
             $REPEATRESULTS.append(text)
+        #endfor
 
         SaveFile(To='Shortcuts', Text($REPEATRESULTS), f"{storage}/{parentFolder}/vcardCache.txt", overwrite=True)
 
         $IFRESULT = Text($REPEATRESULTS)
+    #endif
 
     $REPEATRESULTS.append($IFRESULT.replace('$folder', prompt))
+#endfor
 
 vcardCache = Text($REPEATRESULTS)
 
@@ -112,11 +117,13 @@ if deleteMode == TRUE:
     $IFRESULT = Strings['savedfoods.select.prompt.delete'].replace('$folder', config['prompt'])
 else:
     $IFRESULT = Strings['savedfoods.select.prompt'].replace('$folder', config['prompt'])
+#endif
 
 selectedItems = ChooseFrom(choices, prompt=$IFRESULT, selectMultiple=True)
 for chosen in selectedItems:
     if chosen.Notes == 'Cancel':
         StopShortcut()
+    #endif
 
     dix = Dictionary(chosen.Notes)
 
@@ -134,9 +141,12 @@ for chosen in selectedItems:
             updatedText = Strings['savedfoods.delete.notif'].replace('$folder', {config['prompt']})
             updatedText = updatedText.replace('$name', food['Name'])
             Notification(updatedText)
+        #endif
     
         # add the food
         selectedFoods.append(food)
+    #endif
+#endfor
 
 if deleteMode == TRUE:
     # delete the cache since some foods were deleted
@@ -146,6 +156,8 @@ if deleteMode == TRUE:
     if params['type'] == 'barcodes':
         file = GetFile(From='Shortcuts', f"{storage}/{parentFolder}/barcodeCache.json", errorIfNotFound=False)
         DeleteFile(file, deleteImmediately=True)
+    #endif
+#endif
 
 StopShortcut(output = selectedFoods)
     

@@ -42,13 +42,15 @@ for i in range(20):
                                 RunShorctut("Make Preset", input=LoggedFoods2)
                             case Strings['opts.no']:
                                 pass
+                        #endmenu
 
                     case Strings['presets.make']:
                         RunShortcut(shortcutNames["Make Preset"], input=searchResult)
 
                     case Strings['opts.exit']:
                         pass
-
+                #endmenu
+            #endfor
         case Strings['presets']:
             breakPresetLoop = FALSE
             for _ in range(10):
@@ -64,10 +66,13 @@ for i in range(20):
                                     deletePresetCache = TRUE
                                 case Strings['opts.no']:
                                     pass
+                            #endmenu
+                        #endfor
 
                         if deletePresetCache == TRUE:
                             file = GetFile(From='Shortcuts', 'FLS/Presets/vcardCache.txt', errorIfNotFound=False)
                             DeleteFile(file, deleteImmediately=True)
+                        #endif
 
                     case Strings['presets.make']:
                         # run shortcutNames[foods list ]to get list of foods to be made into a preset
@@ -81,7 +86,8 @@ for i in range(20):
 
                     case Strings['search.opts.back']:
                         breakPresetLoop = TRUE
-
+                #endmenu
+            #endfor
         case Strings['barcodes']:
             breakPresetLoop = FALSE
             for _ in range(10):
@@ -97,10 +103,13 @@ for i in range(20):
                                     deletePresetCache = TRUE
                                 case Strings['opts.no']:
                                     pass
+                            #endmenu
+                        #endfor
 
                         if deletePresetCache == TRUE:
                             file = GetFile(From='Shortcuts', 'FLS/Barcodes/vcardCache.txt', errorIfNotFound=False)
                             DeleteFile(file, deleteImmediately=True)
+                        #endif
                     
                     case Strings['barcodes.add']:
                         RunShortcut(shortcutNames["Barcode Search"])
@@ -113,11 +122,14 @@ for i in range(20):
 
                     case Strings['search.opts.back']:
                         breakPresetLoop = TRUE
-        
+                #endmenu
+            #endfor
         case Strings['recents']:
             for item in RunShortcut(shortcutNames["Get Recent"]):
                 RunShortcut(shortcutNames["Display Food Item"], input=item)
-
+            #endif
         case Strings['search.opts.back']: # TODO update to opts.back, every instance in this file
             StopShortcut()
+    #endmenu
+#endfor
 

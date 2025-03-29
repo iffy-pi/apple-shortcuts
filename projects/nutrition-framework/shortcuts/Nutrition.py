@@ -21,6 +21,8 @@ if storageFile is not None:
     stringsFile = GetFile(From='Shortcuts', f"{text}/Other/shortcutNames.json", errorIfNotFound=False)
     if stringsFile is not None:
         Strings = Dictionary(stringsFile)
+    #endif
+#endif
 
 # If the dictionary is empty then we go online to get the language
 if Count(Strings.keys) == 0:
@@ -30,6 +32,7 @@ if Count(Strings.keys) == 0:
     item = ChooseFromList(langs.Keys)
     selectedLang = langs[item]
     Strings = Dictionary(GetContentsOfURL(f'https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/{selectedLang}'))
+#endif
 
 
 if storageFile is not None:
@@ -38,6 +41,7 @@ if storageFile is not None:
 else:
     Alert(Strings['nutr.setconfig'].replace('$config', Strings['installer.action.config']), showCancel=False)
     StopShortcut()
+#endif
 
 checkForUpdates = TRUE
 exitAfterQuickLog = TRUE
@@ -75,10 +79,13 @@ matches = MatchText(deviceModel, "(iPhone)")
 
 if matches is not None:
     hasHealthApp = TRUE
+#endif
 
 if deviceModel == 'iPad':
     if GetDeviceDetails('System Version') >= 17:
         hasHealthApp = TRUE
+    #endif
+#endif
 
 # save the state of the health app to environment
 file = GetFile(From='Shortcuts', f"{storage}/Other/env.json", errorIfNotFound=False)
@@ -97,9 +104,11 @@ if env['permsEnabled'] is None:
         RunShortcut(shortcutNames['Log Algorithm'], input={'setPerms': True})
         env['permsEnabled'] = TRUE
         SaveFile(To='Shortcuts', env, f"{storage}/Other/env.json", overwrite=True)
+    #endif
+#endif
 
 
-
+for _ in range(50):
     if hasHealthApp == FALSE:
         $IFRESULT = Strings['nutr.backlog.notif'].replace('$device', deviceModel)
     else:
@@ -119,6 +128,7 @@ if env['permsEnabled'] is None:
             $IFRESULT = Round (total, "hundredths")
         else:
             $IFRESULT = 0
+        #endif
 
         calsToday = $IFRESULT
 
@@ -131,8 +141,10 @@ if env['permsEnabled'] is None:
                 {prompt}
                 {Strings['nutr.backlog.nonempty']}
             """
+        #endif
 
         $IFRESULT = prompt
+    #endif
 
     prompt = $IFRESULT
 
@@ -143,6 +155,7 @@ if env['permsEnabled'] is None:
         {Strings['foodnotes']}:
         {file}
         '''
+    #endif
 
     Menu(prompt):
         case Strings['nutr.menu.quicklog']:
@@ -155,6 +168,7 @@ if env['permsEnabled'] is None:
                 # translates to set dictionary value in curFood and then set dictionary
                 curFood['Servings'] = Number(AskForInput(updatedText, Input.Number, default=1, allowDecimalNumbers=True, allowNegativeNumbers=False))
                 $REPEATRESULTS.append(curFood)
+            #endfor
 
             # we log foods in different iteration to fast track user input
             for item in RunShortcut(shortcutNames['Get Recent']):
@@ -165,9 +179,11 @@ if env['permsEnabled'] is None:
                     'Food': dix(curFood)
                 })
                 RunShortcut(shortcutNames["Log Algorithm"], input=dix)
+            #endfor
 
             if Number(exitAfterQuickLog) == TRUE:
                StopShortcut()
+            #endif
 
         case Strings['nutr.menu.logattime']:
             RunShortcut(shortcutNames["Log Foods At Time"])
@@ -194,6 +210,7 @@ if env['permsEnabled'] is None:
                     if hasHealthApp == FALSE:
                         Alert(Strings['nutr.stats.nocharty'])
                         StopShortcut()
+                    #endif
 
                     RunShortcut(shortcutNames["Nutrition Statistics"])
 
@@ -203,11 +220,13 @@ if env['permsEnabled'] is None:
                     file = GetFile(From='Shortcuts', f"{storage}/Other/backlog.json", errorIfNotFound=False)
                     if file is not None
                         ShowAlert(Strings['nutr.history.backlog.nonempty'], showCancel=True)
+                    #endif
                     
                     RunShortcut(shortcutNames["Food History"])
 
                 case 'Back': #TODO string for this
                     pass
+            #endmenu
 
         case Strings['nutr.menu.othersettings']:
             Menu(Strings['nutr.menu.othersettings']):
@@ -238,11 +257,15 @@ if env['permsEnabled'] is None:
                                     newStorage = AskForInput(Input.Text, updatedText)
                                 else
                                     breakLoop = TRUE
+                                #endif
+                            #endif
+                        #endfor
 
                         folder = GetFile(From='Shortcuts', storage)
                         RenameFile(folder, newStorage)
                         storage = newStorage
                         SaveFile(To='Shortcuts', storage, "Nutrition_Shortcut_Storage_Folder_Name.txt", overwrite=True)
+                    #endif
 
                 case Strings['nutr.lang.change']:
                     langs = Dictionary(GetContentsOfURL('https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/language_options.json'))
@@ -260,9 +283,12 @@ if env['permsEnabled'] is None:
 
                 case 'Back': # TODO make string for this
                     pass
+            #endmenu
 
         case 'Exit': # TODO string this
             RunShortcut(shortcutNames['Clear Cache and Backlog'])
             RunShortcut(shortcutNames["Installer"], input={'updateCheck': True})
             StopShortcut()
+    #endmmenu
+#endfor
 

@@ -86,6 +86,7 @@ newFood = Dictionary(Text('{"Serving Size":"","Protein":0,"Trans":0,"Barcode":"0
 
 if (note := FindNotes('All Notes', where=['Name' == noteTitle])) is not None:
     DeleteNotes(note)
+#endif
 
 
 note = CreateNote(contents=noteTemplate, name=noteTitle)
@@ -118,13 +119,19 @@ for line in lines:
                         $IFRESULT3 = AskForInput(Input.Number, prompt=f'Value "{value}" for '{displayName}' could not be converted into a number. Please enter value below.', allowDecimals=True, allowNegatives=False)
                     else:
                         $IFRESULT3 = 0
+                    #endif
                     $IFRESULT2 = $IFRESULT3
                 else:
                     $IFRESULT2 = GetNumbersFromInput(value)
+                #endif
                
                 $IFRESULT = $IFRESULT2
+            #endif
 
             newFood[nutrKey] = $IFRESULT
+        #endif
+    #endif
+#endfor
 
 outputFood = Dictionary(newFood)
 
@@ -154,6 +161,9 @@ for i in range(10):
 
             case 'Discard food and exit':
                 StopShortcut()
+        #endmenu
+    #endif
+#endfor
 
 
 foodDix = newFood
@@ -161,6 +171,7 @@ foodDix = newFood
 
 for key in exactValDix:
     $REPEATRESULTS.append(Number(foodDix[key]))
+#endfor
 
 calcResult = CalculateStatistics('Sum', $REPEATRESULTS)
 
@@ -172,9 +183,11 @@ if calcResult > 0:
         case Strings['manual.vtype.percentages']:
             # Is daily percentages
             $MENURESULT = 1
+    #endmenu
     $IFRESULT = $MENURESULT
 else:
     $IFRESULT = 0
+#endif
 
 if $IFRESULT == 1:
     # Vitamins were in daily percentages convert to exact values
@@ -183,6 +196,8 @@ if $IFRESULT == 1:
         num = Calculate(num * exactValDix[vitKey])
         num = RoundNumber(num)
         foodDix[vitKey] = num
+    #endfor
+#endif
 
 # check to make sure food has a name and a serving size
 text = f'[{foodDix['Name']}]'
@@ -190,6 +205,7 @@ if text != '[]':
     $IFRESULT = foodDix['Name']
 else:
     $IFRESULT = AskForInput(Input.Text, Strings['manual.input.name'], allowMultipleLines=False)
+#endif
 name = $IFRESULT
 
 text = f'[{foodDix['Serving Size']}]'
@@ -197,6 +213,7 @@ if text != '[]':
     $IFRESULT = foodDix['Serving Size']
 else:
     $IFRESULT = AskForInput(Input.Text, Strings['manual.input.size'], allowMultipleLines=False)
+#endif
 servingSize = $IFRESULT
 
 # Generate food ID for food

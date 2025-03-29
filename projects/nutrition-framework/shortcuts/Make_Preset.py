@@ -27,9 +27,11 @@ if shortcutInput is not None:
     item = shortcutInput.getItemAtIndex(1)
     if item['foodsInfo'] is not None:
         foodsInfo = item['foodsInfo']
+    #endif
 else:
     # there is no input so use Foods List, with optimization
     foodsInfo = RunShortcut(nutrDix['Foods List'], input={ 'passToBulkEntry': True})
+#endif
 
 
 if foodsInfo is not None:
@@ -43,6 +45,8 @@ else:
         foodsDix[nextId] = item
         selectedIds.append(nextId)
         nextId = nextId+1
+    #endfor
+#endif
 
 file = GetFile(From='Shortcuts', f'{storage}/Other/nutriKeys.txt')
 nutriKeys = SplitText(file, '\n')
@@ -53,6 +57,7 @@ breakLoop = FALSE
 folder = GetFile(From='Shortcuts', f"{storage}/Presets/Foods", errorIfNotFound=False)
 for file in GetContentsOfFolder(folder):
     presetNames.append(file['Name'])
+#endfor
 
 for _ in Count(selectedIds):
     if breakLoop == FALSE:
@@ -69,6 +74,7 @@ for _ in Count(selectedIds):
             END:VCARD
             '''
             $REPEATRESULTS.append(text)
+        #endfor
 
         contacts = macros.textToContacts($REPEATRESULTS)
 
@@ -79,6 +85,7 @@ for _ in Count(selectedIds):
             '''
         else:
             $IFRESULT = Strings['makepreset.select.foods']
+        #endif
 
         text = f'''
             {$IFRESULT}
@@ -105,9 +112,11 @@ for _ in Count(selectedIds):
                 askForServings = FALSE
                 if confirmServings == TRUE:
                     askForServings = TRUE
+                #endif
 
                 if curFood['Servings'] is None:
                     askForServings = TRUE
+                #endif
 
                 if askForServings == TRUE:
                     updatedText = Strings['ask.for.servings']
@@ -117,6 +126,7 @@ for _ in Count(selectedIds):
                                 default=curFood['Servings'], allowDecimals=True, allowNegatives=False)
                 else:
                     $IFRESULT = curFood['Servings']
+                #endif
                 
                 servings = Number($IFRESULT)
 
@@ -128,12 +138,15 @@ for _ in Count(selectedIds):
                     calcResult = Calculate(calcResult + presetValue)
                     num = RoundNumber(calcResult, hundredths)
                     presetFood[nutr] = num
+                #endfor
+            #endfor
 
 
             # now presetFood will have all the items
             if Count(chosenIds) > 1:
                 defaultSize = ''
                 defaultName = ''
+            #endif
 
             # Check if the current name already exists as a preset, and prompt user if it does
             name = AskForInput(Input.Text, prompt=Strings['makepreset.input.name'], default=defaultName)
@@ -149,9 +162,14 @@ for _ in Count(selectedIds):
                                     name = AskForInput(Input.Text, prompt=Strings['editfood.name.new'])
                                 case Strings['editfood.name.keep']:
                                     breakNameLoop = TRUE
+                            #endmenu
                         else:
                             presetNames.append(name)
                             breakNameLoop = TRUE
+                        #endif
+                    #endif
+                #endfor
+            #endif
 
             servingSize = AskForInput(Input.Text, prompt=Strings['makepreset.input.size'], default=defaultSize)
 
@@ -168,9 +186,11 @@ for _ in Count(selectedIds):
                 Strings['makepreset.notif.msg'].replace('$name', presetFood['Name']),
                 title=Strings['makepreset.notif.title']
                 )
-
         else:
             breakLoop = TRUE
+        #endif
+    #endif
+#endfor
 
 # delete the cache since it is invalid
 file = GetFile(From='Shortcuts', f"{storage}/Presets/vcardCache.txt", errorIfNotFound=False)

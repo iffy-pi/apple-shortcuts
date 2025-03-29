@@ -23,6 +23,7 @@ if accessToken is None:
 	accessToken = AskForInput(Input.Text, 'Enter PushBullet Access Token')
 	config['access_token'] = accessToken
 	SaveFile(config, To='Shortcuts', constants['cfgFile'], overwrite=True)
+#endif
 
 
 itemCount = AskForInput(Input.Number, prompt='How many items would you like to pull?', allowDecimals=False, allowNegatives=False)
@@ -44,10 +45,11 @@ for pushObject in pushes:
 		textContent = Text(GetContentsOfURL(pushObject['file_url']))
 		pushObject['body'] = textContent
 		pushObject['type'] = 'note'
+	#endif
 
 	pushDix[pushObject['iden']] = pushObject
 	pushIdens.append(pushObject['iden'])
-
+#endfor
 
 vcardCache = {}
 
@@ -70,10 +72,12 @@ for curIden in pushIdens:
 	if pushTypeRaw == 'note':
 		pushObjName = Text(pushObject['body'])
 		icon = textIcon
+	#endif
 
 	if pushTypeRaw == 'link':
 		pushObjName = Text(pushObject['url'])
 		icon = linkIcon
+	#endif
 
 	if pushTypeRaw == 'file':
 		pushObjName = Text(pushObject['file_name'])
@@ -85,15 +89,19 @@ for curIden in pushIdens:
 					| ConvertImage(_, 'JPEG', quality=0.3) 
 					| Base64Encode(_, lineBreaks='None') 
 					| f'PHOTO;ENCODING=b;TYPE=JPEG:{_}'
+		#endif
+	#endif
 
 	# Limiting the contact name size
 	splitText = SplitText(pushObjName, byNewLines=True)
 	if Count(splitText) > 1:
 		pushObjName = f'{splitText.getItemFromList(1)}...'
+	#endif
 
 	charList = SplitText(pushObjName, everyCharacter=True)
 	if Count(charList) > 50:
 		pushObjName = charList.GetItemRange(1, 47) | CombineText(_, '') | f'{_}...'
+	#endif
 
 	pushObjName = pushObjName.replace(';', r'\;')
 
@@ -107,6 +115,7 @@ for curIden in pushIdens:
 		END:VCARD
 	'''
 	vcardCache[curIden] = text
+#endfor
 
 continueLoop = TRUE
 
@@ -114,6 +123,7 @@ for _ in range(itemCount):
 	if continueLoop == TRUE:
 		for item in pushIdens:
 			$REPEATRESULTS.append(vcardCache[item])
+		#endfor
 
 		contacts = Text($REPEATRESULTS) | SetName(_, 'vcard.vcf') | GetContactsFromInput(_)
 
@@ -130,21 +140,26 @@ for _ in range(itemCount):
 			
 			if pushType == 'note':
 				content = pushObject['body']
+			#endif
 
 			if pushType == 'link'
 				content = pushObject['url']
+			#endif
 
 			if pushType == 'file'
 				content = GetContentsOfURL(pushObject['file_url']) | SetName(_, pushObject['file_name'], dontIncludeExtension=True)
+			#endif
 
 			pushIdens = pushIdens.filter(x -> x.Name != curIden)
 
 			$REPEATRESULTS.append(content)
+		#endif
 
 		if Count($REPEATRESULTS) > 0:
 			Share($REPEATRESULTS)
 		else:
 			continueLoop = FALSE
+		#endif
 
 		if (count := Count(pushIdens)) == 0:
 			continueLoop = FALSE
@@ -153,13 +168,15 @@ for _ in range(itemCount):
 				$IFRESULT = 'is still 1 push that has'
 			else:
 				$IFRESULT = f'are still {count} that have'
+			#endif
 
 			Menu(prompt=f'There {$IFRESULT} not been saved. What would you like to do?'):
 				case "Exit, I've saved the pushes I wanted":
 					continueLoop = FALSE
 				case "Go back, I want to save more pushes":
 					pass
-
+			#endmenu
+		#endif
 	else:
 		updateRes = GetContentsOfURL(updateInfo['updateLink'])
 		if Number(updateRes['version']) > updateInfo['version']:
@@ -189,6 +206,8 @@ for _ in range(itemCount):
             '''
             note = CreateNote(Text)
             OpenNote(note)
-
+		#endif
         StopShortcut()
+	#endif
+#endfor
 

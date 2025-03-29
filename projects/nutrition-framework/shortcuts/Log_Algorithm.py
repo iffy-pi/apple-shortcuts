@@ -26,6 +26,7 @@ if ShortcutInput['setPerms'] is not None:
     }
 else:
     $IFRESULT = f'{ShortcutInput}'
+#endif
 
 res = Dictionary($IFRESULT)
 
@@ -38,6 +39,7 @@ if foodDix['Servings'] is not None:
 else:
     updatedText = Strings['ask.for.servings'].replace('$name', foodDix['Name']).replace('$size', foodDix['Serving Size'])
     $IFRESULT = AskForInput(InputTypes.Number, updatedText, allowNegatives=False, allowDecimals=True)
+#endif
 
 num = Number($IFRESULT)
 foodDix['Servings'] = num
@@ -54,6 +56,7 @@ if hasHealthApp == FALSE:
         if setPerms == TRUE:
             Alert(Strings['loga.healthperms.baddevice'], Title=Strings['loga.healthperms.title'])
             StopShortcut()
+        #endif
     
     updatedText = Strings['loga.backlog.title'].replace('$name', foodDix['Name'])
     Notification(
@@ -68,6 +71,7 @@ if hasHealthApp == FALSE:
         $IFRESULT = Dictionary(file)
     else:
         $IFRESULT = { 'backlog': [] }
+    #endif
 
     backlog = $IFRESULT['backlog']
 
@@ -112,6 +116,8 @@ else:
 
         Alert(Strings['loga.healthperms.complete'], showCancel=False, Title=Strings['loga.healthperms.title'])
         StopShortcut()
+    #endif
+#endif
 
 
 # nutrients will be the dictionary of nutrients that have values above our threshold
@@ -123,6 +129,7 @@ if setPerms == TRUE:
     $IFRESULT = -1
 else:
     $IFRESULT = 0
+#endif
 threshold = $IFRESULT
 
 file = GetFile(From='Shortcuts', 'FLS/Other/nutriKeys.txt')
@@ -134,6 +141,8 @@ for item in SplitText(file, ByNewLines):
         num = num * servings
         num = Round(num, "hundredths")
         nutrients[item] = num
+    #endif
+#endfor
 
 # Log nutrients
 nutrients['Date'] = loggingDate
@@ -155,6 +164,7 @@ if file is not None:
     $IFRESULT = Text(file)
 else:
     $IFRESULT = "{ 'cache': [] }"
+#endif
 
 res = Dictionary($IFRESULT)
 cache = res['cache']

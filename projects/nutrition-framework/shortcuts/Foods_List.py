@@ -41,6 +41,7 @@ if params['calculator'] is not None:
     $IFRESULT = 'Exit Calculator' # TODO translate this
 else:
     $IFRESULT = Strings['foodslist.menu.done']
+#endif
 doneOpt = $IFRESULT
 
 
@@ -54,6 +55,7 @@ if file is not None:
     '''
     notes = $IFRESULT
     hasNotes = TRUE
+#endif
 
 for _ in range(maxLoops):
     if breakLoop == FALSE:
@@ -70,6 +72,7 @@ for _ in range(maxLoops):
             food = foodsDix[listId]
             cals = RoundNumber(food['Calories'] * food['Servings'], 'Hundredths')
             $REPEATRESULTS.append(f'{food['Servings']}x {food['Name']} ({cals} kcal)')
+        #endfor
 
         if $REPEATRESULTS is not None:
             # Is on the same line because stats already has new line in it
@@ -81,6 +84,7 @@ for _ in range(maxLoops):
             $IFRESULT = f'''
             {Strings['foodslist.foods.empty']}
             '''
+        #endif
         prompt = $IFRESULT
         
         # append our food notes if they are any
@@ -89,12 +93,14 @@ for _ in range(maxLoops):
                 {notes}
                 {prompt}
             '''
+        #endif
 
         if params['inputPrompt'] is not None:
             prompt = f'''
             {params['inputPrompt']}
             {prompt}
             '''
+        #endif
 
         addMenuResult = TRUE
 
@@ -114,11 +120,14 @@ for _ in range(maxLoops):
                         StopShortcut(output = dix)
                     else:
                         StopShortcut(output = dix)
+                    #endif
                 else:
                     for listId in selectedIds:
                         food = foodsDix[listId]
                         $REPEATRESULTS.append(food)
+                    #endfor
                     StopShortcut(output = $REPEATRESULTS)
+                #endfor
 
             case Strings['foodslist.menu.search']:
                 $MENURESULT = RunShortcut(nutrDix['Search Algorithm'])
@@ -151,6 +160,7 @@ for _ in range(maxLoops):
                         END:VCARD
                     '''
                     $REPEATRESULTS.append(text)
+                #endfor
 
                 # cancel contact card
                 text = f'''
@@ -193,7 +203,9 @@ for _ in range(maxLoops):
                                     RunShortcut(nutrDix['Add Recent'], input=changedFood)
                                 case Strings['opts.no']:
                                     pass
-
+                            #endmenu
+                    #endmenu
+                #endif
             case Strings['foodslist.menu.remove']:
                 addMenuResult = FALSE
                 # Remove selection
@@ -208,6 +220,7 @@ for _ in range(maxLoops):
                     END:VCARD
                     '''
                     $REPEATRESULTS.append(text)
+                #endfor
 
                 text = Text($REPEATRESULTS)
                 renamedItem = SetName(text, 'vcard.vcf')
@@ -219,6 +232,7 @@ for _ in range(maxLoops):
                     listId = Contact(delete).Notes
                     # remove it from the list
                     selectedIds = FilterFiles(selectedIds, where=['Name' != listId])
+                #endfor
 
             case 'View Total Nutrients': #TODO add this to the String dictionary
                 addMenuResult = FALSE
@@ -231,8 +245,11 @@ for _ in range(maxLoops):
                         foodVal = foodsDix[listId][nk]
                         servings = foodsDix[listId]['Servings']
                         $REPEATRESULTS.append(foodVal * servings)
+                    #endfor
                     if $REPEATRESULTS is not None:
                         outputFood[nk] = RoundNumber(CalculateStatistics('Sum', $REPEATRESULTS), 'Hundredths')
+                    #endif
+                #endfor
 
                 prompt = f'''
                 Total Nutrients
@@ -249,6 +266,7 @@ for _ in range(maxLoops):
                 Menu(prompt):
                     case 'OK':
                         pass
+                #endmenu
 
             case 'Pause': # TODO translate this
                 Alert(title='Shortcut Paused', body="The shortcut has been paused. When you're ready, open the Shortcuts app and the shortcut will continue running.", showCancel=False)
@@ -256,6 +274,7 @@ for _ in range(maxLoops):
 
             case 'Back':
                 StopShortcut()
+        #endmenu
 
         if addMenuResult == TRUE:
             # add the foods to our selected foods
@@ -281,9 +300,12 @@ for _ in range(maxLoops):
                 nextId = nextId + 1
 
                 $REPEATRESULTS.append(GetVariable(food))
+            #endfor
 
             for food in $REPEATRESULTS:
                 RunShortcut(nutrDix['Add Recent'], input=food)
+            #endfor
+        #endif
 
 
         for sk in sumStats.keys
@@ -291,7 +313,11 @@ for _ in range(maxLoops):
                 foodVal = foodsDix[listId][sk]
                 servings = foodsDix[listId]['Servings']
                 $REPEATRESULTS.append(foodVal * servings)
+            #endfor
 
             sumStats[sk] = RoundNumber(CalculateStatistics('Sum', $REPEATRESULTS), 'Hundredths')
+        #endfor
+    #endif
+#endfor
 
                 

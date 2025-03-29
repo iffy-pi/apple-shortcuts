@@ -68,6 +68,8 @@ if storageFile is not None:
     stringsFile = GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.json", errorIfNotFound=False)
     if stringsFile is not None:
         Strings = Dictionary(stringsFile)
+    #endif
+#endif
 
 
 # If the dictionary is empty then we go online to get the language
@@ -77,6 +79,7 @@ if Count(Strings.keys) == 0:
     item = ChooseFromList(langs.Keys, prompt='Select a language')
     selectedLang = langs[item]
     Strings = Dictionary(GetContentsOfURL(f'https://iffy-pi.github.io/apple-shortcuts/public/nutrition/languages/{selectedLang}'))
+#endif
 
 
 if storageFile is not None:
@@ -84,6 +87,7 @@ if storageFile is not None:
     SaveFile(To='Shortcuts', Strings, f"{storage}/Other/gui_strings.json", overwrite=True)
 else:
     freshConfig = TRUE
+#endif
 
 
 if params['updateCheck'] is not None:
@@ -97,6 +101,8 @@ else:
             newInstall = FALSE
             freshConfig = TRUE
             exitAfterConfig = TRUE
+    #endmenu
+#endif
 
 
 if freshConfig == TRUE:
@@ -114,6 +120,8 @@ if freshConfig == TRUE:
                 blockIfFolderExists = FALSE
             case Strings['installer.storage.create']:
                 newStorage = AskForInput(Input.Text, prompt=Strings['installer.storage.input'], default='Nutrition')
+        #endmenu
+    #endif
 
     if blockIfFolderExists == TRUE:
         breakLoop = FALSE
@@ -124,6 +132,10 @@ if freshConfig == TRUE:
                     newStorage = AskForInput(Input.Text, prompt=updatedText)
                 else:
                     breakLoop = TRUE
+                #endif
+            #endif
+        #endfor
+    #endif
 
     storage = newStorage
 
@@ -132,14 +144,18 @@ if freshConfig == TRUE:
 
     if newInstall == TRUE:
         Alert(Strings['installer.storage.info'], showCancel=False)
+    #endif
+#endif
 
 
 if exitAfterConfig == TRUE:
     StopShortcut()
+#endif
 
 
 if params['useTest'] is not None:
     updateInfo['updateLink'] = 'https://iffy-pi.github.io/apple-shortcuts/versioning/nutrition/testupdates.json'
+#endif
 
 if newInstall == TRUE:
     # If we are doing a new install, we have to save the shortcutNames
@@ -155,6 +171,7 @@ if newInstall == TRUE:
 
     # reset child vers to 0
     childVers = {}
+#endif
 
 updateRes = Dictionary(GetContentsOfURL(updateInfo['updateLink']))
 
@@ -181,6 +198,10 @@ if Number(updateRes['version']) > updateInfo['version']:
                     
                     case Strings['opts.exit']:
                         StopShortcut()
+                #endmenu
+            #endif
+        #endfor
+    #endif
 
 
     if proceedWithUpdates == TRUE:
@@ -195,6 +216,7 @@ if Number(updateRes['version']) > updateInfo['version']:
         if newInstall == FALSE:
             updateText.append(f"- Nutrition Installer: v{updateInfo['version']} {emojiUnicodes['arrow']} v{updateRes['version']}")
             updateLinks.append(f"- Nutrition Installer - [Download]({updateRes['link']})")
+        #endif
 
         for child in updateRes['children']:
             curVer = childVers[ child['id'] ]
@@ -202,6 +224,8 @@ if Number(updateRes['version']) > updateInfo['version']:
             if Number(child['version']) > Number(curVer):
                 updateText.append(f"- {child['name']}: v{curVer} {emojiUnicodes['arrow']} v{child['version']}")
                 updateLinks.append(f"- {child['name']} - [Download]({child['link']})")
+            #endif
+        #endfor
 
         date = Date(updateRes['releaseTime'])
 
@@ -213,6 +237,7 @@ if Number(updateRes['version']) > updateInfo['version']:
                             .replace('$update', updateText)
                             .replace('$date', date.format(date="long", time=None))
             $IFRESULT = updatedText
+        #endif
 
 
         updatedText = Strings['installer.docs.othermd']
@@ -232,7 +257,10 @@ if Number(updateRes['version']) > updateInfo['version']:
             $IFRESULT = CreateNote(Strings['installer.badmd.warning'])
         else:
             $IFRESULT = CreateNote(richText)
+        #endif
 
         OpenNote($IFRESULT)
+    #endif
+#endif
 
 
