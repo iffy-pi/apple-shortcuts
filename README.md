@@ -6,6 +6,36 @@ A repository for handling the updates and versioning of my apple shortcuts, and 
 26
 ```
 
+## Shorpy Coding Conventions
+### Variable Names
+In shorpy files, I follow the python convention for variable names: they begin with a lowercase letter. However, Shortcuts by default initializes variables with capital letters. To make it so that I don't have to manually change the case each time I am setting a variable, I have it implemented as a rule that variable names in shortcuts always begins with a large letter:
+
+| Shorpy                | Shortcuts                           |
+|-----------------------|-------------------------------------|
+| ``` breakLoop = 1 ``` | ``` SetVariable('BreakLoop', 1) ``` |
+
+### Implicit/Magic Variables
+Shortcuts allows you to make use of the output of different actions, including if-blocks, Menu-blocks and repeat-blocks. These are referred to within Shortcuts as **magic variables**. In shorpy files, we distinguish magic variables from actual variables by prepending a `$` sign. That is, variables that begin with a `$` e.g. `$REPEATRESULTS`, `$IFRESULT` or `$text` are magic variables, rather than variables we actually defined.
+
+### Using Dictionaries
+With Python, to change the value of a map/dictionary key you just assign the map at that key to the new value. In Shortcuts however, to set a key to a new value, you have to use the `Set Dictionary Value` action, which outputs a new dictionary containing the updated key. This means that if you want to update a key in a dictionary variable, you have to set the variable to the output of the `Set Dictionary Value` action.
+
+Shorpy does not account for this as it makes the code more complicated. It is assumed to be implicitly known by the coder.
+
+| Shorpy                  | Shortcuts                                         |
+|-------------------------|---------------------------------------------------|
+| ``` dixVar['a'] = 1 ``` | ``` dixVar = SetDictionaryValue(dixVar'a', 1) ``` |
+
+### Labelling Block Ends
+Python uses tab based delimiting to define block ends, but Shortcuts uses a brace-like system, where if-blocks, repeat blocks and Menus all have defined `End If`, `End Repeat`, `End Menu`. Therefore, to make Shorpy files easier to read, we use `#endif`, `#endrepeat`, and `#endmenu` comments put at the end of the blocks. This makes it easier to compare Shorpy files to their actual shortcut
+
+### Tip: If you intend to use a repeat item or repeat index multiple times, set it to a variable at the beginning of the repeat loop.
+Whenever you use `repeat` or `repeat with each` in Shortcuts, you are provided to magic variables: `$REPEATINDEX`, `$REPEATITEM`. These can be used to refer to the repeat item or index within the repeat loop.
+
+The issue is that if you move the repeat block into another repeat block, the magic variables change names and become invalid (stupid I know). So if you used the magic variable in multiple places within the block, you would have to manually edit every single instance of their use.
+
+You can remediate this by instead setting a new variable with the value of the magic variable and using that within the repeat block. So in the case where the magic variables change, you only have to update one instance.
+
 ## Creating a Versioned Shortcut
 1. Create a folder in `versioning/` for the shortcut, e.g. `myshortcut`
 2. Implement versioning system within the shortcut (see [Configuring Update System In Shortcut](#configuring-update-system-in-shortcut)). If new, set initial version to be 1.0.
