@@ -5,15 +5,16 @@ Ver: 1.1
 '''
 
 # Search for food in MyFitnessPal Database
-
-ShowAlert(
-    title='Search is no longer available',
-    body='''
-    Unfortunately, the search functionality is no longer available as the MFP public API has been permanently shutdown.
-    An alternative which integrates with ChatGPT or some other similar search engine will be released in future.
-    '''
-)
-StopShortcut()
+# # TODO Translate this
+# ShowAlert(
+#     title='Search is no longer available',
+#     body='''
+#     Unfortunately, the search functionality is no longer available as the MFP public API has been permanently shutdown.
+#     You can 
+#     An alternative which integrates with ChatGPT or some other similar search engine will be released in future.
+#     '''
+# )
+# StopShortcut()
 
 TRUE = 1
 FALSE = 0
@@ -23,6 +24,19 @@ storage = Text(GetFile(From='Shortcuts', "Nutrition_Shortcut_Storage_Folder_Name
 
 NutriDix = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/shortcutNames.json"))
 Strings = Dictionary(GetFile(From='Shortcuts', f"{storage}/Other/gui_strings.json"))
+
+
+OpenURL('https://www.myfitnesspal.com/food/calorie-chart-nutrition-facts')
+
+ShowAlert("Search and find your desired food. When found, select and copy the nutrient information (selection begins from Calories and ends on Iron value)")
+
+WaitToReturn()
+
+VibrateDevice()
+
+
+
+
 
 # vcard base64 photo icons
 servingSizeIcon = # ... , see servingSizeIcon.txt
