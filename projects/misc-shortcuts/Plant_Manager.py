@@ -1,10 +1,12 @@
+# SHORTCUT: https://www.icloud.com/shortcuts/45f7cb77a657436ba31aabe32615cf9a
 TRUE = 1
 FALSE = 0
 saveFile = FALSE
 mainBreakLoop = FALSE
 
 dataFile = 'Plant Waterings/data.json'
-backupDataFile = 'Plant Waterings/data.backup.json'
+previousDataFile = 'Plant Waterings/data.previous.json' # Stores data file before last made change
+backupDataFile = 'Plant Waterings/data-backup.json' # Used for manual backups
 notification = ''
 separator = '------------------------------------------------------'
 sortSummaryByName = FALSE
@@ -29,6 +31,7 @@ for i in range(15):
 
 	Menu($IFRESULT):
 		case 'Water Plant':
+			groupWateringDate = "-"
 			plantNames = FilterFiles(plantInfo.keys, sortBy='Name', order='A to Z')
 			selected = ChooseFromList(plantNames, prompt='Select plant(s)', multiple=True)
 
@@ -189,14 +192,14 @@ for i in range(15):
 			notification = f'Plant name changed from "{plant}" to "{newName}"', title='Plant name changed'
 			saveFile = TRUE
 
-		case 'Edit Wateing Dates':
+		case 'Edit Watering Dates':
 			plantNames = FilterFiles(plantInfo.keys, sortBy='Name', order='A to Z')
 			plant = ChooseFromList(plantNames, prompt='Select plant to edit watering dates for')
 
 			waterings = plantInfo[plant]['waterings']
 
 			for wt in waterings:
-				$REPEATRESULTS.append(Text(Date(wt).format(date='medium', time='None')))
+				$REPEATRESULTS.append(Text(Date(wt).format(date='long', time='None')))
 			#endfor
 
 			newWateringList = $REPEATRESULTS
@@ -260,12 +263,38 @@ for i in range(15):
 				$IFRESULT = 'Watering Summary will be sorted by plant names'
 			#endif
 
+		case 'Other Features':
+			Menu('Other Features'):
+				case 'Make backup':
+					SaveFile(plantInfo, To='Shortcuts', backupDataFile, overwrite=True)
+					$MENURESULT = 'Backup created!'
+
+				case 'Restore backup':
+					file = GetFile(From='Shortcuts', backupDataFile, errorIfNotFound=True)
+					plantInfo = Dictionary(file)
+					SaveFile(plantInfo, To='Shortcuts', dataFile, overwrite=True)
+					$MENURESULT = 'Backup restored!'
+
+				case 'Toggle Summary Sort':
+					if sortSummaryByName == TRUE:
+						sortSummaryByName = FALSE
+						$IFRESULT = 'Watering Summary will be sorted by days since last watering'
+					else:
+						sortSummaryByName = TRUE
+						$IFRESULT = 'Watering Summary will be sorted by plant names'
+					#endif
+					$MENURESULT = $IFRESULT
+			#endmenu
+			notification = $MENURESULT
+
 		case 'Exit':
 			StopShortcut()
 	#endmenu
 
 	if saveFile == TRUE:
+		dix = Dictionary(GetFile(From='Shortcuts', dataFile, errorIfNotFound=True))
+		SaveFile(dix, To='Shortcuts', previousDataFile, overwrite=True)
+
 		SaveFile(plantInfo, To='Shortcuts', dataFile, overwrite=True)
-		SaveFile(plantInfo, To='Shortcuts', backupDataFile, overwrite=True)
 	#endif
 #endfor
