@@ -1,3 +1,4 @@
+# SHORTCUT LINK: https://www.icloud.com/shortcuts/364c6adcc4db46e6b609785c307c5a34
 TRUE = 1
 FALSE = 0
 saveFile = FALSE
